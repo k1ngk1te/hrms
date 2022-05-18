@@ -1,0 +1,18 @@
+Dear {{name_prefix|safe}} {{last_name|safe}}:
+	This is to inform you that a {{leave_type|safe}} leave of absence was requested on your behalf by {{admin_prefix|safe}} {{admin_name|safe}}. 
+	 
+	Information about Leave:
+
+	Type Of Leave: {{leave_type|safe}},
+	Start Date: {{start_date|safe}},
+	End Date: {{end_date|safe}},
+	Resumption Date: {{resume_date|safe}}
+
+	Reason for Leave:
+	
+	{{reason|safe}}
+
+	Sincerely,
+
+	{{admin_name|safe}},
+	{{admin_job|safe}}

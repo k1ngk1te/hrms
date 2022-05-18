@@ -1,0 +1,39 @@
+{% load static %}
+
+{% load render_vite_bundle %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}" />
+  <title>Kite Human Resource Management System</title>
+
+  {% if debug %}
+  <script type="module" src="http://localhost:3000/@vite/client"></script>
+  
+  <script type="module">
+    import RefreshRuntime from 'http://localhost:3000/@react-refresh'
+    if (RefreshRuntime) {
+      RefreshRuntime.injectIntoGlobalHook(window)
+      window.$RefreshReg$ = () => { }
+      window.$RefreshSig$ = () => (type) => type
+      window.__vite_plugin_react_preamble_installed__ = true
+    }
+  </script>
+  {% endif %}
+</head>
+
+<body>
+
+  <div id="root"></div>
+
+  {% if debug %}
+  <script type="module" src="http://localhost:3000/main.tsx"></script>
+  {% else %}
+  {% render_vite_bundle %}
+  {% endif %}
+</body>
+
+</html>

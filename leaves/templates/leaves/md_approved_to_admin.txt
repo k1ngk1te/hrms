@@ -1,0 +1,9 @@
+Dear {{name_prefix|safe}} {{last_name|safe}}:
+	This is to inform you that the request for a {{leave_type|safe}} leave of absence on behalf of {{emp_name|safe}} was approved. 
+	The Leave of absence with commence on {{start_date|safe}}, through {{end_date|safe}}. 
+	{{emp_name|safe}} is expected to resume work on {{resume_date|safe}} unfailingly.
+	
+	Sincerely,
+
+	{{admin_name|safe}},
+	{{admin_job|safe}}.

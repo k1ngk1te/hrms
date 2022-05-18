@@ -1,0 +1,14 @@
+Dear {{name_prefix|safe}} {{last_name|safe}}:
+	This is to inform you that {{person|safe}} request for a {{leave_type|safe}} leave of absence was denied.
+
+	Leave Request Information:
+	Start Date: {{start_date|safe}}, 
+	End Date: {{end_date|safe}},
+	Resumption Date: {{resume_date|safe}}.
+
+	Please consult the required official as to why {{person|safe}} request for leave was Denied.
+	
+	Sincerely,
+
+	{{admin_name|safe}},
+	{{admin_job|safe}}.

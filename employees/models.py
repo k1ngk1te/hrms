@@ -1,0 +1,151 @@
+from django.contrib.auth import get_user_model
+from django.db import models
+from django.db.models import Q
+from django.urls import reverse
+from django.utils.timezone import now
+
+from common.utils import get_instance
+from jobs.models import Job
+from .managers import EmployeeManager
+
+
+User = get_user_model()
+
+LEAVE_TOTAL = 12
+
+
+class Department(models.Model):
+	name = models.CharField(max_length=50, unique=True)
+	hod = models.OneToOneField('Employee', on_delete=models.SET_NULL, 
+		related_name="head_of_department", blank=True, null=True)
+
+	def __str__(self):
+		return self.name
+
+	@staticmethod
+	def get_department(name):
+		if name is None:
+			raise ValueError("department name is required")
+		return get_instance(Department, {"name": name})
+
+	def get_absolute_url(self):
+		return reverse('department-detail', kwargs={"id": self.id})
+
+
+class Employee(models.Model):
+	user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="employee")
+	job = models.ForeignKey(Job, on_delete=models.SET_NULL, blank=True, null=True)
+	supervisor = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
+	department = models.ForeignKey(Department, on_delete=models.SET_NULL, blank=True, null=True)
+	is_hr = models.BooleanField(default=False)
+	is_md = models.BooleanField(default=False)
+	date_employed = models.DateField(auto_now=True)
+	date_updated = models.DateField(auto_now=True)
+
+	objects = EmployeeManager()
+	
+	def __str__(self):
+		return self.user.email
+
+	def get_absolute_url(self):
+		return reverse('employee-detail', kwargs={"id": self.id})
+
+	@staticmethod
+	def check_is_supervisor(user):
+		count = Employee.objects.filter(supervisor__user=user).count()
+		if count > 0:
+			return True
+		return False
+
+	@staticmethod
+	def get_supervised_emps(user):
+		if user is None:
+			raise ValueError("user is required")
+		return Employee.objects.filter(supervisor__user=user)
+
+	@property
+	def is_supervisor(self):
+		return self.check_is_supervisor(self.user)
+
+	@property
+	def is_on_leave(self):
+		emp = self.user.employee
+		approved_leave = emp.leaves.filter(a_md="A").order_by('date_requested').last()
+		if approved_leave:
+			current_date = now().date()
+			diff = (approved_leave.end_date - current_date).days
+			if (diff > 0):
+				return True
+		return False
+
+	@property
+	def status(self):
+		if self.user.is_active:
+			if self.is_on_leave is False:
+				return "Active"
+			return "On Leave"
+		return "Inactive"
+
+	@property
+	def is_hod(self):
+		dep = get_instance(Department, {"hod__user": self.user})
+		if dep:
+			return True
+		return False
+
+	@property
+	def leaves_taken(self):
+		emp = self.user.employee
+		current_year = now().date().year
+		leaves = emp.leaves.filter(a_md="A", start_date__year=current_year)
+		return leaves.count()
+
+	@property
+	def leaves_remaining(self):
+		return LEAVE_TOTAL - self.leaves_taken
+
+	@property
+	def has_pending_leave(self):
+		emp = self.user.employee
+		leaves = emp.leaves.exclude(Q(a_md="A") | Q(a_md="D") 
+			| Q(a_hr="D") | Q(a_hod="D") | Q(a_s="D"))
+		for leave in leaves:
+			if leave.status == "P":
+				return True
+		return False
+
+	@property
+	def department_name(self):
+		if self.department is not None:
+			return self.department.name
+		return None
+
+	@property
+	def job_name(self):
+		if self.job is not None:
+			return self.job.name
+		return None
+
+	def get_supervisor(self, attr):
+		if self.supervisor is not None:
+			if attr == "name":
+				return self.supervisor.user.get_full_name().capitalize()
+			elif attr == "email":
+				return self.supervisor.user.email
+		return None
+
+	def get_hod(self):
+		if self.department is not None and self.department.hod is not None:
+			return self.department.hod
+		return None
+
+	def relinquish_status(self):
+		for dep in Department.objects.filter(hod__user=self.user):
+			dep.hod = None
+			dep.save()
+		for emp in self.get_supervised_emps(self.user):
+			emp.supervisor = None
+			emp.save()
+		self.is_hr = False
+		self.is_md = False
+		return self.save()

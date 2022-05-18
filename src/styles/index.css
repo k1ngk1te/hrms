@@ -1,0 +1,18 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+html,
+body {
+    padding: 0;
+    margin: 0;
+    font-family:  Bahnschrift, Arial, Open Sans, Droid Sans, Helvetica Neue, sans-serif,
+        Segoe UI, Roboto;
+    overflow-x: hidden;
+}
+
+* {
+    box-sizing: border-box;
+}

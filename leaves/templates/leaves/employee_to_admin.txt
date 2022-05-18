@@ -1,0 +1,12 @@
+Dear {{name_prefix|safe}} {{last_name|safe}}:
+	This is a formal request for a {{leave_type|safe}} leave of absence. I would like to request 
+	a {{leave_type|safe}} leave of absence from {{start_date|safe}}, through {{end_date|safe}}. 
+	I would resume work on {{resume_date|safe}}.
+
+	Reason for Leave:
+	
+	{{reason|safe}}
+
+	Sincerely,
+
+	{{employee_name|safe}}.
