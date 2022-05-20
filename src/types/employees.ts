@@ -1,12 +1,22 @@
 import { DataListType } from "./common";
 import { DepartmentType } from "./departments";
-import { ProfileType, UserInfoType } from "./user";
+import { ProfileType, ProfileDataType, UserInfoType, UserType } from "./user";
 
 export interface GetEmployeesDataType extends DataListType {
   active: number;
   inactive: number;
   on_leave: number;
   results: EmployeeType[];
+}
+
+export type ProfileErrorType = {
+	image: string;
+    gender: string;
+    phone: string;
+    address: string;
+    state: string;
+    city: string;
+    date_of_birth: string;
 }
 
 export type EmployeeType = {
@@ -71,15 +81,7 @@ export type FormErrorType = {
     first_name: string;
     last_name: string;
   };
-  profile: {
-    image: string;
-    gender: string;
-    phone: string;
-    address: string;
-    state: string;
-    city: string;
-    date_of_birth: string;
-  };
+  profile: ProfileErrorType;
   job: {
     id: string;
   };
@@ -105,3 +107,42 @@ export type ErrorsKeyType =
   | "city" 
   | "phone" 
   | "address";
+
+export interface ContactInfoType extends Omit<UserType, "full_name" | "active"> {
+	full_name?: string;
+	active?: boolean;
+	profile: ProfileDataType
+}
+
+export type ClientType = {
+    id: string | number;
+    company: string;
+    position: string;
+    contact: ContactInfoType
+}
+
+export interface ContactCreateInfoType extends Omit<UserType, "full_name" | "active"> {
+	profile: ProfileErrorType
+}
+
+export interface ClientCreateType extends Omit<ClientType, "id" | "contact"> {
+	contact: ContactCreateInfoType
+}
+
+export interface ClientListType extends DataListType {
+	active: number;
+  	inactive: number;
+  	total: number;
+	results: ClientType[]
+}
+
+export type ClientFormErrorType = {
+	contact?: {
+		email?: string;
+		first_name?: string;
+		last_name?: string;
+	};
+	profile?: ProfileErrorType;
+	company?: string;
+	position?: string;
+}

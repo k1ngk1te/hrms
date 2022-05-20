@@ -8,6 +8,7 @@ type InputButtonProps = {
 
 const defaultButtonProps = {
 	caps: true,
+	padding: "px-4 py-[0.475rem]",
 	rounded: "rounded-r-xl",
 };
 const defaultInputProps = {

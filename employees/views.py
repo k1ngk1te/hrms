@@ -9,12 +9,34 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from common.utils import get_instance
-from .models import Department, Employee
-from .pagination import EmployeePagination
+from .models import Client, Department, Employee
+from .pagination import ClientPagination, EmployeePagination
 from .permissions import IsHROrMD, IsHROrMDOrAdminUser
-from .serializers import DepartmentSerializer, EmployeeSerializer
+from .serializers import (
+	ClientSerializer, 
+	DepartmentSerializer, 
+	EmployeeSerializer
+)
+
 
 User = get_user_model()
+
+
+class ClientListView(generics.ListCreateAPIView):
+	queryset = Client.objects.all().order_by('-id')
+	pagination_class = ClientPagination
+	permission_classes = (IsHROrMD, )
+	serializer_class = ClientSerializer
+	ordering_fields = ('contact__first_name', 'contact__last_name', 'company')
+	search_fields = ('contact__first_name', 'contact__last_name', 'company')
+
+
+class ClientDetailView(generics.RetrieveUpdateAPIView):
+	queryset = Client.objects.all().order_by('-id')
+	pagination_class = ClientPagination
+	permission_classes = (IsHROrMD, )
+	serializer_class = ClientSerializer
+	lookup_field = 'id'
 
 
 class DepartmentListView(generics.ListCreateAPIView):
@@ -80,112 +102,6 @@ class EmployeeDetailView(generics.RetrieveUpdateAPIView):
 		except:
 			pass
 		return Employee.objects.none()
-
-
-class EmployeePasswordChangeView(APIView):
-	permission_classes = (IsHROrMD, )
-	
-	def post(self, request, *args, **kwargs):
-		email = self._validate_email(request.data.get("email"))
-		password = self._validate_passwords(
-			request.data.get("new_password1"), 
-			request.data.get("new_password2"))
-
-		user = get_instance(User, { "email": email })
-		user.set_password(password)
-		user.save()
-		return Response({"detail": "password changed successfully"})
-		
-	def _validate_email(self, value):
-		email = value.strip().lower()
-		request_user = self.request.user
-		user = get_instance(User, { "email": email })
-
-		if user is None or user.employee is None:
-			raise ValidationError("employee does not exist")
-
-		if request_user.employee.is_hr and user.employee.is_md:
-			raise PermissionDenied("You are forbidden from making this request")
-
-		return email
-
-	def _validate_passwords(self, password1, password2):
-		if password1 is None or password1 == "":
-			raise ValidationError({"new_password1": "This field is required"})
-		if password2 is None or password2 == "":
-			raise ValidationError({"new_password2": "This field is required"})
-		if password1 != password2:
-			raise ValidationError({
-				"new_password1": "passwords do not match",
-				"new_password2": "passwords do not match",
-			})
-		if len(password1) < 5:
-			raise ValidationError({"new_password1": "Password must be more than 4 characters"})
-		return password1
-
-
-class EmployeeDeactivateView(APIView):
-	permission_classes = (IsHROrMD, )
-
-	def post(self, request, *args, **kwargs):
-		admin = self._validate_user()
-		user = self._validate_email(request.data.get("email", None))
-		action = self._validate_action(request.data.get("action", None))
-		if action == "deactivate":
-			user.is_active = False
-			user.employee.relinquish_status()
-		elif action == "activate":
-			user.is_active = True
-		user.save()
-		res_status = status.HTTP_200_OK
-		if action == "activate":
-			message = {
-				"success": "Employee Activated Successfully"}
-		elif action == "deactivate":
-			message = {
-				"success": "Employee De-activated Successfully"}
-		else:
-			message = "an error occurred"
-			res_status = status.HTTP_400_BAD_REQUEST
-		return Response(message, status=res_status)
-
-	def _validate_email(self, email):
-		if email is None:
-			raise ValidationError({"email": "e-mail is required" })
-		employee = get_instance(Employee, { "user__email": email })
-		if employee is None:
-			raise ValidationError({"email": "employee does not exist" })
-		return employee.user
-
-	def _validate_action(self, action):
-		if action is None:
-			raise ValidationError({"action": "action is required" })
-		if action != "activate" and action != "deactivate":
-			raise ValidationError({"action": "action is invalid. use activate or deactivate"})
-			
-		user = self._validate_email(self.request.data.get("email", None))
-
-		if action == "deactivate" and user.is_active is False:
-			raise ValidationError({"action": "employee is already deactivated"})
-		if action == "activate" and user.is_active is True:
-			raise ValidationError({"action": "employee is already activated"})
-		return action
-
-	def _validate_user(self):
-		request_user = self.request.user
-		user = self._validate_email(self.request.data.get("email", None))
-
-		if (
-			request_user.employee.is_hr is False and request_user.employee.is_md is False
-		) or (
-			request_user.employee.is_hr is True and user.employee.is_md is True
-		):
-			raise PermissionDenied("you are forbidden from making this request")
-		
-		if request_user == user:
-			raise ValidationError("you cannot deactivate yourself")
-
-		return request_user
 
 
 class EmployeeExportDataView(APIView):
@@ -270,4 +186,132 @@ class EmployeeExportDataView(APIView):
 		except:
 			pass
 		return Employee.objects.none()
+
+
+# Use Allauth Get adapter validate password to do this
+class EmployeePasswordChangeView(APIView):
+	permission_classes = (IsHROrMD, )
+	
+	def post(self, request, *args, **kwargs):
+		email = self._validate_email(request.data.get("email"))
+		password = self._validate_passwords(
+			request.data.get("new_password1"), 
+			request.data.get("new_password2"))
+
+		user = get_instance(User, { "email": email })
+		user.set_password(password)
+		user.save()
+		return Response({"detail": "Password Changed Successfully"})
+		
+	def _validate_email(self, value):
+		email = value.strip().lower()
+		request_user = self.request.user
+		user = get_instance(User, { "email": email })
+
+		form_type = self.request.data.get("type")
+		if form_type and form_type == "client":
+			if user is None or user.client is None:
+				raise ValidationError("client does not exist")
+		else:
+			if user is None or user.employee is None:
+				raise ValidationError("employee does not exist")
+
+		if request_user.employee.is_hr and user.employee.is_md:
+			raise PermissionDenied("You are forbidden from making this request")
+
+		return email
+
+	def _validate_passwords(self, password1, password2):
+		if password1 is None or password1 == "":
+			raise ValidationError({"new_password1": "This field is required"})
+		if password2 is None or password2 == "":
+			raise ValidationError({"new_password2": "This field is required"})
+		if password1 != password2:
+			raise ValidationError({
+				"new_password1": "passwords do not match",
+				"new_password2": "passwords do not match",
+			})
+		if len(password1) < 5:
+			raise ValidationError({"new_password1": "Password must be more than 4 characters"})
+		return password1
+
+
+class EmployeeDeactivateView(APIView):
+	permission_classes = (IsHROrMD, )
+
+	def post(self, request, *args, **kwargs):
+		admin = self._validate_user()
+		user = self._validate_email(request.data.get("email", None))
+		action = self._validate_action(request.data.get("action", None))
+		_type = self.request.data.get("type", None)
+		if action == "deactivate":
+			user.is_active = False
+			if _type is None or _type != "client":
+				user.employee.relinquish_status()
+		elif action == "activate":
+			user.is_active = True
+		user.save()
+		res_status = status.HTTP_200_OK
+		user_type = "employee"
+		if _type == "client":
+			user_type = "client"
+		if action == "activate":
+			message = {
+				"detail": f"{user_type.capitalize()} Activated Successfully", "type": user_type}
+		elif action == "deactivate":
+			message = {
+				"detail": f"{user_type.capitalize()} De-activated Successfully", "type": user_type}
+		else:
+			message = {"detail", "A server error occurred! Please try again later."}
+			res_status = status.HTTP_400_BAD_REQUEST
+		return Response(message, status=res_status)
+
+	def _validate_email(self, email):
+		if email is None:
+			raise ValidationError({"detail": "e-mail is required" })
+		_type = self.request.data.get("type", None)
+		if _type == "client":
+			client = get_instance(Client, { "contact__email": email })
+			if client is None:
+				raise ValidationError({"detail": "client does not exist" })
+			return client.contact
+		employee = get_instance(Employee, { "user__email": email })
+		if employee is None:
+			raise ValidationError({"detail": "employee does not exist" })
+		return employee.user
+
+	def _validate_action(self, action):
+		if action is None:
+			raise ValidationError({"detail": "action is required" })
+		if action != "activate" and action != "deactivate":
+			raise ValidationError({"detail": "action is invalid. use activate or deactivate"})
+			
+		user = self._validate_email(self.request.data.get("email", None))
+		_type = self.request.data.get("type", None)
+
+		if action == "deactivate" and user.is_active is False:
+			if _type == "client":
+				raise ValidationError({"detail": "client is already inactive"})
+			raise ValidationError({"detail": "employee is already inactive"})
+		if action == "activate" and user.is_active is True:
+			if _type == "client":
+				raise ValidationError({"detail": "client is already active"})
+			raise ValidationError({"detail": "employee is already active"})
+		return action
+
+	def _validate_user(self):
+		request_user = self.request.user
+		user = self._validate_email(self.request.data.get("email", None))
+
+		if (
+			request_user.employee.is_hr is False and request_user.employee.is_md is False
+		) or (
+			request_user.employee.is_hr is True and user.employee.is_md is True
+		):
+			raise PermissionDenied({"detail": "you are forbidden from making this request"})
+		
+		if request_user == user:
+			raise ValidationError({"detail": "you cannot deactivate yourself"})
+
+		return request_user
 

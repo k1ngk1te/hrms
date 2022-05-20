@@ -6,20 +6,44 @@ from common.utils import get_request_method, get_instance, get_instances, get_us
 from jobs.models import Job
 from jobs.serializers import JobSerializer
 from users.models import Profile
-from users.serializers import ProfileSerializer, UserSerializer
-from .models import Department, Employee
+from users.serializers import ProfileSerializer, UserProfileSerializer, UserSerializer
+from .models import Client, Department, Employee
 
 
 User = get_user_model()
 
 
-def get_marital_status(status):
-	if status == "M":
-		return "married"
-	elif status == "D":
-		return "divorced"
-	else:
-		return "single"
+class ClientSerializer(serializers.ModelSerializer):
+	contact = UserProfileSerializer()
+
+	class Meta:
+		model = Client
+		fields = '__all__'
+
+	def create(self, validated_data):
+		contact_data = validated_data.pop("contact")
+
+		email = contact_data.get("email").lower()
+
+		serializer = UserProfileSerializer(data=contact_data, context=self.context)
+		serializer.is_valid(raise_exception=True)
+		serializer.save()
+
+		user = User.objects.get(email=email)
+		client = Client.objects.create(contact=user, **validated_data)
+		return client
+
+	def update(self, instance, validated_data):
+		contact_data = validated_data.pop("contact")
+
+		serializer = UserProfileSerializer(data=contact_data, instance=instance.contact, context=self.context)
+		serializer.is_valid(raise_exception=True)
+		serializer.save()
+
+		instance.company = validated_data.get("company", instance.company)
+		instance.position = validated_data.get("position", instance.position)
+		instance.save()
+		return instance
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
@@ -201,7 +225,6 @@ class EmployeeSerializer(serializers.ModelSerializer):
 		profile.gender = _gender
 		profile.date_of_birth = profile_data.get("date_of_birth", profile.date_of_birth)
 		profile.phone = profile_data.get("phone", profile.phone)
-		profile.marital_status = profile_data.get("marital_status", profile.marital_status)
 		profile.address = profile_data.get("address", profile.address)
 		profile.state = profile_data.get("state", profile.state)
 		profile.city = profile_data.get("city", profile.city)

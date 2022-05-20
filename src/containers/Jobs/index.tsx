@@ -14,7 +14,7 @@ import {
   open as modalOpen,
 } from "@/store/features/modal-slice";
 import { useAppDispatch, useAppSelector, useFormInput } from "@/hooks";
-import { LoadingPage, omitKey, validateForm } from "@/utils";
+import { omitKey, validateForm } from "@/utils";
 import { Container, Modal, Pagination } from "@/components/common";
 import { Button, InputButton } from "@/components/controls";
 import { Form, JobTable } from "@/components/Jobs";
@@ -155,15 +155,14 @@ const Jobs = () => {
     [dispatch, deleteJob]
   );
 
-  return isLoading ? (
-    <LoadingPage />
-  ) : (
+  return (
     <Container
       heading="Jobs"
       refresh={{
         loading: isFetching,
         onClick: () => refetch(),
       }}
+      loading={isLoading}
     >
       <div className="flex flex-col md:flex-row md:items-center md:px-2 lg:px-4">
         <form

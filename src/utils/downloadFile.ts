@@ -1,9 +1,7 @@
-
-
 const downloadFile = async (url: string, file_name: string) => {
     try {
       const response = await fetch(url, {method: "GET"});
-      const data = await response.json();
+      const data = await response.blob();
 
       if (response.status === 200 && data) {
         const url = window.URL.createObjectURL(new Blob([data]));

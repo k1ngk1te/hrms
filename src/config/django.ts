@@ -4,9 +4,7 @@ const ROOT_URL = "/api";
 export const LOGIN_URL = `${ROOT_URL}/auth/login/`;
 export const LOGOUT_URL = `${ROOT_URL}/auth/logout/`;
 export const PASSWORD_CHANGE_URL = `${ROOT_URL}/auth/password/change/`;
-export const REFRESH_TOKEN_URL = `${ROOT_URL}/auth/token/refresh/`;
 export const USER_DATA_URL = `${ROOT_URL}/auth/user/`;
-export const VERIFY_TOKEN_URL = `${ROOT_URL}/auth/token/verify/`;
 
 export const LEAVES_URL = `${ROOT_URL}/leaves/`;
 export const LEAVE_DETAIL_URL = (id: number | string) => `${LEAVES_URL}${id}/`;
@@ -18,6 +16,10 @@ export const NOTIFICATION_URL = (id: number | string) =>
 export const PROFILE_URL = `${ROOT_URL}/profile/`;
 
 // Admin URLs
+
+export const CLIENTS_URL = `${ROOT_URL}/clients/`;
+export const CLIENT_URL = (id: number | string) => `${ROOT_URL}/clients/${id}/`;
+
 export const DEPARTMENTS_URL = `${ROOT_URL}/departments/`;
 export const DEPARTMENT_URL = (id: number | string) => `${ROOT_URL}/departments/${id}/`;
 

@@ -9,11 +9,6 @@ GENDER_CHOICES = (
     ('F', 'Female')
 )
 
-MARITAL_CHOICES = (
-    ('D', 'Divorced'),
-    ('M', 'Married'),
-    ('S', 'Single')
-)
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(
@@ -68,7 +63,6 @@ class Profile(models.Model):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default='M')
     address = models.TextField(blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True)
-    marital_status = models.CharField(max_length=1, choices=MARITAL_CHOICES, default='S')
     phone = models.CharField(max_length=20, blank=True, null=True)
     state = models.CharField(max_length=100, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)

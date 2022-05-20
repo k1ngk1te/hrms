@@ -17,7 +17,7 @@ import {
 	close as modalClose,
 	open as modalOpen,
 } from "@/store/features/modal-slice";
-import { getDate, getNextDate, LoadingPage, validateForm } from "@/utils";
+import { getDate, getNextDate, validateForm } from "@/utils";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { FormType } from "@/types/leaves";
 import { Container, Modal, Pagination } from "@/components/common";
@@ -220,67 +220,62 @@ const Leave = () => {
 					leaves?.refetch();
 				},
 			}}
+			loading={leaves.isLoading}
 		>
-			{leaves.isLoading ? (
-				<LoadingPage />
-			) : (
-				<>
-					<Cards
-						approved={leaves.data?.approved_count || 0}
-						denied={leaves.data?.denied_count || 0}
-						pending={leaves.data?.pending_count || 0}
+			<Cards
+				approved={leaves.data?.approved_count || 0}
+				denied={leaves.data?.denied_count || 0}
+				pending={leaves.data?.pending_count || 0}
+			/>
+			<Topbar
+				adminView={false}
+				loading={leaves.isFetching}
+				dateSubmit={({ fromDate, toDate }) =>
+					setDateQuery({ from: fromDate, to: toDate })
+				}
+				openModal={() => dispatch(modalOpen())}
+			/>
+			<LeaveTable
+				loading={leaves.isFetching}
+				leaves={leaves.data?.results || []}
+			/>
+			{leaves.data && leaves.data?.results.length > 0 && (
+				<div className="pt-2 pb-5">
+					<Pagination
+						disabled={leaves.isFetching}
+						onChange={(pageNo: number) => {
+							const value = pageNo - 1 <= 0 ? 0 : pageNo - 1;
+							offset !== value && setOffset(value * 50);
+						}}
+						totalItems={leaves.data.count}
 					/>
-					<Topbar
-						adminView={false}
-						loading={leaves.isFetching}
-						dateSubmit={({ fromDate, toDate }) =>
-							setDateQuery({ from: fromDate, to: toDate })
-						}
-						openModal={() => dispatch(modalOpen())}
-					/>
-					<LeaveTable
-						loading={leaves.isFetching}
-						leaves={leaves.data?.results || []}
-					/>
-					{leaves.data && leaves.data?.results.length > 0 && (
-						<div className="pt-2 pb-5">
-							<Pagination
-								disabled={leaves.isFetching}
-								onChange={(pageNo: number) => {
-									const value = pageNo - 1 <= 0 ? 0 : pageNo - 1;
-									offset !== value && setOffset(value * 50);
-								}}
-								totalItems={leaves.data.count}
-							/>
-						</div>
-					)}
-					<Modal
-						close={() => dispatch(modalClose())}
-						component={
-							<Form
-								data={form}
-								errors={isFormError<{
-								  	employee?: string;
-								  	leave_type?: string;
-								  	start_date?: string;
-								  	end_date?: string;
-								  	reason?: string;
-								  }>(error) && error.data}
-								formErrors={errors}
-								loading={loading}
-								onChange={handleChange}
-								onSubmit={handleSubmit}
-								onSelectChange={handleSelectChange}
-								onTextChange={handleTextChange}
-							/>
-						}
-						description="Fill in the form below to request a leave"
-						keepVisible
-						title="Request Leave"
-						visible={modalVisible}
-					/>
-				</>
+				</div>
 			)}
+			<Modal
+				close={() => dispatch(modalClose())}
+				component={
+					<Form
+						data={form}
+						errors={isFormError<{
+						  	employee?: string;
+						  	leave_type?: string;
+						  	start_date?: string;
+						  	end_date?: string;
+						  	reason?: string;
+						  }>(error) && error.data}
+						formErrors={errors}
+						loading={loading}
+						onChange={handleChange}
+						onSubmit={handleSubmit}
+						onSelectChange={handleSelectChange}
+						onTextChange={handleTextChange}
+					/>
+				}
+				description="Fill in the form below to request a leave"
+				keepVisible
+				title="Request Leave"
+				visible={modalVisible}
+			/>
 		</Container>
 	);
 };

@@ -14,6 +14,19 @@ User = get_user_model()
 LEAVE_TOTAL = 12
 
 
+class Client(models.Model):
+	contact = models.OneToOneField(User, on_delete=models.CASCADE, related_name="client")
+	company = models.CharField(max_length=255)
+	position = models.CharField(max_length=100)
+
+	def __str__(self):
+		return self.company
+
+	@property
+	def status(self):
+		return self.contact.is_active
+		
+
 class Department(models.Model):
 	name = models.CharField(max_length=50, unique=True)
 	hod = models.OneToOneField('Employee', on_delete=models.SET_NULL, 

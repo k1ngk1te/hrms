@@ -14,7 +14,6 @@ import {
 	open as modalOpen,
 } from "@/store/features/modal-slice";
 import { useAppDispatch, useAppSelector, useFormInput } from "@/hooks";
-import { LoadingPage } from "@/utils";
 import { Form, DepartmentTable } from "@/components/Departments";
 import { Container, Modal, Pagination } from "@/components/common";
 import { Button, InputButton } from "@/components/controls";
@@ -185,106 +184,101 @@ const Departments = () => {
 				loading: departments.isFetching,
 				onClick: () => departments.refetch(),
 			}}
+			loading={departments.isLoading}
 		>
-			{departments.isLoading ? (
-				<LoadingPage />
-			) : (
-				<>
-					<div className="flex flex-col md:flex-row md:items-center md:px-2 lg:px-4">
-						<form
-							className="flex items-center mb-3 pr-8 w-full lg:mb-0"
-							onSubmit={(e) => {
-								e.preventDefault();
-								setNameSearch(search.value.toLowerCase());
-							}}
-						>
-							<InputButton
-								buttonProps={{
-									disabled: departments.isFetching,
-									title: "Search",
-									type: "submit",
-								}}
-								inputProps={{
-									bdrColor: "border-primary-500",
-									Icon: FaSearch,
-									onChange: search.onChange,
-									placeholder: "Search Departments",
-									rounded: "rounded-l-lg",
-									value: search.value,
-								}}
-							/>
-						</form>
-						{(authData?.admin_status === "hr" ||
-							authData?.admin_status === "md") && (
-							<div className="flex justify-end px-2 w-full">
-								<div className="w-3/4 lg:w-1/2">
-									<Button
-										caps
-										IconRight={FaPlus}
-										onClick={() => {
-											setInitState({ name: "", hod: "" });
-											setEditMode(false);
-											dispatch(modalOpen());
-										}}
-										rounded="rounded-xl"
-										title="Add department"
-									/>
-								</div>
-							</div>
-						)}
-					</div>
-					<div className="w-full">
-						<DepartmentTable
-							departments={departments.data?.results || []}
-							loading={departments.isFetching}
-							updateDep={(data: {
-								id: string | number;
-								name: string;
-								hod: string;
-							}) => {
-								setDepId(data.id);
-								setInitState({ name: data.name, hod: data.hod });
-								setEditMode(true);
-								dispatch(modalOpen());
-							}}
-							deleteDep={(id: number) => handleDelete(id)}
-							disableAction={departments.isFetching}
-						/>
-						{departments.data && departments.data?.results.length > 0 && (
-							<div className="pt-2 pb-5">
-								<Pagination
-									disabled={departments.isFetching}
-									onChange={(pageNo: number) => {
-										const value = pageNo - 1 <= 0 ? 0 : pageNo - 1;
-										offset !== value && setOffset(value * 50);
-									}}
-									totalItems={departments.data.count}
-								/>
-							</div>
-						)}
-					</div>
-					<Modal
-						component={
-							<Form
-								initState={initState}
-								errors={
-									editMode
-										? isErrorWithData(update.error) && update.error?.data?.error
-										: isErrorWithData(error) && error?.data?.error
-								}
-								editMode={editMode}
-								loading={editMode ? update.isLoading : isLoading}
-								success={editMode === false && status === "fulfilled"}
-								onSubmit={handleSubmit}
-							/>
-						}
-						close={() => dispatch(modalClose())}
-						description="Fill in the form below to add a new department"
-						title="Add New Department"
-						visible={modalVisible}
+			<div className="flex flex-col md:flex-row md:items-center md:px-2 lg:px-4">
+				<form
+					className="flex items-center mb-3 pr-8 w-full lg:mb-0"
+					onSubmit={(e) => {
+						e.preventDefault();
+						setNameSearch(search.value.toLowerCase());
+					}}
+				>
+					<InputButton
+						buttonProps={{
+							disabled: departments.isFetching,
+							title: "Search",
+							type: "submit",
+						}}
+						inputProps={{
+							bdrColor: "border-primary-500",
+							Icon: FaSearch,
+							onChange: search.onChange,
+							placeholder: "Search Departments",
+							rounded: "rounded-l-lg",
+							value: search.value,
+						}}
 					/>
-				</>
-			)}
+				</form>
+				{(authData?.admin_status === "hr" ||
+					authData?.admin_status === "md") && (
+					<div className="flex justify-end px-2 w-full">
+						<div className="w-3/4 lg:w-1/2">
+							<Button
+								caps
+								IconRight={FaPlus}
+								onClick={() => {
+									setInitState({ name: "", hod: "" });
+									setEditMode(false);
+									dispatch(modalOpen());
+								}}
+								rounded="rounded-xl"
+								title="Add department"
+							/>
+						</div>
+					</div>
+				)}
+			</div>
+			<div className="w-full">
+				<DepartmentTable
+					departments={departments.data?.results || []}
+					loading={departments.isFetching}
+					updateDep={(data: {
+						id: string | number;
+						name: string;
+						hod: string;
+					}) => {
+						setDepId(data.id);
+						setInitState({ name: data.name, hod: data.hod });
+						setEditMode(true);
+						dispatch(modalOpen());
+					}}
+					deleteDep={(id: number) => handleDelete(id)}
+					disableAction={departments.isFetching}
+				/>
+				{departments.data && departments.data?.results.length > 0 && (
+					<div className="pt-2 pb-5">
+						<Pagination
+							disabled={departments.isFetching}
+							onChange={(pageNo: number) => {
+								const value = pageNo - 1 <= 0 ? 0 : pageNo - 1;
+								offset !== value && setOffset(value * 50);
+							}}
+							totalItems={departments.data.count}
+						/>
+					</div>
+				)}
+			</div>
+			<Modal
+				component={
+					<Form
+						initState={initState}
+						errors={
+							editMode
+								? isErrorWithData(update.error) && update.error?.data?.error
+								: isErrorWithData(error) && error?.data?.error
+						}
+						editMode={editMode}
+						loading={editMode ? update.isLoading : isLoading}
+						success={editMode === false && status === "fulfilled"}
+						onSubmit={handleSubmit}
+					/>
+				}
+				close={() => dispatch(modalClose())}
+				description="Fill in the form below to add a new department"
+				title="Add New Department"
+				visible={modalVisible}
+			/>
 		</Container>
 	);
 };

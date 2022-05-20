@@ -3,8 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { BiRefresh } from "react-icons/bi";
 import { FaArrowLeft } from "react-icons/fa";
 import { close } from "@/store/features/alert-modal-slice";
+import Error from "@/pages/error";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { AlertModal } from "@/components/common";
+import { LoadingPage } from "@/utils";
 
 type IconProps = {
 	children: ReactNode;
@@ -50,12 +52,19 @@ type ContainerProps = {
 		onClick: () => void;
 		loading?: boolean;
 	};
+	error?: {
+		statusCode?: number;
+		title?: string;
+	}
+	loading: boolean;
 };
 
 const Container: FC<ContainerProps> = ({
 	children,
+	error,
 	heading,
 	icon,
+	loading,
 	refresh,
 	title,
 }) => {
@@ -78,7 +87,7 @@ const Container: FC<ContainerProps> = ({
 									className="block cursor-pointer duration-500 flex items-center justify-center ml-4 rounded-full text-primary-500 transform transition-colors hover:bg-gray-200"
 								>
 									<span className="block p-1">
-										<FaArrowLeft className="block p-1 text-xs md:text-sm" />
+										<FaArrowLeft className="text-xs md:text-sm" />
 									</span>
 								</IconContainer>
 							)}
@@ -104,7 +113,9 @@ const Container: FC<ContainerProps> = ({
 						</div>
 					</div>
 				)}
-				<div className="p-2 md:p-4">{children}</div>
+				<div className="p-2 md:p-4">
+					{loading ? <LoadingPage /> : error ? <Error statusCode={error.statusCode || 500} title={error.title || "A server error occurred! Please try again later."} /> : <>{children}</>}
+				</div>
 			</div>
 			<AlertModal
 				{...options}

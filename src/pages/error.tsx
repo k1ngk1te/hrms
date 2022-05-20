@@ -8,7 +8,7 @@ const PageError = ({
 	statusCode?: number;
 	title?: string;
 }) => (
-	<div className="flex justify-center h-screen items-center w-screen">
+	<div className="flex justify-center h-full items-center min-h-[70vh] w-full">
 		{/* <PageTitle title={NOT_FOUND_TITLE} /> */}
 		<p className="text-lg">{statusCode || 500}</p>
 		<div className="h-[10px] w-[1.25px]" />

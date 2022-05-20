@@ -130,7 +130,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 
 REST_AUTH_SERIALIZERS = {
-    'JWT_SERIALIZER': 'users.serializers.JWTSerializer',
     'USER_DETAILS_SERIALIZER': 'users.serializers.UserDetailSerializer',
 }
 

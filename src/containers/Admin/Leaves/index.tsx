@@ -22,7 +22,6 @@ import {
 	downloadFile,
 	getDate,
 	getNextDate,
-	LoadingPage,
 	validateForm,
 } from "@/utils";
 import { useAppDispatch, useAppSelector } from "@/hooks";
@@ -251,71 +250,66 @@ const Leave = () => {
 					leaves?.refetch();
 				},
 			}}
+			loading={leaves.isLoading}
 		>
-			{leaves.isLoading ? (
-				<LoadingPage />
-			) : (
-				<>
-					<Cards
-						approved={leaves.data?.approved_count || 0}
-						denied={leaves.data?.denied_count || 0}
-						pending={leaves.data?.pending_count || 0}
+			<Cards
+				approved={leaves.data?.approved_count || 0}
+				denied={leaves.data?.denied_count || 0}
+				pending={leaves.data?.pending_count || 0}
+			/>
+			<Topbar
+				adminView
+				openModal={() => dispatch(modalOpen())}
+				loading={leaves.isFetching}
+				dateSubmit={({ fromDate, toDate }) =>
+					setDateQuery({ from: fromDate, to: toDate })
+				}
+				searchSubmit={(search: string) => setNameSearch(search)}
+				exportData={exportLeave}
+			/>
+			<LeaveTable
+				loading={leaves.isFetching}
+				setStatus={setStatus}
+				leaves={leaves.data?.results || []}
+			/>
+			{leaves.data && leaves.data?.results.length > 0 && (
+				<div className="pt-2 pb-5">
+					<Pagination
+						disabled={leaves.isFetching}
+						onChange={(pageNo: number) => {
+							const value = pageNo - 1 <= 0 ? 0 : pageNo - 1;
+							offset !== value && setOffset(value * 50);
+						}}
+						totalItems={leaves.data.count}
 					/>
-					<Topbar
-						adminView
-						openModal={() => dispatch(modalOpen())}
-						loading={leaves.isFetching}
-						dateSubmit={({ fromDate, toDate }) =>
-							setDateQuery({ from: fromDate, to: toDate })
-						}
-						searchSubmit={(search: string) => setNameSearch(search)}
-						exportData={exportLeave}
-					/>
-					<LeaveTable
-						loading={leaves.isFetching}
-						setStatus={setStatus}
-						leaves={leaves.data?.results || []}
-					/>
-					{leaves.data && leaves.data?.results.length > 0 && (
-						<div className="pt-2 pb-5">
-							<Pagination
-								disabled={leaves.isFetching}
-								onChange={(pageNo: number) => {
-									const value = pageNo - 1 <= 0 ? 0 : pageNo - 1;
-									offset !== value && setOffset(value * 50);
-								}}
-								totalItems={leaves.data.count}
-							/>
-						</div>
-					)}
-					<Modal
-						close={() => dispatch(modalClose())}
-						component={
-							<Form
-								adminView
-								data={form}
-								errors={isFormError<{
-  	employee?: string;
-  	leave_type?: string;
-  	start_date?: string;
-  	end_date?: string;
-  	reason?: string;
-  }>(error) && error.data}
-								formErrors={errors}
-								loading={loading}
-								onChange={handleChange}
-								onSubmit={handleSubmit}
-								onSelectChange={handleSelectChange}
-								onTextChange={handleTextChange}
-							/>
-						}
-						description="Fill in the form below to add a leave"
-						keepVisible
-						title="Add Leave"
-						visible={modalVisible}
-					/>
-				</>
+				</div>
 			)}
+			<Modal
+				close={() => dispatch(modalClose())}
+				component={
+					<Form
+						adminView
+						data={form}
+						errors={isFormError<{
+employee?: string;
+leave_type?: string;
+start_date?: string;
+end_date?: string;
+reason?: string;
+}>(error) && error.data}
+						formErrors={errors}
+						loading={loading}
+						onChange={handleChange}
+						onSubmit={handleSubmit}
+						onSelectChange={handleSelectChange}
+						onTextChange={handleTextChange}
+					/>
+				}
+				description="Fill in the form below to add a leave"
+				keepVisible
+				title="Add Leave"
+				visible={modalVisible}
+			/>
 		</Container>
 	);
 };

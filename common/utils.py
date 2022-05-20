@@ -49,37 +49,41 @@ def get_user_info(user, request=None, check_admin=False):
 			"image": get_profile_image(user, request),
 			"first_name": user.first_name,
 			"last_name": user.last_name,
+			"full_name": user.get_full_name(),
 			"email": user.email,
-			"empId": user.employee.id,
 			"active": user.is_active,
 		}
 
-		if user.employee and user.employee.job:
-			data.update({
-				"job": user.employee.job.name
-			})
+		try:
+			if user.employee:
+				data.update({"empId": user.employee.id})
 
-		if check_admin is True:
-			employee = user.employee
-			if employee is None:
-				admin_status = None
-			elif employee.is_md is True:
-				admin_status = "md"
-			elif employee.is_hr is True:
-				admin_status = "hr"
-			elif employee.is_hod is True:
-				admin_status = "hod"
-			elif employee.is_supervisor is True:
-				admin_status = "supervisor"
-			else:
-				admin_status = None
+				if user.employee.job:
+					data.update({ "job": user.employee.job.name })
 
-			data.update({ 
-				"is_admin": user.is_staff,
-				"admin_status": admin_status,
-				"leaves_taken": employee.leaves_taken,
-				"leaves_remaining": employee.leaves_remaining,
-			})
+			if check_admin is True:
+				employee = user.employee
+				if employee is None:
+					admin_status = None
+				elif employee.is_md is True:
+					admin_status = "md"
+				elif employee.is_hr is True:
+					admin_status = "hr"
+				elif employee.is_hod is True:
+					admin_status = "hod"
+				elif employee.is_supervisor is True:
+					admin_status = "supervisor"
+				else:
+					admin_status = None
+
+				data.update({ 
+					"is_admin": user.is_staff,
+					"admin_status": admin_status,
+					"leaves_taken": employee.leaves_taken,
+					"leaves_remaining": employee.leaves_remaining,
+				})
+		except:
+			pass
 
 		return data
 	except:

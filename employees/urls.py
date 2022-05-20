@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import (
+	ClientListView, ClientDetailView,
 	DepartmentListView, DepartmentDetailView,
 	EmployeeListView, EmployeeDetailView, 
 	EmployeeDeactivateView, EmployeePasswordChangeView,
@@ -8,6 +9,8 @@ from .views import (
 
 
 urlpatterns = [
+	path('api/clients/', ClientListView.as_view(), name="clients"),
+	path('api/clients/<int:id>/', ClientDetailView.as_view(), name="client-detail"),
 	path('api/departments/', DepartmentListView.as_view(), name="departments"),
 	path('api/departments/<int:id>/', DepartmentDetailView.as_view(), name="department-detail"),
 	path('api/employees/', EmployeeListView.as_view(), name="employees"),

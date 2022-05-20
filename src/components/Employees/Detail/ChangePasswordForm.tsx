@@ -1,7 +1,9 @@
 import { FC, FormEvent, useCallback, useEffect, useState } from "react";
 
 import { logout } from "@/store/features/auth-slice";
+import { isErrorWithData, isFormError } from "@/store";
 import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
+import { useChangeEmployeePasswordMutation } from "@/store/features/employees-slice";
 import { close as modalClose } from "@/store/features/modal-slice";
 import { useAppDispatch, useFormInput } from "@/hooks";
 import { validateForm } from "@/utils";
@@ -9,17 +11,11 @@ import { ChangePasswordType } from "@/types/user";
 import { Button, Input } from "@/components/controls";
 
 type FormProps = {
-  errors?: {
-  	new_password1?: string;
-  	new_password2?: string;
-  };
-  errorStatus?: number;
-  isLoading: boolean;
-  onSubmit: (e: ChangePasswordType) => void;
-  success: boolean;
+	email: string;
+	type?: "client" | "employee"
 }
 
-const Form: FC<FormProps> = ({ errors, errorStatus, isLoading, onSubmit, success }) => {
+const Form: FC<FormProps> = ({ email, type }) => {
   const [formErrors, setErrors] = useState<any>({});
 
   const password1 = useFormInput("");
@@ -30,39 +26,45 @@ const Form: FC<FormProps> = ({ errors, errorStatus, isLoading, onSubmit, success
 
   const dispatch = useAppDispatch();
 
+  const [changePassword, { data, error, isLoading, status }] = useChangeEmployeePasswordMutation();
+  const errors = isFormError<{
+  	new_password1?: string; new_password2?: string;
+  }>(error) ? error.data : undefined
+
   useEffect(() => {
-    if (success) {
+    if (status === "fulfilled") {
       dispatch(modalClose());
       dispatch(
         alertModalOpen({
           color: "success",
           header: "Password Changed",
-          message: "Password Changed Successfully!",
+          message: data.detail || "Password Changed Successfully!",
         })
       );
       password1Reset();
       password2Reset();
     }
-  }, [dispatch, success, password1Reset, password2Reset]);
+  }, [dispatch, data, status, password1Reset, password2Reset]);
 
   useEffect(() => {
-    if (errorStatus === 401) dispatch(logout())
-  }, [errorStatus, dispatch])
+    if (isErrorWithData(error) && error.status === 401) dispatch(logout())
+  }, [error, dispatch])
 
   const handleSubmit = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
-      const form = {
+      const data = {
+      	email,
         password1: password1.value,
         password2: password2.value,
       };
 
-      const { valid, result } = validateForm(form);
-      if (valid) onSubmit(form);
+      const { valid, result } = validateForm(data);
+      if (valid) changePassword({ ...data, type });
       else setErrors(result);
     },
-    [onSubmit, password1.value, password2.value]
+    [changePassword, email, type, password1.value, password2.value]
   );
 
   return (

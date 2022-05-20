@@ -7,7 +7,6 @@ import {
   LEAVE_DETAIL_PAGE_URL,
 } from "@/config/routes";
 import { useAppDispatch, useAppSelector } from "@/hooks";
-import { LoadingPage } from "@/utils";
 import { Container, Pagination } from "@/components/common";
 import { Audit } from "@/components/Notifications";
 
@@ -50,46 +49,43 @@ const Notifications = () => {
         onClick: () => notifications?.refetch(),
         loading: notifications?.isFetching,
       }}
+      loading={notifications.isLoading}
     >
-      {notifications.isLoading ? (
-        <LoadingPage />
-      ) : (
-        <div className="bg-gray-200 h-full max-w-4xl mx-auto p-3 rounded-lg w-full sm:px-4 md:py-5 lg:py-8">
-          {notifications.data !== undefined &&
-          notifications.data?.results.length <= 0 ? (
-            <NoData />
-          ) : (
-            notifications.data?.results.map((notification, index) => (
-              <Audit
-                key={index}
-                id={notification.id}
-                date_sent={notification.date_sent}
-                goto={
-                  notification._type === "L"
-                    ? authData && authData?.is_admin && notification.recipient.email === authData?.email
-                      ? ADMIN_LEAVE_DETAIL_PAGE_URL(notification.message_id)
-                      : LEAVE_DETAIL_PAGE_URL(notification.message_id)
-                    : undefined
-                }
-                read={notification.read}
-                message={notification.message}
-              />
-            ))
-          )}
-          {notifications.data && notifications.data?.results.length > 0 && (
-            <div className="pt-2 pb-5">
-              <Pagination
-                disabled={notifications.isFetching}
-                onChange={(pageNo: number) => {
-                  const value = pageNo - 1 <= 0 ? 0 : pageNo - 1;
-                  offset !== value && setOffset(value * 50);
-                }}
-                totalItems={notifications.data.count}
-              />
-            </div>
-          )}
-        </div>
-      )}
+	    <div className="bg-gray-200 h-full max-w-4xl mx-auto p-3 rounded-lg w-full sm:px-4 md:py-5 lg:py-8">
+	      {notifications.data !== undefined &&
+	      notifications.data?.results.length <= 0 ? (
+	        <NoData />
+	      ) : (
+	        notifications.data?.results.map((notification, index) => (
+	          <Audit
+	            key={index}
+	            id={notification.id}
+	            date_sent={notification.date_sent}
+	            goto={
+	              notification._type === "L"
+	                ? authData && authData?.is_admin && notification.recipient.email === authData?.email
+	                  ? ADMIN_LEAVE_DETAIL_PAGE_URL(notification.message_id)
+	                  : LEAVE_DETAIL_PAGE_URL(notification.message_id)
+	                : undefined
+	            }
+	            read={notification.read}
+	            message={notification.message}
+	          />
+	        ))
+	      )}
+	      {notifications.data && notifications.data?.results.length > 0 && (
+	        <div className="pt-2 pb-5">
+	          <Pagination
+	            disabled={notifications.isFetching}
+	            onChange={(pageNo: number) => {
+	              const value = pageNo - 1 <= 0 ? 0 : pageNo - 1;
+	              offset !== value && setOffset(value * 50);
+	            }}
+	            totalItems={notifications.data.count}
+	          />
+	        </div>
+	      )}
+	    </div>
     </Container>
   );
 };

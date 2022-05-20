@@ -6,7 +6,7 @@ export const updateObject = (
 
 const validateForm = (form: object, invalidates?: string[]) => {
   let valid = true;
-  const result = {};
+  const result: any = {};
   const entries = Object.entries(form);
 
   entries.forEach((entry) => {

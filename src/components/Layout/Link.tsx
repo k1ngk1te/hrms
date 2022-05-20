@@ -112,7 +112,16 @@ export const ListLink: FC<ListLinkType> = ({ Icon, onClick, links, title }) => {
 	const [visible, setVisible] = useState(false);
 	const { pathname } = useLocation();
 
-	const activeLink = links.filter(({ href }) => href === pathname)[0];
+	const _pathname =
+		pathname !== "/" && pathname.slice(-1) !== "/" ? pathname + "/" : pathname;
+
+	const active1 = links.filter(({ href }) => href === _pathname)[0];
+	const active2 = links.filter(
+		({ href }) =>
+			href && href !== "/" && _pathname !== "/" && _pathname.startsWith(href)
+	)[0];
+
+	const activeLink = active1 || active2;
 
 	useEffect(() => {
 		if (activeLink) setVisible(true);
@@ -120,7 +129,7 @@ export const ListLink: FC<ListLinkType> = ({ Icon, onClick, links, title }) => {
 	}, [activeLink]);
 
 	return (
-		<li className="my-1 lg:my-0">
+		<div className="my-1 lg:my-0">
 			<div
 				onClick={() => setVisible(!visible)}
 				className={`${containerStyle} ${
@@ -143,7 +152,7 @@ export const ListLink: FC<ListLinkType> = ({ Icon, onClick, links, title }) => {
 					)}
 				</div>
 			</div>
-			<ul
+			<div
 				className={`${
 					visible ? "block opacity-100 visible" : "hidden invisible opacity-0"
 				} duration-500 transform transition-all`}
@@ -159,7 +168,7 @@ export const ListLink: FC<ListLinkType> = ({ Icon, onClick, links, title }) => {
 						title={title}
 					/>
 				))}
-			</ul>
-		</li>
+			</div>
+		</div>
 	);
 };

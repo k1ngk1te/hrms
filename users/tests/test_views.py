@@ -98,7 +98,6 @@ class ProfileTests(TestSetUp):
 			"address": "This is Tester's home address",
 			"state": "Los Angeles",
 			"city": "New York",
-			"marital_status": "M"
 		}, format="json")
 
 		user = User.objects.get(email=self.user.email)
@@ -108,7 +107,6 @@ class ProfileTests(TestSetUp):
 		self.assertEqual(user.first_name, "tester")
 		self.assertEqual(user.last_name, "test")
 		self.assertEqual(profile.gender, "F")
-		self.assertEqual(profile.marital_status, "M")
 		self.assertEqual(profile.city, "New York")
 		self.assertEqual(profile.state, "Los Angeles")
 		self.assertEqual(profile.address, "This is Tester's home address")

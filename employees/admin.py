@@ -1,5 +1,9 @@
 from django.contrib import admin
-from .models import Department, Employee
+from .models import Client, Department, Employee
+
+
+class ClientAdmin(admin.ModelAdmin):
+	list_display = ('company', 'contact', )
 
 
 class DepartmentAdmin(admin.ModelAdmin):
@@ -12,5 +16,6 @@ class EmployeeAdmin(admin.ModelAdmin):
 		'is_hr', 'is_md')
 
 
+admin.site.register(Client, ClientAdmin)
 admin.site.register(Department, DepartmentAdmin)
 admin.site.register(Employee, EmployeeAdmin)

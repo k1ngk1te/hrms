@@ -1,6 +1,6 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
-import { isErrorWithData } from "@/store";
+import { isErrorWithData, isFormError } from "@/store";
 import { logout } from "@/store/features/auth-slice";
 import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
 import { close as modalClose } from "@/store/features/modal-slice";
@@ -8,7 +8,7 @@ import { useUpdateEmployeeMutation } from "@/store/features/employees-slice";
 import { useAppDispatch } from "@/hooks";
 import { omitKey, validateForm } from "@/utils";
 import { initErrorState } from "@/containers/Employees";
-import { EmployeeType, ErrorFormType, FormType } from "@/types/employees";
+import { EmployeeType, ErrorFormType, FormErrorType, FormType } from "@/types/employees";
 import { Form } from "@/components/Employees";
 
 const EmployeeForm = ({
@@ -92,7 +92,7 @@ const EmployeeForm = ({
     <Form
       editMode
       initState={initState}
-      errors={error && isErrorWithData(error) ? error.data : undefined}
+      errors={error && isFormError<FormErrorType>(error) ? error.data : undefined}
       formErrors={errors}
       loading={loading}
       onSubmit={handleSubmit}

@@ -13,7 +13,7 @@ import {
   useChangePasswordMutation,
 } from "@/store/features/auth-api-slice";
 import { useAppDispatch, useAppSelector } from "@/hooks";
-import { getDate, LoadingPage, toCapitalize } from "@/utils";
+import { getDate, toCapitalize } from "@/utils";
 import { ChangePasswordForm } from "@/components/Employees";
 import { UpdateForm } from "@/components/Profile";
 import { Container, InfoComp, InfoTopBar, Modal } from "@/components/common";
@@ -46,15 +46,14 @@ const Profile = () => {
     if (changeErrorStatus === true || errorStatus === true) dispatch(logout());
   }, [dispatch, getData.error, error]);
 
-  return getData.isLoading ? (
-    <LoadingPage />
-  ) : (
+  return (
     <Container
       heading="My Profile"
       refresh={{
         loading: getData?.isFetching,
         onClick: () => getData?.refetch(),
       }}
+      loading={getData.isLoading}
     >
       <InfoTopBar
         email={empData?.user?.email}
@@ -145,10 +144,6 @@ const Profile = () => {
           {
             title: "Department",
             value: toCapitalize(empData?.department?.name) || "",
-          },
-          {
-            title: "Marital Status",
-            value: toCapitalize(empData?.profile?.marital_status.name) || "",
           },
           {
             title: "Last Leave Date",

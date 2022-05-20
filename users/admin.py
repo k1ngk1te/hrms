@@ -37,6 +37,7 @@ class UserAdmin(BaseUserAdmin):
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ['user']
     search_field = ['user']
+    ordering = ['user__email']
 
 
 admin.site.unregister(Group)

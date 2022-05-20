@@ -12,7 +12,7 @@ import {
 	useCreateEmployeeMutation,
 	useGetEmployeesQuery,
 } from "@/store/features/employees-slice";
-import { downloadFile, LoadingPage, validateForm } from "@/utils";
+import { downloadFile, validateForm } from "@/utils";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import {
 	ErrorFormType,
@@ -159,77 +159,72 @@ const Employees = () => {
 				loading: employees?.isFetching,
 				onClick: () => employees?.refetch(),
 			}}
+			loading={employees.isLoading}
 		>
-			{employees.isLoading ? (
-				<LoadingPage />
-			) : (
-				<>
-					<Cards
-						active={employees.data?.active || 0}
-						leave={employees.data?.on_leave || 0}
-						inactive={employees.data?.inactive || 0}
-					/>
-					<Topbar
-						openModal={() => {
-							formSuccess === true && setFormSuccess(false);
-							dispatch(modalOpen());
-						}}
-						loading={employees.isFetching}
-						onSubmit={(name: string) => setSearch(name)}
-						exportData={exportEmployee}
-					/>
-					<div className="mt-3">
-						<EmployeeTable
-							employees={employees.data?.results || []}
-							loading={employees.isFetching}
-							setStatus={setStatus}
+			<Cards
+				active={employees.data?.active || 0}
+				leave={employees.data?.on_leave || 0}
+				inactive={employees.data?.inactive || 0}
+			/>
+			<Topbar
+				openModal={() => {
+					formSuccess === true && setFormSuccess(false);
+					dispatch(modalOpen());
+				}}
+				loading={employees.isFetching}
+				onSubmit={(name: string) => setSearch(name)}
+				exportData={exportEmployee}
+			/>
+			<div className="mt-3">
+				<EmployeeTable
+					employees={employees.data?.results || []}
+					loading={employees.isFetching}
+					setStatus={setStatus}
+				/>
+				{employees.data && employees.data?.results.length > 0 && (
+					<div className="pt-2 pb-5">
+						<Pagination
+							disabled={employees.isFetching}
+							onChange={(pageNo: number) => {
+								const value = pageNo - 1 <= 0 ? 0 : pageNo - 1;
+								offset !== value && setOffset(value * 50);
+							}}
+							totalItems={employees.data.count}
 						/>
-						{employees.data && employees.data?.results.length > 0 && (
-							<div className="pt-2 pb-5">
-								<Pagination
-									disabled={employees.isFetching}
-									onChange={(pageNo: number) => {
-										const value = pageNo - 1 <= 0 ? 0 : pageNo - 1;
-										offset !== value && setOffset(value * 50);
-									}}
-									totalItems={employees.data.count}
-								/>
-							</div>
-						)}
 					</div>
-					<Modal
-						close={() => dispatch(modalClose())}
-						component={
-							<Form
-								initState={initState}
-								errors={
-									isFormError<FormErrorType>(error) ? error.data : undefined
-								}
-								formErrors={errors}
-								removeErrors={(name: ErrorsKeyType) => {
-									if (
-										errors &&
-										errors[name] &&
-										(errors[name] !== "" ||
-											errors[name] !== undefined ||
-											errors[name] !== null)
-									)
-										setErrors((prevState) => ({
-											...prevState,
-											[name]: "",
-										}));
-								}}
-								loading={loading}
-								onSubmit={handleSubmit}
-								success={formSuccess}
-							/>
+				)}
+			</div>
+			<Modal
+				close={() => dispatch(modalClose())}
+				component={
+					<Form
+						initState={initState}
+						errors={
+							isFormError<FormErrorType>(error) ? error.data : undefined
 						}
-						description="Fill in the form below to add a new Employee"
-						title="Add Employee"
-						visible={modalVisible}
+						formErrors={errors}
+						removeErrors={(name: ErrorsKeyType) => {
+							if (
+								errors &&
+								errors[name] &&
+								(errors[name] !== "" ||
+									errors[name] !== undefined ||
+									errors[name] !== null)
+							)
+								setErrors((prevState) => ({
+									...prevState,
+									[name]: "",
+								}));
+						}}
+						loading={loading}
+						onSubmit={handleSubmit}
+						success={formSuccess}
 					/>
-				</>
-			)}
+				}
+				description="Fill in the form below to add a new Employee"
+				title="Add Employee"
+				visible={modalVisible}
+			/>
 		</Container>
 	);
 };
