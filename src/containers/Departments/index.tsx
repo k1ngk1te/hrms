@@ -15,7 +15,7 @@ import {
 } from "@/store/features/modal-slice";
 import { useAppDispatch, useAppSelector, useFormInput } from "@/hooks";
 import { Form, DepartmentTable } from "@/components/Departments";
-import { Container, Modal, Pagination } from "@/components/common";
+import { Container, Modal } from "@/components/common";
 import { Button, InputButton } from "@/components/controls";
 
 const Departments = () => {
@@ -185,6 +185,10 @@ const Departments = () => {
 				onClick: () => departments.refetch(),
 			}}
 			loading={departments.isLoading}
+			paginate={data ? {
+				loading: departments.isFetching,
+				setOffset, offset, totalItems: data.count || 0
+			} : undefined}
 		>
 			<div className="flex flex-col md:flex-row md:items-center md:px-2 lg:px-4">
 				<form
@@ -246,18 +250,6 @@ const Departments = () => {
 					deleteDep={(id: number) => handleDelete(id)}
 					disableAction={departments.isFetching}
 				/>
-				{departments.data && departments.data?.results.length > 0 && (
-					<div className="pt-2 pb-5">
-						<Pagination
-							disabled={departments.isFetching}
-							onChange={(pageNo: number) => {
-								const value = pageNo - 1 <= 0 ? 0 : pageNo - 1;
-								offset !== value && setOffset(value * 50);
-							}}
-							totalItems={departments.data.count}
-						/>
-					</div>
-				)}
 			</div>
 			<Modal
 				component={

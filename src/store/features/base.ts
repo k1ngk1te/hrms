@@ -17,10 +17,12 @@ export const baseApi = createApi({
 	endpoints: () => ({}),
 	reducerPath: "baseApi",
 	tagTypes: [
+		"Attendance",
 		"Client",
 		"Company",
 		"Department",
 		"Employee",
+		"Holiday",
 		"Job",
 		"Leave",
 		"Notification",

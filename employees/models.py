@@ -6,7 +6,7 @@ from django.utils.timezone import now
 
 from common.utils import get_instance
 from jobs.models import Job
-from .managers import EmployeeManager
+from .managers import AttendanceManager, EmployeeManager
 
 
 User = get_user_model()
@@ -162,3 +162,30 @@ class Employee(models.Model):
 		self.is_hr = False
 		self.is_md = False
 		return self.save()
+
+
+class Holiday(models.Model):
+	name = models.CharField(max_length=100)
+	date = models.DateField()
+
+	class Meta:
+		unique_together = ["name", "date"]
+
+	def __str__(self):
+		return self.name
+
+
+class Attendance(models.Model):
+	employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+	date = models.DateField(default=now)	
+	punch_in = models.TimeField()
+	punch_out = models.TimeField(blank=True, null=True)
+
+	objects = AttendanceManager()
+
+	class Meta:
+		unique_together = ['employee', 'date']
+
+	def __str__(self):
+		return '%s - %s ' % (self.employee, self.date)
+

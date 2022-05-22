@@ -12,7 +12,7 @@ import {
 } from "@/store/features/employees-slice";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { Cards, ClientTable, Form, Topbar } from "@/components/Clients";
-import { Container, Modal, Pagination } from "@/components/common";
+import { Container, Modal } from "@/components/common";
 import { ClientCreateType } from "@/types/employees";
 
 const Clients = () => {
@@ -84,7 +84,13 @@ const Clients = () => {
 			loading={isLoading}
 			refresh={{
 				onClick: refetch,
+				loading: isFetching
 			}}
+			paginate={data ? {
+				loading: isFetching,
+				offset, setOffset,
+				totalItems: data.count || 0
+			} : undefined}
 		>
 			<Cards
 				active={data ? data.active : 0}
@@ -95,7 +101,7 @@ const Clients = () => {
 				openModal={() => {
 					dispatch(modalOpen());
 				}}
-				loading={false}
+				loading={isFetching}
 				onSubmit={(name: string) => setSearch(name)}
 			/>
 			<ClientTable clients={data ? data.results : []} loading={isFetching} />

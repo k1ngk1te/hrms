@@ -9,96 +9,72 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from common.utils import get_instance
-from .models import Client, Department, Employee
+from core.views import (
+	ListCreateRetrieveUpdateView, 
+	ListCreateRetrieveUpdateDestroyView
+)
+from .models import Attendance, Client, Department, Employee, Holiday
 from .pagination import ClientPagination, EmployeePagination
-from .permissions import IsHROrMD, IsHROrMDOrAdminUser
+from .permissions import IsEmployee, IsHROrMD, IsHROrMDOrAdminUser, IsHROrMDOrReadOnly
 from .serializers import (
+	AttendanceSerializer,
 	ClientSerializer, 
 	DepartmentSerializer, 
-	EmployeeSerializer
+	EmployeeSerializer,
+	HolidaySerializer,
 )
 
 
 User = get_user_model()
 
 
-class ClientListView(generics.ListCreateAPIView):
+class AttendanceView(ListCreateRetrieveUpdateView):
+	permission_classes = (IsEmployee, )
+	serializer_class = AttendanceSerializer
+	lookup_field = 'id'
+
+	def get_queryset(self):
+		return Attendance.objects.filter(employee__user=self.request.user).order_by('-date')
+
+
+class ClientView(ListCreateRetrieveUpdateView):
 	queryset = Client.objects.all().order_by('-id')
 	pagination_class = ClientPagination
 	permission_classes = (IsHROrMD, )
 	serializer_class = ClientSerializer
 	ordering_fields = ('contact__first_name', 'contact__last_name', 'company')
 	search_fields = ('contact__first_name', 'contact__last_name', 'company')
-
-
-class ClientDetailView(generics.RetrieveUpdateAPIView):
-	queryset = Client.objects.all().order_by('-id')
-	pagination_class = ClientPagination
-	permission_classes = (IsHROrMD, )
-	serializer_class = ClientSerializer
 	lookup_field = 'id'
 
 
-class DepartmentListView(generics.ListCreateAPIView):
+class DepartmentView(ListCreateRetrieveUpdateDestroyView):
 	permission_classes = (IsHROrMDOrAdminUser, )
 	queryset = Department.objects.all().order_by('-id')
 	serializer_class = DepartmentSerializer
 	ordering_fields = ('name', 'hod__user__first_name', 'hod__user__last_name', 'hod__user__email')
 	search_fields = ('name', 'hod__user__first_name', 'hod__user__last_name', 'hod__user__email')
-
-
-class DepartmentDetailView(generics.RetrieveUpdateDestroyAPIView):
-	queryset = Department.objects.all()
-	serializer_class = DepartmentSerializer
 	lookup_field = 'id'
-	permission_classes = (IsHROrMD, )
 
-	def update(self, request, *args, **kwargs):
-		instance = get_instance(Department, {"id": kwargs["id"]})
-		if instance is None:
-			return Response("department not found", status=status.HTTP_404_NOT_FOUND)
-		serializer = self.get_serializer(instance, data=request.data)
-		serializer.is_valid(raise_exception=True)
-		self.perform_update(serializer)
-		if serializer.errors:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-		return Response(serializer.data)
+	def put(self, request, *args, **kwargs):
+		if request.user.employee.is_hr or request.user.employee.is_md:
+			return self.custom_update(request, *args, **kwargs)
+		return Response({"detail": "You are not authorized to make this request"}, 
+			status=status.HTTP_403_FORBIDDEN)
 
 
-class EmployeeListView(generics.ListCreateAPIView):
+class EmployeeView(ListCreateRetrieveUpdateView):
 	serializer_class = EmployeeSerializer
 	pagination_class = EmployeePagination
 	permission_classes = (IsHROrMDOrAdminUser, )
 	ordering_fields = ('user__first_name', 'user__last_name', 'user__email')
 	search_fields = ('user__first_name', 'user__last_name', 'user__email')
+	lookup_field = 'id'
 
 	def get_queryset(self):
 		try:
 			queryset = Employee.objects.employees(
 				self.request.user.employee).order_by('-date_updated')
 			return queryset
-		except:
-			pass
-		return Employee.objects.none()
-
-
-class EmployeeDetailView(generics.RetrieveUpdateAPIView):
-	serializer_class = EmployeeSerializer
-	permission_classes = (IsHROrMDOrAdminUser, )
-	lookup_field = 'id'
-
-	def put(self, request, *args, **kwargs):
-		employee = self.get_object()
-		serializer = self.get_serializer(employee, data=request.data)
-		serializer.is_valid(raise_exception=True)
-		self.perform_update(serializer)
-		if serializer.errors:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-		return Response(serializer.data)
-
-	def get_queryset(self):
-		try:
-			return Employee.objects.employees(self.request.user.employee)
 		except:
 			pass
 		return Employee.objects.none()
@@ -315,3 +291,11 @@ class EmployeeDeactivateView(APIView):
 
 		return request_user
 
+
+class HolidayView(ListCreateRetrieveUpdateDestroyView):
+	queryset = Holiday.objects.all().order_by('-date')
+	permission_classes = (IsHROrMDOrReadOnly, )
+	serializer_class = HolidaySerializer
+	ordering_fields = ('-date', 'name')
+	search_fields = ('name', )
+	lookup_field = 'id'

@@ -7,12 +7,14 @@ export const PROFILE_PAGE_URL = "/profile/";
 
 
 // Employees Section
-export const ADMIN_LEAVES_PAGE_URL = "employees/admin/leaves/";
+export const ATTENDANCE_PAGE_URL = "/employees/attendance/";
+export const ADMIN_LEAVES_PAGE_URL = "/employees/admin/leaves/";
 export const ADMIN_LEAVE_DETAIL_PAGE_URL = (slug: string | number) => `/employees/admin/leaves/${slug}/`;
 export const CLIENTS_PAGE_URL = "/employees/clients/";
 export const CLIENT_PAGE_URL = (slug: string | number) => `/employees/clients/${slug}/`;
 export const DEPARTMENTS_PAGE_URL = "/employees/departments/";
 export const EMPLOYEES_PAGE_URL = "/employees/all/";
 export const EMPLOYEE_PAGE_URL = (slug: string | number) => `/employees/all/${slug}/`;
+export const HOLIDAYS_PAGE_URL = `/employees/holidays/`;
 export const LEAVES_PAGE_URL = "/employees/leaves/";
 export const LEAVE_DETAIL_PAGE_URL = (slug: string | number) => `/employees/leaves/${slug}/`;

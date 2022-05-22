@@ -55,12 +55,6 @@ const Sidebar = forwardRef<HTMLDivElement, PropsType>(
 						href: routes.EMPLOYEES_PAGE_URL,
 					},
 					{
-						admin: true,
-						Icon: FaPlaneDeparture,
-						title: "leaves (admin)",
-						href: routes.ADMIN_LEAVES_PAGE_URL,
-					},
-					{
 						admin: false,
 						Icon: FaSuitcase,
 						title: "leaves",
@@ -68,9 +62,26 @@ const Sidebar = forwardRef<HTMLDivElement, PropsType>(
 					},
 					{
 						admin: true,
+						Icon: FaPlaneDeparture,
+						title: "leaves (admin)",
+						href: routes.ADMIN_LEAVES_PAGE_URL,
+					},
+					{
+						Icon: FaUser,
+						title: "attendance",
+						href: routes.ATTENDANCE_PAGE_URL,
+					},
+					{
+						admin: true,
 						Icon: FaWarehouse,
 						title: "departments",
 						href: routes.DEPARTMENTS_PAGE_URL,
+					},
+					{
+						admin: true,
+						Icon: FaPlaneDeparture,
+						title: "holidays",
+						href: routes.HOLIDAYS_PAGE_URL,
 					},
 				]
 			},

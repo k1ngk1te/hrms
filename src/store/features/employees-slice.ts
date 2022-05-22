@@ -1,5 +1,7 @@
 import { baseApi } from "./base";
 import {
+	ATTENDANCES_URL,
+	ATTENDANCE_URL,
 	DATA_LIFETIME,
 	CLIENT_URL,
 	CLIENTS_URL,
@@ -7,15 +9,22 @@ import {
 	EMPLOYEES_URL,
 	EMPLOYEE_DEACTIVATE_URL,
 	EMPLOYEE_PASSWORD_CHANGE_URL,
+	HOLIDAY_URL,
+	HOLIDAYS_URL,
 } from "@/config";
 import { PaginationType } from "@/types/common";
 import {
+	AttendanceListType,
+	AttendanceType,
 	GetEmployeesDataType,
 	ClientType,
 	ClientCreateType,
 	ClientListType,
 	EmployeeType,
 	FormType,
+	HolidayType,
+	HolidayCreateType,
+	HolidayListType,
 } from "@/types/employees";
 import { ChangePasswordType } from "@/types/user";
 import { generateEmployee, generateClient } from "../helpers";
@@ -30,9 +39,17 @@ const employeesApi = baseApi.injectEndpoints({
 					"default-content-type": "use-browser-default",
 				},
 				credentials: "include",
-				body: generateClient(data)
+				body: generateClient(data),
 			}),
-			invalidatesTags: (result) => result ? ["Client"] : []
+			invalidatesTags: (result) => (result ? ["Client"] : []),
+		}),
+		getAttendance: build.query<AttendanceListType, PaginateType>({
+			query: ({ limit, offset }) => ({
+				url: `${ATTENDANCES_URL}?limit=${limit}&offset=${offset}`,
+				method: "GET",
+				credentials: "include",
+			}),
+			providesTags: ["Attendance"],
 		}),
 		getClient: build.query<ClientType, number | string>({
 			query: (id) => ({
@@ -40,9 +57,12 @@ const employeesApi = baseApi.injectEndpoints({
 				method: "GET",
 				credentials: "include",
 			}),
-			providesTags: ["Client"]
+			providesTags: ["Client"],
 		}),
-		updateClient: build.mutation<ClientType, { id: number | string; data: ClientCreateType }>({
+		updateClient: build.mutation<
+			ClientType,
+			{ id: number | string; data: ClientCreateType }
+		>({
 			query: ({ id, data }) => ({
 				url: CLIENT_URL(id),
 				method: "PUT",
@@ -52,7 +72,7 @@ const employeesApi = baseApi.injectEndpoints({
 				body: generateClient(data),
 				credentials: "include",
 			}),
-			invalidatesTags: ["Client"]
+			invalidatesTags: ["Client"],
 		}),
 		getClients: build.query<ClientListType, PaginationType>({
 			query: ({ limit, offset, search }) => ({
@@ -63,7 +83,7 @@ const employeesApi = baseApi.injectEndpoints({
 				credentials: "include",
 			}),
 			keepUnusedDataFor: DATA_LIFETIME || 60,
-			providesTags: ["Client"]
+			providesTags: ["Client"],
 		}),
 		getEmployees: build.query<GetEmployeesDataType, PaginationType>({
 			query: ({ limit, offset, search }) => ({
@@ -83,6 +103,46 @@ const employeesApi = baseApi.injectEndpoints({
 				credentials: "include",
 			}),
 			providesTags: ["Employee"],
+		}),
+		getHolidays: build.query<HolidayListType, PaginateType>({
+			query: ({ limit, offset, search }) => ({
+				url: `${HOLIDAYS_URL}?offset=${search ? 0 : offset}&limit=${
+					search ? 0 : limit
+				}&search=${search || ""}`,
+				method: "GET",
+				credentials: "include",
+			}),
+			keepUnusedDataFor: DATA_LIFETIME || 60,
+			providesTags: ["Holiday"],
+		}),
+		createHoliday: build.mutation<HolidayType, HolidayCreateType>({
+			query: (data) => ({
+				url: HOLIDAYS_URL,
+				method: "POST",
+				body: data,
+				credentials: "include",
+			}),
+			invalidatesTags: (result) => (result ? ["Holiday"] : []),
+		}),
+		updateHoliday: build.mutation<
+			HolidayType,
+			{ id: number | string; data: HolidayCreateType }
+		>({
+			query: ({ id, data }) => ({
+				url: HOLIDAY_URL(id),
+				method: "PUT",
+				body: data,
+				credentials: "include",
+			}),
+			invalidatesTags: (result) => (result ? ["Holiday"] : []),
+		}),
+		deleteHoliday: build.mutation<HolidayType, number | string>({
+			query: (id) => ({
+				url: HOLIDAY_URL(id),
+				method: "DELETE",
+				credentials: "include",
+			}),
+			invalidatesTags: (result, error) => (!error ? ["Holiday"] : []),
 		}),
 		createEmployee: build.mutation<EmployeeType, FormType>({
 			query: (employee) => ({
@@ -118,13 +178,22 @@ const employeesApi = baseApi.injectEndpoints({
 			query: ({ email, password1, password2, type }) => ({
 				url: EMPLOYEE_PASSWORD_CHANGE_URL,
 				method: "POST",
-				body: { email, new_password1: password1, new_password2: password2, type },
+				body: {
+					email,
+					new_password1: password1,
+					new_password2: password2,
+					type,
+				},
 				credentials: "include",
 			}),
 		}),
 		deactivateEmployee: build.mutation<
 			{ detail: string; type: "client" | "employee" },
-			{ email: string; action: "activate" | "deactivate", type?: "client" | "employee" }
+			{
+				email: string;
+				action: "activate" | "deactivate";
+				type?: "client" | "employee";
+			}
 		>({
 			query: ({ email, action, type }) => ({
 				url: EMPLOYEE_DEACTIVATE_URL,
@@ -132,7 +201,24 @@ const employeesApi = baseApi.injectEndpoints({
 				body: { email, action, type },
 				credentials: "include",
 			}),
-			invalidatesTags: (result) => (result ? result.type === "client" ? ["Client"] : ["Employee"] : []),
+			invalidatesTags: (result) =>
+				result ? (result.type === "client" ? ["Client"] : ["Employee"]) : [],
+		}),
+		punchIn: build.mutation<AttendanceType, void>({
+			query: () => ({
+				url: ATTENDANCES_URL,
+				method: "POST",
+				body: {},
+				credentials: "include",
+			}),
+		}),
+		punchOut: build.mutation<AttendanceType, number>({
+			query: (id) => ({
+				url: ATTENDANCE_URL(id),
+				method: "POST",
+				body: {},
+				credentials: "include",
+			}),
 		}),
 	}),
 	overrideExisting: false,
@@ -142,11 +228,18 @@ export const {
 	useChangeEmployeePasswordMutation,
 	useCreateClientMutation,
 	useCreateEmployeeMutation,
+	useCreateHolidayMutation,
 	useDeactivateEmployeeMutation,
+	useDeleteHolidayMutation,
+	useGetAttendanceQuery,
 	useGetClientQuery,
 	useGetClientsQuery,
 	useGetEmployeeQuery,
 	useGetEmployeesQuery,
+	useGetHolidaysQuery,
+	usePunchInMutation,
+	usePunchOutMutation,
 	useUpdateClientMutation,
 	useUpdateEmployeeMutation,
+	useUpdateHolidayMutation,
 } = employeesApi;

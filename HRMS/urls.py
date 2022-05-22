@@ -11,7 +11,7 @@ admin.site.site_title = "Human Resource Management Administration Portal"
 admin.site.index_title = "Human Resource Management Administration Portal"
 
 urlpatterns = [
-    path('d-admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('api/auth/login/', CustomLoginView.as_view(), name='rest_login'),
     path('api/auth/', include('dj_rest_auth.urls')),
 

@@ -10,6 +10,7 @@ from rest_framework.views import APIView
 
 from common.utils import get_instance, get_instances
 from employees.models import Employee
+from employees.permissions import IsEmployee
 from notifications.models import Notification
 from .models import Leave
 from .pagination import LeavePagination, LeaveAdminPagination
@@ -20,6 +21,7 @@ User = get_user_model()
 
 
 class LeaveListView(generics.ListCreateAPIView):
+	permission_classes = (IsEmployee, )
 	serializer_class = LeaveSerializer
 	pagination_class = LeavePagination
 
@@ -38,6 +40,8 @@ class LeaveListView(generics.ListCreateAPIView):
 
 
 class LeaveDetailView(APIView):
+	permission_classes = (IsEmployee, )
+	
 	def get(self, request, *args, **kwargs):
 		leave = get_instance(Leave, {"id": kwargs['id']})
 		if leave is None:

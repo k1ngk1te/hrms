@@ -15,7 +15,7 @@ import {
 } from "@/store/features/modal-slice";
 import { useAppDispatch, useAppSelector, useFormInput } from "@/hooks";
 import { omitKey, validateForm } from "@/utils";
-import { Container, Modal, Pagination } from "@/components/common";
+import { Container, Modal } from "@/components/common";
 import { Button, InputButton } from "@/components/controls";
 import { Form, JobTable } from "@/components/Jobs";
 
@@ -163,6 +163,10 @@ const Jobs = () => {
         onClick: () => refetch(),
       }}
       loading={isLoading}
+      paginate={data ? {
+      	loading: isFetching, offset, setOffset,
+      	totalItems: data.count || 0
+      } : undefined}
     >
       <div className="flex flex-col md:flex-row md:items-center md:px-2 lg:px-4">
         <form
@@ -219,18 +223,6 @@ const Jobs = () => {
         disableAction={deleteData.isLoading}
         deleteJob={(id: string | number) => handleDelete(id)}
       />
-      {data && data?.results.length > 0 && (
-        <div className="pt-2 pb-5">
-          <Pagination
-            disabled={isFetching}
-            onChange={(pageNo: number) => {
-              const value = pageNo - 1 <= 0 ? 0 : pageNo - 1;
-              offset !== value && setOffset(value * 50);
-            }}
-            totalItems={data.count}
-          />
-        </div>
-      )}
       <Modal
         close={() => dispatch(modalClose())}
         component={

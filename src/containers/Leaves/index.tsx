@@ -20,7 +20,7 @@ import {
 import { getDate, getNextDate, validateForm } from "@/utils";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { FormType } from "@/types/leaves";
-import { Container, Modal, Pagination } from "@/components/common";
+import { Container, Modal } from "@/components/common";
 import { Cards, Form, Topbar, LeaveTable } from "@/components/Leaves";
 
 const initState: {
@@ -221,6 +221,10 @@ const Leave = () => {
 				},
 			}}
 			loading={leaves.isLoading}
+			paginate={leaves.data ? {
+				loading: leaves.data.isFetching, setOffset, offset,
+				totalItems: leaves.data.count
+			} : undefined}
 		>
 			<Cards
 				approved={leaves.data?.approved_count || 0}

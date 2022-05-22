@@ -27,7 +27,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { FormType } from "@/types/leaves";
 import LeaveTable from "@/components/Leaves/Admin/Table";
-import { Container, Modal, Pagination } from "@/components/common";
+import { Container, Modal } from "@/components/common";
 import { Form, Topbar, Cards } from "@/components/Leaves";
 
 const initState: FormType = {
@@ -251,6 +251,9 @@ const Leave = () => {
 				},
 			}}
 			loading={leaves.isLoading}
+			paginate={leaves.data ? {
+				offset, setOffset, loading: leaves.isFetching, totalItems: leaves.data.count
+			} : undefined}
 		>
 			<Cards
 				approved={leaves.data?.approved_count || 0}
@@ -272,18 +275,6 @@ const Leave = () => {
 				setStatus={setStatus}
 				leaves={leaves.data?.results || []}
 			/>
-			{leaves.data && leaves.data?.results.length > 0 && (
-				<div className="pt-2 pb-5">
-					<Pagination
-						disabled={leaves.isFetching}
-						onChange={(pageNo: number) => {
-							const value = pageNo - 1 <= 0 ? 0 : pageNo - 1;
-							offset !== value && setOffset(value * 50);
-						}}
-						totalItems={leaves.data.count}
-					/>
-				</div>
-			)}
 			<Modal
 				close={() => dispatch(modalClose())}
 				component={

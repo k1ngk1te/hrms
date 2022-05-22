@@ -2,6 +2,20 @@ import { DataListType } from "./common";
 import { DepartmentType } from "./departments";
 import { ProfileType, ProfileDataType, UserInfoType, UserType } from "./user";
 
+export interface AttendanceListType extends DataListType {
+	results: AttendanceType[]
+}
+
+export type AttendanceType = {
+	id: number | string;
+	date: string;
+	punch_in: string;
+	punch_out?: string;
+	production?: string;
+	break?: number;
+	overtime?: number
+}
+
 export interface GetEmployeesDataType extends DataListType {
   active: number;
   inactive: number;
@@ -145,4 +159,21 @@ export type ClientFormErrorType = {
 	profile?: ProfileErrorType;
 	company?: string;
 	position?: string;
+}
+
+export type HolidayType = {
+	id: string | number;
+	name: string;
+	date: string;
+}
+
+export interface HolidayListType extends DataListType {
+	results: HolidayType[]
+}
+
+export type HolidayCreateType = Omit<HolidayType, "id">
+
+export type HolidayErrorType = {
+	name?: string;
+	date?: string;
 }

@@ -1,16 +1,54 @@
+import datetime
 from django.contrib.auth import get_user_model
+from django.utils.timezone import now
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from common.utils import get_request_method, get_instance, get_instances, get_user_info
 from jobs.models import Job
 from jobs.serializers import JobSerializer
 from users.models import Profile
 from users.serializers import ProfileSerializer, UserProfileSerializer, UserSerializer
-from .models import Client, Department, Employee
+from .models import Attendance, Client, Department, Employee, Holiday
 
 
 User = get_user_model()
+
+
+class AttendanceSerializer(serializers.ModelSerializer):
+	date = serializers.DateField(required=False)
+	punch_in = serializers.TimeField(required=False)
+	punch_out = serializers.TimeField(required=False)
+
+	class Meta:
+		model = Attendance
+		exclude = ('employee', )
+
+	def create(self, validated_data):
+		user = self.context.get("request").user
+		try:
+			employee = Employee.objects.get(user=user)
+		except Employee.DoesNotExist:
+			raise ValidationError({"detail": "Employee does not exist!"})
+		date = now().date()
+		current_time = now().time()
+		punch_in = datetime.time(current_time.hour, current_time.minute)
+
+		instance = get_instance(Attendance, {"employee": employee, "date": date})
+		if instance is not None:
+			raise PermissionDenied({"detail": f"Unabled to complete request. You punched in at {instance.punch_in}"})
+		attendance = Attendance.objects.create(employee=employee, date=date, punch_in=punch_in)
+		return attendance
+
+	def update(self, instance, validated_data):
+		if instance.date != now().date():
+			raise PermissionDenied({"detail": "This attendance is not available."})
+		if instance.punch_out:
+			raise PermissionDenied({"detail": f"Unabled to complete request. You punched out at {instance.punch_out}"})
+		current_time = now().time()
+		instance.punch_out = datetime.time(current_time.hour, current_time.minute)
+		instance.save()
+		return instance
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -244,4 +282,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 		return job
 
 
-
+class HolidaySerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Holiday
+		fields = '__all__'

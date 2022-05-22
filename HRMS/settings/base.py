@@ -162,7 +162,6 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 REST_USE_JWT = False
 REST_AUTH_TOKEN_MODEL = None
 REST_SESSION_LOGIN = True
-# REST_USE_JWT = True
 
 # JWT_AUTH_COOKIE = 'access_custom_token'
 # JWT_AUTH_REFRESH_COOKIE = 'refresh_custom_token'
@@ -172,11 +171,11 @@ REST_SESSION_LOGIN = True
 # JWT_AUTH_COOKIE_ENFORCE_CSRF_ON_UNAUTHENTICATED = True
 
 # SIMPLE JWT Settings
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'AUTH_HEADER_TYPES': ('Bearer', ),
-    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken', ),
-    'BLACKLIST_AFTER_ROTATION': True,
-    'REFRESH_TOKEN_LIFETIME': timedelta(hours=6),
-    'ROTATE_REFRESH_TOKENS': True,
-}
+# SIMPLE_JWT = {
+#     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+#     'AUTH_HEADER_TYPES': ('Bearer', ),
+#     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken', ),
+#     'BLACKLIST_AFTER_ROTATION': True,
+#     'REFRESH_TOKEN_LIFETIME': timedelta(hours=6),
+#     'ROTATE_REFRESH_TOKENS': True,
+# }

@@ -6,16 +6,15 @@ export const LOGOUT_URL = `${ROOT_URL}/auth/logout/`;
 export const PASSWORD_CHANGE_URL = `${ROOT_URL}/auth/password/change/`;
 export const USER_DATA_URL = `${ROOT_URL}/auth/user/`;
 
-export const LEAVES_URL = `${ROOT_URL}/leaves/`;
-export const LEAVE_DETAIL_URL = (id: number | string) => `${LEAVES_URL}${id}/`;
-
 export const NOTIFICATIONS_URL = `${ROOT_URL}/notifications/`;
 export const NOTIFICATION_URL = (id: number | string) =>
   `${ROOT_URL}/notifications/${id}/`;
 
 export const PROFILE_URL = `${ROOT_URL}/profile/`;
 
-// Admin URLs
+// Employees URLs
+export const ATTENDANCES_URL = `${ROOT_URL}/attendance/`;
+export const ATTENDANCE_URL = (id: number | string) => `${ROOT_URL}/attendance/${id}/`;
 
 export const CLIENTS_URL = `${ROOT_URL}/clients/`;
 export const CLIENT_URL = (id: number | string) => `${ROOT_URL}/clients/${id}/`;
@@ -30,11 +29,18 @@ export const EMPLOYEE_PASSWORD_CHANGE_URL = `${ROOT_URL}/employees/password/chan
 export const EMPLOYEE_EXPORT_URL = (_type: string) =>
   `${ROOT_URL}/employees/export/${_type}/`;
 
-export const JOBS_URL = `${ROOT_URL}/jobs/`;
-export const JOB_URL = (id: number | string) => `${ROOT_URL}/jobs/${id}/`;
+ export const HOLIDAYS_URL = `${ROOT_URL}/holidays/`;
+ export const HOLIDAY_URL = (id: number | string) => `${ROOT_URL}/holidays/${id}/`;
+
+export const LEAVES_URL = `${ROOT_URL}/leaves/`;
+export const LEAVE_DETAIL_URL = (id: number | string) => `${LEAVES_URL}${id}/`;
 
 export const LEAVES_ADMIN_URL = `${ROOT_URL}/leaves/admin/`;
 export const LEAVE_ADMIN_DETAIL_URL = (id: number | string) =>
   `${ROOT_URL}/leaves/admin/${id}/`;
 export const LEAVE_ADMIN_EXPORT_URL = (_type: string) =>
   `${ROOT_URL}/leaves/admin/export/${_type}/`;
+
+
+export const JOBS_URL = `${ROOT_URL}/jobs/`;
+export const JOB_URL = (id: number | string) => `${ROOT_URL}/jobs/${id}/`;

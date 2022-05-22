@@ -21,7 +21,7 @@ import {
 	FormType,
 } from "@/types/employees";
 import { Cards, EmployeeTable, Form, Topbar } from "@/components/Employees";
-import { Container, Modal, Pagination } from "@/components/common";
+import { Container, Modal } from "@/components/common";
 
 const initState = {
 	image: undefined,
@@ -156,10 +156,14 @@ const Employees = () => {
 		<Container
 			heading="Employees"
 			refresh={{
-				loading: employees?.isFetching,
-				onClick: () => employees?.refetch(),
+				loading: employees.isFetching,
+				onClick: () => employees.refetch(),
 			}}
 			loading={employees.isLoading}
+			paginate={employees.data ? {
+				offset, setOffset, loading: employees.isFetching,
+				totalItems: employees.data.count || 0
+			} : undefined}
 		>
 			<Cards
 				active={employees.data?.active || 0}
@@ -181,18 +185,6 @@ const Employees = () => {
 					loading={employees.isFetching}
 					setStatus={setStatus}
 				/>
-				{employees.data && employees.data?.results.length > 0 && (
-					<div className="pt-2 pb-5">
-						<Pagination
-							disabled={employees.isFetching}
-							onChange={(pageNo: number) => {
-								const value = pageNo - 1 <= 0 ? 0 : pageNo - 1;
-								offset !== value && setOffset(value * 50);
-							}}
-							totalItems={employees.data.count}
-						/>
-					</div>
-				)}
 			</div>
 			<Modal
 				close={() => dispatch(modalClose())}

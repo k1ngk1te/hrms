@@ -1,5 +1,9 @@
 from django.contrib import admin
-from .models import Client, Department, Employee
+from .models import Attendance, Client, Department, Employee
+
+
+class AttendanceAdmin(admin.ModelAdmin):
+	list_display = ('employee', 'date', 'punch_in', 'punch_out')
 
 
 class ClientAdmin(admin.ModelAdmin):
@@ -16,6 +20,7 @@ class EmployeeAdmin(admin.ModelAdmin):
 		'is_hr', 'is_md')
 
 
+admin.site.register(Attendance, AttendanceAdmin)
 admin.site.register(Client, ClientAdmin)
 admin.site.register(Department, DepartmentAdmin)
 admin.site.register(Employee, EmployeeAdmin)

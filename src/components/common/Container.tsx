@@ -1,12 +1,12 @@
-import { FC, ReactNode, useCallback } from "react";
+import { Dispatch, FC, ReactNode, SetStateAction, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BiRefresh } from "react-icons/bi";
 import { FaArrowLeft } from "react-icons/fa";
-import { close } from "@/store/features/alert-modal-slice";
-import Error from "@/pages/error";
-import { useAppDispatch, useAppSelector } from "@/hooks";
-import { AlertModal } from "@/components/common";
-import { LoadingPage } from "@/utils";
+import { close } from "../../store/features/alert-modal-slice";
+import Error from "../../pages/error";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { AlertModal, Pagination } from "./index";
+import { LoadingPage } from "../../utils";
 
 type IconProps = {
 	children: ReactNode;
@@ -39,6 +39,7 @@ const IconContainer: FC<IconProps> = ({
 };
 
 type ContainerProps = {
+	background?: string;
 	children: ReactNode;
 	heading: string;
 	title?: number | string;
@@ -55,16 +56,24 @@ type ContainerProps = {
 	error?: {
 		statusCode?: number;
 		title?: string;
-	}
+	};
 	loading: boolean;
+	paginate?: {
+		loading: boolean;
+		totalItems: number;
+		offset: number;
+		setOffset: Dispatch<SetStateAction<number>>;
+	};
 };
 
 const Container: FC<ContainerProps> = ({
+	background = "bg-gray-50",
 	children,
 	error,
 	heading,
 	icon,
 	loading,
+	paginate,
 	refresh,
 	title,
 }) => {
@@ -113,8 +122,32 @@ const Container: FC<ContainerProps> = ({
 						</div>
 					</div>
 				)}
-				<div className="p-2 md:p-4">
-					{loading ? <LoadingPage /> : error ? <Error statusCode={error.statusCode || 500} title={error.title || "A server error occurred! Please try again later."} /> : <>{children}</>}
+				<div className={`p-2 md:p-4 ${background}`}>
+					{loading ? (
+						<LoadingPage />
+					) : error ? (
+						<Error
+							statusCode={error.statusCode || 500}
+							title={
+								error.title ||
+								"A server error occurred! Please try again later."
+							}
+						/>
+					) : (
+						<>{children}</>
+					)}
+					{paginate && paginate.totalItems > 0 && (
+						<div className="pt-2 pb-5">
+							<Pagination
+								disabled={paginate.loading || false}
+								onChange={(pageNo: number) => {
+									const value = pageNo - 1 <= 0 ? 0 : pageNo - 1;
+									paginate.offset !== value && paginate.setOffset(value * 50);
+								}}
+								totalItems={paginate.totalItems || 0}
+							/>
+						</div>
+					)}
 				</div>
 			</div>
 			<AlertModal

@@ -56,6 +56,28 @@ class User(AbstractBaseUser, PermissionsMixin):
             pass
         return False
 
+    @property
+    def is_employee(self):
+    	try:
+    		user = get_user_model().objects.get(email=self.email)
+    		if user.employee:
+    			return True
+    		return False
+    	except:
+    		pass
+    	return False
+
+    @property
+    def is_client(self):
+    	try:
+    		user = get_user_model().objects.get(email=self.email)
+    		if user.client:
+    			return True
+    		return False
+    	except:
+    		pass
+    	return False
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')

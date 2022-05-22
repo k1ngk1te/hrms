@@ -7,7 +7,7 @@ import {
   LEAVE_DETAIL_PAGE_URL,
 } from "@/config/routes";
 import { useAppDispatch, useAppSelector } from "@/hooks";
-import { Container, Pagination } from "@/components/common";
+import { Container } from "@/components/common";
 import { Audit } from "@/components/Notifications";
 
 const NoData = () => (
@@ -50,6 +50,10 @@ const Notifications = () => {
         loading: notifications?.isFetching,
       }}
       loading={notifications.isLoading}
+      paginate={notifications.data ? {
+      	totalItems: notifications.data.count,
+      	loading: notifications.isFetching, setOffset, offset
+      } : undefined}
     >
 	    <div className="bg-gray-200 h-full max-w-4xl mx-auto p-3 rounded-lg w-full sm:px-4 md:py-5 lg:py-8">
 	      {notifications.data !== undefined &&
@@ -72,18 +76,6 @@ const Notifications = () => {
 	            message={notification.message}
 	          />
 	        ))
-	      )}
-	      {notifications.data && notifications.data?.results.length > 0 && (
-	        <div className="pt-2 pb-5">
-	          <Pagination
-	            disabled={notifications.isFetching}
-	            onChange={(pageNo: number) => {
-	              const value = pageNo - 1 <= 0 ? 0 : pageNo - 1;
-	              offset !== value && setOffset(value * 50);
-	            }}
-	            totalItems={notifications.data.count}
-	          />
-	        </div>
 	      )}
 	    </div>
     </Container>

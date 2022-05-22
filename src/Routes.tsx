@@ -15,11 +15,13 @@ import NotificationsPage from "@/pages/notifications";
 import ProfilePage from "@/pages/profile";
 
 // Employees Section
+import AttendancePage from "@/pages/attendance";
 import ClientsPage from "@/pages/clients";
 import ClientPage from "@/pages/clients/detail";
 import DepartmentsPage from "@/pages/departments";
 import EmployeesPage from "@/pages/admin/employees";
 import EmployeesDetailPage from "@/pages/admin/employees/detail";
+import HolidaysPage from "@/pages/holidays";
 import LeavesPage from "@/pages/leaves";
 import LeavesDetailPage from "@/pages/leaves/detail";
 import LeavesAdminPage from "@/pages/admin/leaves";
@@ -36,7 +38,8 @@ const AppRoutes = () => (
 
 			<Route element={<Authenticated />}>
 				<Route element={<Layout />}>
-					{/* Employees Section */}
+					{/* Employees Section Start */}
+					<Route path={routes.ATTENDANCE_PAGE_URL} element={<AttendancePage />} />
 					<Route path={routes.CLIENTS_PAGE_URL}>
 						<Route path="" element={<ClientsPage />} />
 						<Route path=":id" element={<ClientPage />} />
@@ -57,6 +60,8 @@ const AppRoutes = () => (
 						<Route path="" element={<LeavesAdminPage />} />
 						<Route path=":id" element={<LeavesAdminDetailPage />} />
 					</Route>
+					<Route path={routes.HOLIDAYS_PAGE_URL} element={<HolidaysPage />} />
+					{/* Employees Section Stop */}
 
 					<Route path={routes.JOBS_PAGE_URL} element={<JobsPage />} />
 					<Route path={routes.HOME_PAGE_URL} element={<HomePage />} />
