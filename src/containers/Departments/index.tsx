@@ -185,9 +185,9 @@ const Departments = () => {
 				onClick: () => departments.refetch(),
 			}}
 			loading={departments.isLoading}
-			paginate={data ? {
+			paginate={departments.data ? {
 				loading: departments.isFetching,
-				setOffset, offset, totalItems: data.count || 0
+				setOffset, offset, totalItems: departments.data.count || 0
 			} : undefined}
 		>
 			<div className="flex flex-col md:flex-row md:items-center md:px-2 lg:px-4">

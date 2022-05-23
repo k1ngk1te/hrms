@@ -48,7 +48,9 @@ export interface UserInfoType extends UserType {
   admin_status?: "supervisor" | "hod" | "hr" | "md" | null;
   empId?: string | number;
   leaves_taken?: number;
-	leaves_remaining?: number;
+leaves_remaining?: number;
+punched_in?: boolean;
+punched_out?: boolean;
 };
 
 export type ChangePasswordType = {

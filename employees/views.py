@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.http import HttpResponse
 from rest_framework import generics, permissions, status
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import PermissionDenied, ValidationError, server_error
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -14,7 +14,7 @@ from core.views import (
 	ListCreateRetrieveUpdateDestroyView
 )
 from .models import Attendance, Client, Department, Employee, Holiday
-from .pagination import ClientPagination, EmployeePagination
+from .pagination import AttendancePagination, ClientPagination, EmployeePagination
 from .permissions import IsEmployee, IsHROrMD, IsHROrMDOrAdminUser, IsHROrMDOrReadOnly
 from .serializers import (
 	AttendanceSerializer,
@@ -28,13 +28,36 @@ from .serializers import (
 User = get_user_model()
 
 
-class AttendanceView(ListCreateRetrieveUpdateView):
-	permission_classes = (IsEmployee, )
+class AttendanceView(generics.ListCreateAPIView):
+	pagination_class = AttendancePagination
 	serializer_class = AttendanceSerializer
-	lookup_field = 'id'
+	permission_classes = (IsEmployee, )	
+
+	def get(self, request, *args, **kwargs):
+		print(request.user.employee.has_punched_out)
+		return self.list(request, *args, **kwargs)
+
+	def create(self, request, *args, **kwargs):
+		serializer = AttendanceSerializer(data=request.data, context=self.get_serializer_context())
+		serializer.is_valid(raise_exception=True)
+		if serializer.errors:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		serializer.save()
+		message = "Punched In"
+		if request.data.get("action") == "out":
+			message = "Punched Out"
+		return Response({"detail": message}, status=status.HTTP_200_OK)
 
 	def get_queryset(self):
 		return Attendance.objects.filter(employee__user=self.request.user).order_by('-date')
+
+	def get_serializer_context(self):
+		return {
+			'request': self.request,
+			'format': self.format_kwarg,
+			'view': self,
+			'action': self.request.data.get("action", None)
+		}
 
 
 class ClientView(ListCreateRetrieveUpdateView):

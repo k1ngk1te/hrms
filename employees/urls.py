@@ -8,7 +8,6 @@ from .views import (
 
 urlpatterns = [
 	path('api/attendance/', AttendanceView.as_view(), name="attendance"),
-	path('api/attendance/<int:id>/', AttendanceView.as_view(), name="attendance-detail"),
 	path('api/clients/', ClientView.as_view(), name="clients"),
 	path('api/clients/<int:id>/', ClientView.as_view(), name="client-detail"),
 	path('api/departments/', DepartmentView.as_view(), name="departments"),

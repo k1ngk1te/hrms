@@ -70,4 +70,23 @@ export const getNextDate = (
   return str ? nd.toLocaleDateString("en-CA") : nd;
 };
 
+export const fixZeroDigit = (digit: number): string => digit < 0 ? "00" : digit < 10 ? `0${digit}` : String(digit)
+
+export const getTime = (time: string): string => {
+	const timeSplit = time.split(":")
+	let suffix = "AM"
+	let hour = timeSplit[0] ? parseInt(timeSplit[0]) : 0
+	const minute = timeSplit[0] ? parseInt(timeSplit[1]) : 0
+
+	if (hour > 12) {
+		hour = hour - 12;
+		suffix = "PM"
+	} else if (hour === 0) {
+		hour = 12
+		suffix = "AM"
+	}
+
+	return `${hour}:${fixZeroDigit(minute)} ${suffix}`
+}
+
 export default getDate;

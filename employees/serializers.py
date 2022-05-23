@@ -25,28 +25,73 @@ class AttendanceSerializer(serializers.ModelSerializer):
 		exclude = ('employee', )
 
 	def create(self, validated_data):
+		action = self.get_action()
+		if action == "in":
+			attendance = self.validate_punch_in()
+		elif action == "out":
+			attendance = self.validate_punch_out()
+		else:
+			raise server_error({"detail": "A server error occurred! Please try again later."})
+		return attendance
+
+	def get_action(self):
+		action = self.context.get("action", None)
+		if action is None:
+			raise ValidationError({"detail": "Invalid request. Please provide action value."})
+		if action != "in" and action != "out":
+			raise ValidationError({"detail": "Invalid action. Either punch in or out."})
+		return action
+
+	def get_employee(self):
 		user = self.context.get("request").user
 		try:
 			employee = Employee.objects.get(user=user)
+			return employee
 		except Employee.DoesNotExist:
 			raise ValidationError({"detail": "Employee does not exist!"})
+		return None
+
+	def get_instance(self):
 		date = now().date()
+		return get_instance(Attendance, {"employee": self.get_employee(), "date": date})
+
+	def validate_punch_in(self):
+		employee = self.get_employee()
+		date = now().date()
+
 		current_time = now().time()
-		punch_in = datetime.time(current_time.hour, current_time.minute)
+
+		open_time = datetime.time(8, 30, 0)
+
+		if current_time < open_time:
+			raise PermissionDenied({"detail": f"Unabled to complete request. It's not opening time!"})
+
+		punch_in = datetime.time(current_time.hour, current_time.minute, current_time.second)
 
 		instance = get_instance(Attendance, {"employee": employee, "date": date})
-		if instance is not None:
+		if instance is not None and instance.punch_in:
 			raise PermissionDenied({"detail": f"Unabled to complete request. You punched in at {instance.punch_in}"})
+		elif instance is not None and instance.punch_in is None:
+			instance.punch_in = punch_in
+			instance.save()
+			return instance
 		attendance = Attendance.objects.create(employee=employee, date=date, punch_in=punch_in)
 		return attendance
 
-	def update(self, instance, validated_data):
-		if instance.date != now().date():
-			raise PermissionDenied({"detail": "This attendance is not available."})
-		if instance.punch_out:
-			raise PermissionDenied({"detail": f"Unabled to complete request. You punched out at {instance.punch_out}"})
+	def validate_punch_out(self):
 		current_time = now().time()
-		instance.punch_out = datetime.time(current_time.hour, current_time.minute)
+		closing_time = datetime.time(17, 30, 0)
+
+		if closing_time < current_time:
+			raise PermissionDenied({"detail": f"Unabled to complete request. It's past closing time!"})
+
+		date = now().date()
+		instance = self.get_instance()
+		if instance is None or instance.punch_in is None:
+			raise PermissionDenied({"detail": "Invalid request! You are yet to punch in for the day."})
+		if instance and instance.punch_out:
+			raise PermissionDenied({"detail": f"Unabled to complete request. You punched out at {instance.punch_out}"})
+		instance.punch_out = datetime.time(current_time.hour, current_time.minute, current_time.second)
 		instance.save()
 		return instance
 

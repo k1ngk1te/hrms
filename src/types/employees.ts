@@ -3,6 +3,8 @@ import { DepartmentType } from "./departments";
 import { ProfileType, ProfileDataType, UserInfoType, UserType } from "./user";
 
 export interface AttendanceListType extends DataListType {
+	punched_in?: string;
+	punched_out?: string;
 	results: AttendanceType[]
 }
 

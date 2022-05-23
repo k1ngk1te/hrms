@@ -6,6 +6,27 @@ from users.models import User
 from .models import Client, Employee
 
 
+class AttendancePagination(LimitOffsetPagination):
+	def get_paginated_response(self, data):
+		try:
+			return Response(OrderedDict([
+				('count', self.count),
+				('next', self.get_next_link()),
+				('previous', self.get_previous_link()),
+				('punched_in', self.request.user.employee.has_punched_in),
+				('punched_out', self.request.user.employee.has_punched_out),
+				('results', data),
+			]))
+		except User.employee.RelatedObjectDoesNotExist:
+			return Response(OrderedDict([
+				('count', self.count),
+				('next', self.get_next_link()),
+				('previous', self.get_previous_link()),
+				('results', data),
+			]))
+		return None
+		
+
 class ClientPagination(LimitOffsetPagination):
 	def get_paginated_response(self, data):
 		try:

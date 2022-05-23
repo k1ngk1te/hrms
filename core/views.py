@@ -1,5 +1,5 @@
 from rest_framework import mixins
-from rest_framework.exceptions import server_error, PermissionDenied
+from rest_framework.exceptions import server_error, MethodNotAllowed
 from rest_framework.generics import GenericAPIView
 
 
@@ -31,12 +31,11 @@ class ListCreateUpdateView(mixins.ListModelMixin,
 		if id_required:
 			if lookup_field is not None:
 				return True
-			raise PermissionDenied({"detail": "Invalid route. query param is required"})
+			raise PermissionDenied({"detail": "Method not allowed!"})
 		else:
 			if lookup_field is None:
 				return True
-			raise PermissionDenied({"detail": "Invalid route. query param is not required"})
-
+			raise MethodNotAllowed({"detail": "Method not allowed!"})
 
 
 class ListCreateRetrieveUpdateView(mixins.RetrieveModelMixin, 

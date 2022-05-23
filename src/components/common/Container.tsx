@@ -2,10 +2,12 @@ import { Dispatch, FC, ReactNode, SetStateAction, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BiRefresh } from "react-icons/bi";
 import { FaArrowLeft } from "react-icons/fa";
+import { close as alertClose } from "../../store/features/alert-slice";
 import { close } from "../../store/features/alert-modal-slice";
 import Error from "../../pages/error";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { AlertModal, Pagination } from "./index";
+import { Alert } from "../controls"
 import { LoadingPage } from "../../utils";
 
 type IconProps = {
@@ -80,6 +82,10 @@ const Container: FC<ContainerProps> = ({
 	const dispatch = useAppDispatch();
 	const { options, visible } = useAppSelector((state) => state.alertModal);
 
+	const message = useAppSelector(state => state.alert.message)
+	const alertType = useAppSelector(state => state.alert.type)
+	const alertVisible = useAppSelector(state => state.alert.visible)
+
 	const closeModal = useCallback(() => {
 		dispatch(close());
 	}, [dispatch]);
@@ -134,7 +140,17 @@ const Container: FC<ContainerProps> = ({
 							}
 						/>
 					) : (
-						<>{children}</>
+						<>
+							<div className={alertVisible ? "block container mx-auto py-2 relative w-full z-[55]" : "hidden"}>
+								<Alert 
+									message={message}
+									onClick={() => dispatch(alertClose())}
+									type={alertType}
+									visible={alertVisible}
+								/>
+							</div>
+							{children}
+						</>
 					)}
 					{paginate && paginate.totalItems > 0 && (
 						<div className="pt-2 pb-5">

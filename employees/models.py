@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 
 from common.utils import get_instance
+from core.utils import get_app_model
 from jobs.models import Job
 from .managers import AttendanceManager, EmployeeManager
 
@@ -139,6 +140,39 @@ class Employee(models.Model):
 			return self.job.name
 		return None
 
+	@property
+	def has_punched_in(self):
+		try:
+			date = now().date()
+			EmployeeModel = get_app_model("employees.Employee")
+			emp = EmployeeModel.objects.get(user=self.user)
+			attendance = emp.attendance.get(date=date)
+			if attendance and attendance.punch_in:
+				return attendance.punch_in
+			return None
+		except:
+			pass
+		return None
+
+	@property
+	def has_punched_out(self):
+		try:
+			print(self.objects.create)
+			date = now().date()
+			EmployeeModel = get_app_model("employees.Employee")
+			emp = EmployeeModel.objects.get(user=self.user)
+			attendance = emp.attendance.get(date=date)
+			if attendance and attendance.punch_out:
+				return attendance.punch_out
+			return None
+		except:
+			pass
+		return None
+
+	def get_hours_spent(self):
+		# date = now()
+		pass
+
 	def get_supervisor(self, attr):
 		if self.supervisor is not None:
 			if attr == "name":
@@ -176,7 +210,7 @@ class Holiday(models.Model):
 
 
 class Attendance(models.Model):
-	employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+	employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="attendance")
 	date = models.DateField(default=now)	
 	punch_in = models.TimeField()
 	punch_out = models.TimeField(blank=True, null=True)
@@ -188,4 +222,27 @@ class Attendance(models.Model):
 
 	def __str__(self):
 		return '%s - %s ' % (self.employee, self.date)
+
+	@property
+	def hours_spent(self):
+		if not self.punch_in:
+			return 0
+		current_date = now().date()
+		if self.date != current_date and not self.punch_out:
+			return 0
+		current_time = now().time()
+		if self.date == current_date and not self.punch_out:
+			if current_time.hour > 17 and current_time.minute > 30:
+				return 0
+			if current_time > 17:
+				return 8
+			else:
+				hour = current_time.hour - self.punch_in.hour
+				minute = 59 - self.punch_in.minute
+				return float('%s.%s' % (hour, minute))
+		if self.punch_in and self.punch_out:
+			hour = self.punch_out.hour - self.punch_in.hour
+			minute = self.punch_out.minute - self.punch_in.minute
+			return float('%s.%s' % (hour, minute))
+		return 0
 

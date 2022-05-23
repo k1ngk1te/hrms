@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { isErrorWithData } from "@/store";
 import { useGetAttendanceQuery } from "@/store/features/employees-slice";
-import { Activity, Statistics, AttendanceTable, TimeSheet } from "@/components/Attendance"
+import {
+	Activity,
+	Statistics,
+	AttendanceTable,
+	TimeSheet,
+} from "@/components/Attendance";
 import { Container } from "@/components/common";
 
 const Attendance = () => {
@@ -43,11 +48,18 @@ const Attendance = () => {
 			}
 		>
 			<div className="gap-4 grid grid-cols-1 w-full md:gap-5 md:grid-cols-2 lg:grid-cols-3">
-				<TimeSheet />
+				<TimeSheet
+					loading={isFetching || false}
+					punchedIn={data ? data.punched_in : undefined}
+					punchedOut={data ? data.punched_out : undefined}
+				/>
 				<Statistics />
 				<Activity />
 			</div>
-			<AttendanceTable attendance={data ? data.results : []} loading={isFetching} />
+			<AttendanceTable
+				attendance={data ? data.results : []}
+				loading={isFetching}
+			/>
 		</Container>
 	);
 };

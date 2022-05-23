@@ -13,8 +13,7 @@ export const NOTIFICATION_URL = (id: number | string) =>
 export const PROFILE_URL = `${ROOT_URL}/profile/`;
 
 // Employees URLs
-export const ATTENDANCES_URL = `${ROOT_URL}/attendance/`;
-export const ATTENDANCE_URL = (id: number | string) => `${ROOT_URL}/attendance/${id}/`;
+export const ATTENDANCE_URL = `${ROOT_URL}/attendance/`;
 
 export const CLIENTS_URL = `${ROOT_URL}/clients/`;
 export const CLIENT_URL = (id: number | string) => `${ROOT_URL}/clients/${id}/`;

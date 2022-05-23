@@ -1,6 +1,5 @@
 import { baseApi } from "./base";
 import {
-	ATTENDANCES_URL,
 	ATTENDANCE_URL,
 	DATA_LIFETIME,
 	CLIENT_URL,
@@ -45,7 +44,7 @@ const employeesApi = baseApi.injectEndpoints({
 		}),
 		getAttendance: build.query<AttendanceListType, PaginateType>({
 			query: ({ limit, offset }) => ({
-				url: `${ATTENDANCES_URL}?limit=${limit}&offset=${offset}`,
+				url: `${ATTENDANCE_URL}?limit=${limit}&offset=${offset}`,
 				method: "GET",
 				credentials: "include",
 			}),
@@ -204,21 +203,14 @@ const employeesApi = baseApi.injectEndpoints({
 			invalidatesTags: (result) =>
 				result ? (result.type === "client" ? ["Client"] : ["Employee"]) : [],
 		}),
-		punchIn: build.mutation<AttendanceType, void>({
-			query: () => ({
-				url: ATTENDANCES_URL,
+		punchAction: build.mutation<{detail: string}, "in" | "out">({
+			query: (action) => ({
+				url: ATTENDANCE_URL,
 				method: "POST",
-				body: {},
+				body: { action },
 				credentials: "include",
 			}),
-		}),
-		punchOut: build.mutation<AttendanceType, number>({
-			query: (id) => ({
-				url: ATTENDANCE_URL(id),
-				method: "POST",
-				body: {},
-				credentials: "include",
-			}),
+			invalidatesTags: (result, error) => !error ? ["Attendance"] : [],
 		}),
 	}),
 	overrideExisting: false,
@@ -237,8 +229,7 @@ export const {
 	useGetEmployeeQuery,
 	useGetEmployeesQuery,
 	useGetHolidaysQuery,
-	usePunchInMutation,
-	usePunchOutMutation,
+	usePunchActionMutation,
 	useUpdateClientMutation,
 	useUpdateEmployeeMutation,
 	useUpdateHolidayMutation,

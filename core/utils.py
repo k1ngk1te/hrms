@@ -1,3 +1,4 @@
+from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from django.http import Http404
 from django.shortcuts import (
@@ -17,3 +18,15 @@ def get_list_or_404(queryset, *filter_args, **filter_kwargs):
         return _get_list_or_404(queryset, *filter_args, **filter_kwargs)
     except (TypeError, ValueError, ValidationError):
         raise Http404
+
+def get_app_model(name):
+    try:
+        return django_apps.get_model(name, require_ready=False)
+    except ValueError:
+        raise ImproperlyConfigured(
+            f"{name.upper()} must be of the form 'app_label.model_name'"
+        )
+    except LookupError:
+        raise ImproperlyConfigured(
+            f"{name.upper()} refers to a model '%s' that has not been installed"
+        )
