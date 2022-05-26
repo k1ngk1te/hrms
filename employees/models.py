@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.urls import reverse
@@ -13,6 +14,12 @@ from .managers import AttendanceManager, EmployeeManager
 User = get_user_model()
 
 LEAVE_TOTAL = 12
+
+PRIORITY_CHOICES = (
+	('H', 'High'),
+	('M', 'Medium'),
+	('L', 'Low')
+)
 
 
 class Client(models.Model):
@@ -157,7 +164,6 @@ class Employee(models.Model):
 	@property
 	def has_punched_out(self):
 		try:
-			print(self.objects.create)
 			date = now().date()
 			EmployeeModel = get_app_model("employees.Employee")
 			emp = EmployeeModel.objects.get(user=self.user)
@@ -245,4 +251,62 @@ class Attendance(models.Model):
 			minute = self.punch_out.minute - self.punch_in.minute
 			return float('%s.%s' % (hour, minute))
 		return 0
+
+
+class Project(models.Model):
+	name = models.CharField(max_length=255, unique=True)
+	created_by = models.ForeignKey(Employee, on_delete=models.SET_NULL,
+		related_name="created_by", blank=True, null=True)
+	client = models.ForeignKey(Client, on_delete=models.SET_NULL, blank=True, null=True)
+	start_date = models.DateField()
+	end_date = models.DateField()
+	initial_cost = models.FloatField(default=0, help_text="Startup/Initial cost to get the app started")
+	rate = models.FloatField(default=0, help_text="rate per hour")
+	priority = models.CharField(max_length=1, choices=PRIORITY_CHOICES, default="H")
+	leaders = models.ManyToManyField(Employee, related_name="team_leaders", blank=True)
+	team = models.ManyToManyField(Employee, related_name="team", blank=True)
+	description = models.TextField(blank=True, null=True)
+	completed = models.BooleanField(default=False)
+	verified = models.BooleanField(default=False)
+
+	def __str__(self):
+		return self.name
+
+	@property
+	def is_active(self):
+		current_date = now().date()
+		if current_date <= self.end_date:
+			return True
+		return False
+
+
+def file_folder(instance, filename):
+    return 'blogs/{}/{}'.format(instance.blog.slug, filename)
+
+class ProjectFile(models.Model):
+	project = models.ForeignKey(Project, on_delete=models.CASCADE)
+	image = models.ImageField(upload_to=file_folder, help_text="To be used if file is an image", blank=True, null=True)
+	file = models.FileField(upload_to=file_folder, help_text="To be used if file is a document, audio or video", blank=True, null=True)
+
+	def __str__(self):
+		return self.project.name
+
+	def save(self, *args, **kwargs):
+		if not self.image and not self.file:
+			raise ValidationError("Provide either an image or a file")
+		return super().save(*args, **kwargs)
+
+
+class Task(models.Model):
+	project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="task")
+	name = models.CharField(max_length=255, unique=True)
+	priority = models.CharField(max_length=1, choices=PRIORITY_CHOICES, default="H")
+	followers = models.ManyToManyField(Employee)
+	create_date = models.DateField(default=now)
+	due_date = models.DateField()
+	completed = models.BooleanField(default=False)
+	verified = models.BooleanField(default=False)
+
+	def __str__(self):
+		return self.name
 

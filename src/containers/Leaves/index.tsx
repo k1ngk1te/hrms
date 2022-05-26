@@ -243,18 +243,6 @@ const Leave = () => {
 				loading={leaves.isFetching}
 				leaves={leaves.data?.results || []}
 			/>
-			{leaves.data && leaves.data?.results.length > 0 && (
-				<div className="pt-2 pb-5">
-					<Pagination
-						disabled={leaves.isFetching}
-						onChange={(pageNo: number) => {
-							const value = pageNo - 1 <= 0 ? 0 : pageNo - 1;
-							offset !== value && setOffset(value * 50);
-						}}
-						totalItems={leaves.data.count}
-					/>
-				</div>
-			)}
 			<Modal
 				close={() => dispatch(modalClose())}
 				component={

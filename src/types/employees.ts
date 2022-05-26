@@ -179,3 +179,55 @@ export type HolidayErrorType = {
 	name?: string;
 	date?: string;
 }
+
+export interface EmployeeUserType extends UserType {
+	empId: string | number
+}
+
+export type ProjectType = {
+    id: string | number;
+    client: ClientType;
+    leaders: { id: string | number; data: EmployeeUserType }[];
+    team: { id: string | number; data: EmployeeUserType }[];
+    created_by: { id: string | number; data: EmployeeUserType };
+    name: string;
+    start_date: string;
+    end_date: string;
+    initial_cost: number;
+    rate: number;
+    priority: "H" | "M" | "L";
+    description: string;
+    completed: boolean;
+    verified: boolean;
+    is_active: boolean;
+}
+
+export type ProjectCreateType = {
+	client: string | number;
+	leaders: (string | number)[];
+	team: (string | number)[];
+	name: string;
+	start_date: string;
+	end_date: string;
+	initial_cost: number;
+    rate: number;
+    priority: "H" | "M" | "L";
+    description: string;
+}
+
+export type ProjectCreateErrorType = {
+	client: string
+	leaders: string;
+	team: string;
+	name: string;
+	start_date: string;
+	end_date: string;
+	initial_cost: string;
+    rate: string;
+    priority: string;
+    description: string;
+}
+
+export interface ProjectListType extends DataListType {
+	results: ProjectType[]
+}

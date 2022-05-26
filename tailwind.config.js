@@ -48,6 +48,7 @@ module.exports = {
       "8xl": "5rem",
     },
     screens: {
+    	'xs': '400px',
       'sm': '580px',
       'md': '768px',
       'lg': '1024px',

@@ -175,7 +175,7 @@ class UserProfileSerializer(UserSerializer):
 		email = validated_data.get("email").lower()
 
 		serializer = UserSerializer(data=validated_data, context=self.context)
-		serializer.is_valid(raise_exception)
+		serializer.is_valid(raise_exception=True)
 		serializer.save()
 
 		user = User.objects.get(email=email)

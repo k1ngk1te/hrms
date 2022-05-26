@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
 	AttendanceView, ClientView, DepartmentView, EmployeeView,
 	EmployeeDeactivateView, EmployeePasswordChangeView,
-	EmployeeExportDataView, HolidayView,
+	EmployeeExportDataView, HolidayView, ProjectView
 )
 
 
@@ -22,4 +22,6 @@ urlpatterns = [
 		EmployeePasswordChangeView.as_view(), name="employee-password-change"),
 	path('api/holidays/', HolidayView.as_view(), name="holidays"),
 	path('api/holidays/<int:id>/', HolidayView.as_view(), name="holiday-detail"),
+	path('api/projects/', ProjectView.as_view(), name="projects"),
+	path('api/projects/<int:id>/', ProjectView.as_view(), name="project-detail"),
 ]

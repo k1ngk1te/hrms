@@ -31,11 +31,11 @@ class ListCreateUpdateView(mixins.ListModelMixin,
 		if id_required:
 			if lookup_field is not None:
 				return True
-			raise PermissionDenied({"detail": "Method not allowed!"})
+			raise MethodNotAllowed(self.request.method)
 		else:
 			if lookup_field is None:
 				return True
-			raise MethodNotAllowed({"detail": "Method not allowed!"})
+			raise MethodNotAllowed(self.request.method)
 
 
 class ListCreateRetrieveUpdateView(mixins.RetrieveModelMixin, 

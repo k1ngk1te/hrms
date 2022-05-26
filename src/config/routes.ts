@@ -18,3 +18,5 @@ export const EMPLOYEE_PAGE_URL = (slug: string | number) => `/employees/all/${sl
 export const HOLIDAYS_PAGE_URL = `/employees/holidays/`;
 export const LEAVES_PAGE_URL = "/employees/leaves/";
 export const LEAVE_DETAIL_PAGE_URL = (slug: string | number) => `/employees/leaves/${slug}/`;
+export const PROJECTS_PAGE_URL = "/employees/projects/";
+export const PROJECT_PAGE_URL = (slug: string | number) => `/employees/projects/${slug}/`;

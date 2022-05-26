@@ -272,6 +272,7 @@ const Form: FC<FormProps> = ({ editMode, errors, initState = initialState, loadi
 						onChange={email.onChange}
 						placeholder="Email"
 						required
+						type="email"
 						value={email.value}
 					/>
 				</div>

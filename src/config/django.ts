@@ -12,7 +12,7 @@ export const NOTIFICATION_URL = (id: number | string) =>
 
 export const PROFILE_URL = `${ROOT_URL}/profile/`;
 
-// Employees URLs
+// Employees URLs Start
 export const ATTENDANCE_URL = `${ROOT_URL}/attendance/`;
 
 export const CLIENTS_URL = `${ROOT_URL}/clients/`;
@@ -40,6 +40,9 @@ export const LEAVE_ADMIN_DETAIL_URL = (id: number | string) =>
 export const LEAVE_ADMIN_EXPORT_URL = (_type: string) =>
   `${ROOT_URL}/leaves/admin/export/${_type}/`;
 
+export const PROJECTS_URL = `${ROOT_URL}/projects/`;
+export const PROJECT_URL = (id: number | string) => `${ROOT_URL}/projects/${id}/`;
+// Employees URLs Stop
 
 export const JOBS_URL = `${ROOT_URL}/jobs/`;
 export const JOB_URL = (id: number | string) => `${ROOT_URL}/jobs/${id}/`;

@@ -92,6 +92,30 @@ const Sidebar = forwardRef<HTMLDivElement, PropsType>(
 				href: routes.CLIENTS_PAGE_URL,
 			},
 			{
+				Icon: FaUsers,
+				title: "projects",
+				links: [
+					{
+						admin: true,
+						Icon: FaUsers,
+						title: "all projects",
+						href: routes.PROJECTS_PAGE_URL,
+					},
+					{
+						admin: false,
+						Icon: FaSuitcase,
+						title: "tasks",
+						href: "#",
+					},
+					{
+						admin: true,
+						Icon: FaPlaneDeparture,
+						title: "task board",
+						href: "#",
+					},
+				]
+			},
+			{
 				admin: true,
 				Icon: FaJournalWhills,
 				title: "jobs",
@@ -199,7 +223,7 @@ const Sidebar = forwardRef<HTMLDivElement, PropsType>(
 							className={`${
 								isLoading
 									? "bg-gray-700 cursor-not-allowed"
-									: "cursor-pointer hover:bg-primary-300 hover:text-secondary-500"
+									: "cursor-pointer hover:bg-primary-300"
 							} capitalize flex justify-between items-center px-5 py-3 tracking-wide text-gray-100 text-sm lg:px-3 xl:pl-4`}
 						>
 							<div className="flex items-center">

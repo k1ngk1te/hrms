@@ -54,3 +54,20 @@ class IsHROrMDOrAdminUser(BasePermission):
         except:
             pass
         return valid
+
+
+class IsHROrMDOrLeaderOrReadOnlyEmployeeAndClient(BasePermission):
+    """
+    SAFE Methods are allowed for authenticated Employees (Task followers), Clients, and UNSAFE Methods for
+    HR, MD or Project Leaders
+    """
+
+    def has_permission(self, request, view):
+        if request.user.is_authenticated is False or request.user.is_active is False:
+            return False
+        if request.method in SAFE_METHODS and (request.user.is_client or request.user.is_employee):
+            return True
+        if request.user.is_employee and (request.user.employee.is_hr or request.user.employee.is_md):
+            return True
+        return False
+

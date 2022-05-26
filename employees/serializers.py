@@ -4,13 +4,13 @@ from django.utils.timezone import now
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
+from common.serializer_fields import ClientRelatedField, EmployeeRelatedField
 from common.utils import get_request_method, get_instance, get_instances, get_user_info
 from jobs.models import Job
 from jobs.serializers import JobSerializer
 from users.models import Profile
-from users.serializers import ProfileSerializer, UserProfileSerializer, UserSerializer
-from .models import Attendance, Client, Department, Employee, Holiday
-
+from users.serializers import ProfileSerializer, UserProfileSerializer, UserSerializer, UserDetailsSerializer
+from .models import Attendance, Client, Department, Employee, Holiday, Project
 
 User = get_user_model()
 
@@ -331,3 +331,31 @@ class HolidaySerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Holiday
 		fields = '__all__'
+
+
+class ProjectEmployeeSerializer(UserDetailsSerializer):
+	data = serializers.SerializerMethodField('get_user_data')
+
+	class Meta:
+		model = Employee
+		fields = ('id', 'data', )
+
+	def get_user_data(self, obj):
+		request = self.context.get('request')
+		check_admin = self.context.get('check_admin', False)
+		return get_user_info(obj.user, request, check_admin)
+
+
+class ProjectSerializer(serializers.ModelSerializer):
+	client = ClientRelatedField(queryset=Client.objects.filter(contact__is_active=True))
+	leaders = ProjectEmployeeSerializer(Employee.objects.filter(user__is_active=True), many=True)
+	team = ProjectEmployeeSerializer(Employee.objects.filter(user__is_active=True), many=True)
+	created_by = ProjectEmployeeSerializer(Employee.objects.filter(user__is_active=True), read_only=True)
+	is_active = serializers.SerializerMethodField('get_is_active')
+
+	class Meta:
+		model = Project
+		fields = '__all__'
+
+	def get_is_active(self, obj):
+		return obj.is_active

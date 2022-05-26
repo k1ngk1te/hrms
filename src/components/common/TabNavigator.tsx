@@ -45,9 +45,10 @@ type NavigatorProps = {
 		description?: string;
 		component: JSX.Element;
 	}[];
+	container?: string;
 };
 
-const TabNavigator = ({ screens }: NavigatorProps) => {
+const TabNavigator = ({ container="p-2 md:p-4 lg:p-6", screens }: NavigatorProps) => {
 	const [activeScreen, setActiveScreen] = useState<number>(0);
 	const title = screens[activeScreen]?.title;
 	const description = screens[activeScreen]?.description;
@@ -55,8 +56,8 @@ const TabNavigator = ({ screens }: NavigatorProps) => {
 	const gridLength = screens?.length;
 
 	return (
-		<div className="bg-gray-100 h-full p-1 pb-0 w-full">
-			<div className="border-b border-gray-300 divide-x divide-white flex flex-wrap items-center mb-4">
+		<div className="h-full p-1 pb-0 w-full">
+			<div className="bg-gray-100 border-b border-gray-300 divide-y divide-white flex flex-wrap items-center mb-4 md:divide-y-0 md:divide-x">
 				{screens?.map(({ title }, index) => (
 					<Nav
 						active={activeScreen === index}
@@ -80,7 +81,7 @@ const TabNavigator = ({ screens }: NavigatorProps) => {
 						</p>
 					)}
 				</div>
-				<div className="p-2 md:p-4 lg:p-6">
+				<div className={container}>
 					{screens[activeScreen]?.component}
 				</div>
 			</div>

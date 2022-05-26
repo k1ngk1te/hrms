@@ -13,15 +13,22 @@ from core.views import (
 	ListCreateRetrieveUpdateView, 
 	ListCreateRetrieveUpdateDestroyView
 )
-from .models import Attendance, Client, Department, Employee, Holiday
+from .models import Attendance, Client, Department, Employee, Holiday, Project
 from .pagination import AttendancePagination, ClientPagination, EmployeePagination
-from .permissions import IsEmployee, IsHROrMD, IsHROrMDOrAdminUser, IsHROrMDOrReadOnly
+from .permissions import (
+	IsEmployee,
+	IsHROrMD,
+	IsHROrMDOrAdminUser,
+	IsHROrMDOrReadOnly,
+	IsHROrMDOrLeaderOrReadOnlyEmployeeAndClient
+)
 from .serializers import (
 	AttendanceSerializer,
 	ClientSerializer, 
 	DepartmentSerializer, 
 	EmployeeSerializer,
 	HolidaySerializer,
+	ProjectSerializer
 )
 
 
@@ -322,3 +329,23 @@ class HolidayView(ListCreateRetrieveUpdateDestroyView):
 	ordering_fields = ('-date', 'name')
 	search_fields = ('name', )
 	lookup_field = 'id'
+
+
+class ProjectView(ListCreateRetrieveUpdateView):
+	permission_classes = (IsHROrMDOrLeaderOrReadOnlyEmployeeAndClient, )
+	serializer_class = ProjectSerializer
+	search_fields = ('name', 'client__company')
+	ordering_fields = ('name', 'client__company')
+	lookup_field = 'id'
+
+	def get_queryset(self):
+		user = self.request.user
+		if not user.is_client and not user.is_employee:
+			return Project.objects.none()
+		if user.is_client:
+			queryset = Project.objects.filter(client__contact=user).distinct()
+		if user.is_employee and (user.employee.is_hr or user.employee.is_md):
+			queryset = Project.objects.all().distinct()
+		else:
+			queryset = Project.objects.filter(Q(created_by__user=user) | Q(team=user.employee)).distinct()
+		return queryset

@@ -26,6 +26,8 @@ import LeavesPage from "@/pages/leaves";
 import LeavesDetailPage from "@/pages/leaves/detail";
 import LeavesAdminPage from "@/pages/admin/leaves";
 import LeavesAdminDetailPage from "@/pages/admin/leaves/detail";
+import ProjectsPage from "@/pages/projects";
+import ProjectPage from "@/pages/projects/detail";
 
 const AppRoutes = () => (
 	<Routes>
@@ -61,6 +63,10 @@ const AppRoutes = () => (
 						<Route path=":id" element={<LeavesAdminDetailPage />} />
 					</Route>
 					<Route path={routes.HOLIDAYS_PAGE_URL} element={<HolidaysPage />} />
+					<Route path={routes.PROJECTS_PAGE_URL}>
+						<Route path="" element={<ProjectsPage />} />
+						<Route path=":id" element={<ProjectPage />} />
+					</Route>
 					{/* Employees Section Stop */}
 
 					<Route path={routes.JOBS_PAGE_URL} element={<JobsPage />} />
