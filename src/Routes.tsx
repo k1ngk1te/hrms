@@ -28,6 +28,8 @@ import LeavesAdminPage from "@/pages/admin/leaves";
 import LeavesAdminDetailPage from "@/pages/admin/leaves/detail";
 import ProjectsPage from "@/pages/projects";
 import ProjectPage from "@/pages/projects/detail";
+import ProjectTasksPage from "@/pages/projects/detail/tasks";
+import ProjectTeamPage from "@/pages/projects/detail/team";
 
 const AppRoutes = () => (
 	<Routes>
@@ -41,7 +43,10 @@ const AppRoutes = () => (
 			<Route element={<Authenticated />}>
 				<Route element={<Layout />}>
 					{/* Employees Section Start */}
-					<Route path={routes.ATTENDANCE_PAGE_URL} element={<AttendancePage />} />
+					<Route
+						path={routes.ATTENDANCE_PAGE_URL}
+						element={<AttendancePage />}
+					/>
 					<Route path={routes.CLIENTS_PAGE_URL}>
 						<Route path="" element={<ClientsPage />} />
 						<Route path=":id" element={<ClientPage />} />
@@ -65,7 +70,11 @@ const AppRoutes = () => (
 					<Route path={routes.HOLIDAYS_PAGE_URL} element={<HolidaysPage />} />
 					<Route path={routes.PROJECTS_PAGE_URL}>
 						<Route path="" element={<ProjectsPage />} />
-						<Route path=":id" element={<ProjectPage />} />
+						<Route path=":id">
+							<Route path="" element={<ProjectPage />} />
+							<Route path="tasks" element={<ProjectTasksPage />} />
+							<Route path="team" element={<ProjectTeamPage />} />
+						</Route>
 					</Route>
 					{/* Employees Section Stop */}
 

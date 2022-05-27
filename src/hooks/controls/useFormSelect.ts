@@ -5,9 +5,15 @@ const useFormSelect = (initValue: any, options?: OptionsType) => {
   const [value, setValue] = useState(initValue || "");
 
   const handleChange = useCallback(
-    ({ target: { value } }: ChangeEvent<HTMLSelectElement>) => {
-      setValue(value);
-      if (options?.onChange) options.onChange({ value })
+    ({ target: { selectedOptions, value } }: ChangeEvent<HTMLSelectElement>) => {
+		if (options && options.multiple === true) {
+			const selectValues = Array.from(
+			       selectedOptions,
+			       (option) => option.value
+			     )
+			setValue(selectValues)
+		} else setValue(value)
+		if (options?.onChange) options.onChange({ value })
     },
     [options]
   );

@@ -29,6 +29,7 @@ export type InputProps = {
 	label?: string;
 	labelColor?: string;
 	labelSize?: string;
+	multiple?: boolean;
 	onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 	name?: string;
 	padding?: string;
@@ -60,6 +61,7 @@ const Input = ({
 	label,
 	labelColor,
 	labelSize,
+	multiple,
 	onChange,
 	name,
 	padding,
@@ -153,6 +155,7 @@ const Input = ({
 					onChange={onChange}
 					placeholder={placeholder}
 					required={required}
+					multiple={multiple}
 					type={_type}
 					list={datalist?.id}
 					value={value}
@@ -205,6 +208,7 @@ Input.defaultProps = {
 	helpTextSize: "text-xs",
 	iconColor: "text-primary-500",
 	labelSize: "text-xs md:text-sm",
+	multiple: false,
 	padding: "px-3 py-2",
 	placeholderColor: "placeholder-white text-white",
 	required: true,

@@ -8,5 +8,6 @@ export { default as InputButton } from "./InputButton";
 export { DotsLoader, default as Loader } from "./Loader";
 export { default as Radio } from "./Radio";
 export { default as Select } from "./Select";
+export { default as Select2 } from "./Select2";
 export { default as Table } from "./Table";
 export { default as Textarea } from "./Textarea";

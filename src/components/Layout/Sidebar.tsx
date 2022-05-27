@@ -102,12 +102,6 @@ const Sidebar = forwardRef<HTMLDivElement, PropsType>(
 						href: routes.PROJECTS_PAGE_URL,
 					},
 					{
-						admin: false,
-						Icon: FaSuitcase,
-						title: "tasks",
-						href: "#",
-					},
-					{
 						admin: true,
 						Icon: FaPlaneDeparture,
 						title: "task board",

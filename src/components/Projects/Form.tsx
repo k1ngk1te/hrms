@@ -35,14 +35,18 @@ const initialState = {
 	initial_cost: "",
 	rate: "",
 	priority: "H",
-	leaders: "",
-	team: "",
+	leaders: [],
+	team: [],
 	description: "",
 };
 
 type InitStateType = typeof initialState;
+interface InitErrorType extends Omit<InitStateType, "team" | "leaders"> {
+	team: string;
+	leaders: string;
+}
 
-const initErrorState: InitStateType | undefined = {
+const initErrorState: InitErrorType | undefined = {
 	name: "",
 	client: "",
 	start_date: "",
@@ -75,7 +79,7 @@ const Form: FC<FormProps> = ({
 	onSubmit,
 	success,
 }) => {
-	const [formErrors, setErrors] = useState<InitStateType>(initErrorState);
+	const [formErrors, setErrors] = useState<InitErrorType>(initErrorState);
 
 	const [clientLimit, setClientLimit] = useState(50);
 	const [empLimit, setEmpLimit] = useState(50);
@@ -157,14 +161,16 @@ const Form: FC<FormProps> = ({
 	const rate = useFormInput(initState.rate, {
 		onChange: () => (removeErrors ? removeErrors("rate") : ""),
 	});
-	const priority = useFormInput(initState.priority, {
+	const priority = useFormSelect(initState.priority, {
 		onChange: () => (removeErrors ? removeErrors("priority") : ""),
 	});
 	const leaders = useFormSelect(initState.leaders, {
 		onChange: () => (removeErrors ? removeErrors("leaders") : ""),
+		multiple: true
 	});
 	const team = useFormSelect(initState.team, {
 		onChange: () => (removeErrors ? removeErrors("team") : ""),
+		multiple: true
 	});
 	const description = useFormTextArea(initState.description, {
 		onChange: () => (removeErrors ? removeErrors("description") : ""),
@@ -213,11 +219,9 @@ const Form: FC<FormProps> = ({
 	const handleSubmit = useCallback(
 		(form: ProjectCreateType) => {
 			// const invalidates = ["state", "city", "address", "date_of_birth"]
-			console.log("FORM :>> ", form);
 			const { valid, result } = validateForm(form);
 			if (valid)
-				// onSubmit(form)
-				console.log("VALID :>> ");
+				onSubmit(form)
 			else if (valid === false) setErrors(result);
 		},
 		[editMode, onSubmit]
@@ -363,15 +367,12 @@ const Form: FC<FormProps> = ({
 							employeesError || formErrors?.leaders || errors?.leaders || ""
 						}
 						label="Team Leaders"
-						// onChange={(e) => {
-						// 	console.log(e.target.value)
-						// 	leaders.onChange(e)
-						// }}
+						onChange={leaders.onChange}
 						multiple
 						placeholder="Select Team Leaders"
 						options={empOptions}
 						required
-						// value={leaders.value}
+						value={leaders.value}
 					/>
 				</div>
 				<div className="w-full md:flex md:flex-col md:justify-end">

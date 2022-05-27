@@ -19,6 +19,7 @@ type SelectProps = {
   label?: string;
   labelColor?: string;
   labelSize?: string;
+  multiple?: boolean;
   name?: string;
   onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
   options: {
@@ -48,6 +49,7 @@ const Select = ({
   label,
   labelColor,
   labelSize,
+  multiple,
   name,
   onChange,
   options,
@@ -131,6 +133,7 @@ const Select = ({
           name={name}
           onChange={onChange}
           value={value}
+          multiple={multiple}
           required={required}
           {...props}
         >
@@ -150,7 +153,6 @@ const Select = ({
         <div className="absolute flex inset-y-0 items-center pointer-events-none px-2 right-2 text-gray-700">
           <span className="text-xs">
             <FaChevronDown />
-            {/* {<i className="fas fa-chevron-down text-tiny" />} */}
           </span>
         </div>
       </div>
@@ -171,6 +173,7 @@ Select.defaultProps = {
   errorSize: "text-xs",
   iconColor: "text-primary-500",
   labelSize: "text-xs md:text-sm",
+  multiple: false,
   padding: "px-3 py-2",
   rounded: "rounded",
   textSize: "text-xs md:text-sm"

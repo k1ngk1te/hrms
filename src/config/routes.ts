@@ -20,3 +20,5 @@ export const LEAVES_PAGE_URL = "/employees/leaves/";
 export const LEAVE_DETAIL_PAGE_URL = (slug: string | number) => `/employees/leaves/${slug}/`;
 export const PROJECTS_PAGE_URL = "/employees/projects/";
 export const PROJECT_PAGE_URL = (slug: string | number) => `/employees/projects/${slug}/`;
+export const PROJECT_TASKS_PAGE_URL = (slug: string | number) => `/employees/projects/${slug}/tasks/`
+export const PROJECT_TEAM_PAGE_URL = (slug: string | number) => `/employees/projects/${slug}/team/`

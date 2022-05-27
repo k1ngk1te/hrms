@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { FaCheckCircle, FaTimes, FaCheck, FaEye, FaPen, FaFileUpload, FaTrash, FaRegFilePdf } from "react-icons/fa";
-import { DEFAULT_IMAGE } from "@/config"
+import { DEFAULT_IMAGE, PROJECT_TASKS_PAGE_URL, PROJECT_TEAM_PAGE_URL } from "@/config"
 import { isErrorWithData } from "@/store"
 import { useGetProjectQuery } from "@/store/features/projects-slice"
 import { useFormSelect, useOutClick } from "@/hooks";
@@ -137,8 +137,24 @@ const Detail = () => {
 			} : undefined}
 		>
 			<div className="p-2">
-				<div className="flex justify-end w-full sm:px-4">
-					<div className="w-full sm:w-1/3 md:w-1/4 lg:w-1/5">
+				<div className="flex flex-wrap items-center w-full sm:px-4 lg:justify-end">
+					<div className="my-2 w-full sm:px-2 sm:w-1/3 md:w-1/4 lg:w-1/5">
+						<Button
+							IconLeft={FaEye}
+							rounded="rounded-xl"
+							title="manage tasks"
+							link={PROJECT_TASKS_PAGE_URL(id || "")}
+						/>
+					</div>
+					<div className="my-2 w-full sm:px-2 sm:w-1/3 md:w-1/4 lg:w-1/5">
+						<Button
+							IconLeft={FaEye}
+							rounded="rounded-xl"
+							title="manage team"
+							link={PROJECT_TEAM_PAGE_URL(id || "")}
+						/>
+					</div>
+					<div className="my-2 w-full sm:px-2 sm:w-1/3 md:w-1/4 lg:w-1/5">
 						<Button
 							IconLeft={FaPen}
 							rounded="rounded-xl"
