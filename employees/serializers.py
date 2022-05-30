@@ -6,6 +6,7 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from common.serializer_fields import ClientRelatedField, EmployeeRelatedField
 from common.utils import get_request_method, get_instance, get_instances, get_user_info
+from core.serializers import PersonSerializer
 from jobs.models import Job
 from jobs.serializers import JobSerializer
 from users.models import Profile
@@ -61,7 +62,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
 
 		current_time = now().time()
 
-		open_time = datetime.time(8, 30, 0)
+		open_time = datetime.time(6, 30, 0)
 
 		if current_time < open_time:
 			raise PermissionDenied({"detail": f"Unabled to complete request. It's not opening time!"})
@@ -130,10 +131,10 @@ class ClientSerializer(serializers.ModelSerializer):
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
-	id = serializers.IntegerField(required=False)
+	id = serializers.CharField(required=False)
 	name = serializers.CharField(required=False)
 	hod = serializers.PrimaryKeyRelatedField(
-		queryset=Employee.objects.filter(user__is_active=True), 
+		queryset=Employee.objects.filter(user__is_active=True),
 		required=False, allow_null=True)
 	hod_info = serializers.SerializerMethodField('get_hod')
 	no_of_employees = serializers.SerializerMethodField('get_no_of_employees')
@@ -145,7 +146,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
 	def create(self, validated_data):
 		name = self.validate_name(validated_data.get("name"))
 		hod = self.validate_hod(validated_data.get("hod"))
-		
+
 		department = Department.objects.create(name=name, hod=hod)
 		return department
 
@@ -213,7 +214,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 	job = JobSerializer()
 	department = DepartmentSerializer()
 	supervisor = serializers.PrimaryKeyRelatedField(
-		queryset=Employee.objects.filter(user__is_active=True), 
+		queryset=Employee.objects.filter(user__is_active=True),
 		required=False, allow_null=True)
 	supervisor_info = serializers.SerializerMethodField('get_supervisor_info')
 	status = serializers.SerializerMethodField('get_status')
@@ -221,7 +222,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Employee
-		fields = ('id', 'user', 'job', 'profile', 'department', 
+		fields = ('id', 'user', 'job', 'profile', 'department',
 		'supervisor', 'supervisor_info', 'status', 'date_employed', 'active')
 
 	def create(self, validated_data):
@@ -283,7 +284,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 		if instance.user.email != value.get('email').strip().lower():
 			check_user = get_instance(User, {"email":value.get('email').strip().lower()})
 			if check_user is None:
-				instance.user.email = value.get('email').strip().lower()						
+				instance.user.email = value.get('email').strip().lower()
 			else:
 				raise ValidationError({"email": "user with specified email already exists"})
 		instance.user.first_name = value.get('first_name', instance.user.first_name)
@@ -333,29 +334,68 @@ class HolidaySerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 
-class ProjectEmployeeSerializer(UserDetailsSerializer):
-	data = serializers.SerializerMethodField('get_user_data')
+class ProjectEmployeeSerializer(PersonSerializer):
+	id = serializers.CharField()
 
 	class Meta:
 		model = Employee
-		fields = ('id', 'data', )
-
-	def get_user_data(self, obj):
-		request = self.context.get('request')
-		check_admin = self.context.get('check_admin', False)
-		return get_user_info(obj.user, request, check_admin)
+		relation_key = 'user'
+		fields = ('id', ) + PersonSerializer.Meta.fields
 
 
 class ProjectSerializer(serializers.ModelSerializer):
 	client = ClientRelatedField(queryset=Client.objects.filter(contact__is_active=True))
-	leaders = ProjectEmployeeSerializer(Employee.objects.filter(user__is_active=True), many=True)
-	team = ProjectEmployeeSerializer(Employee.objects.filter(user__is_active=True), many=True)
-	created_by = ProjectEmployeeSerializer(Employee.objects.filter(user__is_active=True), read_only=True)
+	leaders = ProjectEmployeeSerializer(many=True)
+	team = ProjectEmployeeSerializer(many=True)
+	created_by = ProjectEmployeeSerializer(read_only=True)
+	completed = serializers.BooleanField(read_only=True)
+	verified = serializers.BooleanField(read_only=True)
 	is_active = serializers.SerializerMethodField('get_is_active')
 
 	class Meta:
 		model = Project
 		fields = '__all__'
+
+	def create(self, validated_data):
+		created_by = self.context.get("request").user.employee
+		team = validated_data.pop("team", None)
+		leaders = validated_data.pop("leaders", None)
+
+		team_leaders = self.get_employees("leaders", leaders)
+		team_members = self.get_employees("team", team)
+
+		project = Project.objects.create(created_by=created_by, **validated_data)
+
+		if team_leaders and len(team_leaders) > 1:
+			for emp in team_leaders:
+				project.leaders.add(emp)
+				project.team.add(emp)
+		if team_members and len(team_members) > 1:
+			for emp in team_leaders:
+				project.team.add(emp)
+		return project
+
+	def get_employees(self, key, employee_list=None):
+		if not employee_list:
+			return []
+		employees = []
+		if len(employee_list) > 0:
+			for employee in employee_list:
+				id = employee.get("id", None)
+				if id is None:
+					raise ValidationError({key: "Employee ID is required!"})
+				instance = get_instance(Employee, {"id": id})
+				if not instance:
+					raise ValidationError({key: (
+						f"There is no employee with ID {id}")
+						})
+				if instance.status.lower() != "active":
+					raise ValidationError({key: (
+						f"Employee with ID {id}",
+						f"is {instance.status.lower()}" )
+					})
+				employees.append(instance)
+		return employees
 
 	def get_is_active(self, obj):
 		return obj.is_active

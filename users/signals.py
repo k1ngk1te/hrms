@@ -1,19 +1,25 @@
 from django.contrib.auth import get_user_model
-from django.db.models.signals import post_delete, post_save
+from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
+
+from core.utils import generate_id
 from .models import Profile
 
 User = get_user_model()
 
+@receiver(pre_save, sender=Profile)
+def set_profile_id(sender, instance, **kwargs):
+	if not instance.id:
+		instance.id = generate_id("PLE", key="profile_id", model=Profile)
+
+@receiver(pre_save, sender=User)
+def set_user_id(sender, instance, **kwargs):
+	if not instance.id:
+		instance.id = generate_id("USR", key="user_id", model=User)
 
 @receiver(post_save, sender=User)
-def create_profile(sender, instance, created, **kwargs):
+def set_profile(sender, instance, created, **kwargs):
 	if created:
-		if Profile.objects.filter(user=instance).exists():
-			pass
-		else:
-			Profile.objects.create(user=instance)
-
-@receiver(post_save, sender=User)
-def save_profile(sender, instance,**kwargs):
-	profile = Profile.objects.get_or_create(user=instance)
+		Profile.objects.get_or_create(user=instance)
+	elif not instance.profile:
+		Profile.objects.get_or_create(user=instance)

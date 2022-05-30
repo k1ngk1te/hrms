@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -10,6 +11,7 @@ from core.utils import get_app_model
 from jobs.models import Job
 from .managers import AttendanceManager, EmployeeManager
 
+ID_LENGTH = settings.ID_MAX_LENGTH
 
 User = get_user_model()
 
@@ -23,6 +25,8 @@ PRIORITY_CHOICES = (
 
 
 class Client(models.Model):
+	client_id = models.BigAutoField(primary_key=True)
+	id = models.CharField(max_length=ID_LENGTH, unique=True, editable=False)
 	contact = models.OneToOneField(User, on_delete=models.CASCADE, related_name="client")
 	company = models.CharField(max_length=255)
 	position = models.CharField(max_length=100)
@@ -33,11 +37,13 @@ class Client(models.Model):
 	@property
 	def status(self):
 		return self.contact.is_active
-		
+
 
 class Department(models.Model):
+	department_id = models.BigAutoField(primary_key=True)
+	id = models.CharField(max_length=ID_LENGTH, unique=True, editable=False)
 	name = models.CharField(max_length=50, unique=True)
-	hod = models.OneToOneField('Employee', on_delete=models.SET_NULL, 
+	hod = models.OneToOneField('Employee', on_delete=models.SET_NULL,
 		related_name="head_of_department", blank=True, null=True)
 
 	def __str__(self):
@@ -54,6 +60,8 @@ class Department(models.Model):
 
 
 class Employee(models.Model):
+	employee_id = models.BigAutoField(primary_key=True)
+	id = models.CharField(max_length=ID_LENGTH, unique=True, editable=False)
 	user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="employee")
 	job = models.ForeignKey(Job, on_delete=models.SET_NULL, blank=True, null=True)
 	supervisor = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
@@ -64,7 +72,7 @@ class Employee(models.Model):
 	date_updated = models.DateField(auto_now=True)
 
 	objects = EmployeeManager()
-	
+
 	def __str__(self):
 		return self.user.email
 
@@ -73,10 +81,13 @@ class Employee(models.Model):
 
 	@staticmethod
 	def check_is_supervisor(user):
-		count = Employee.objects.filter(supervisor__user=user).count()
-		if count > 0:
-			return True
-		return False
+		try:
+			count = Employee.objects.filter(supervisor__user=user).count()
+			if count > 0:
+				return True
+			return False
+		except:
+			return False
 
 	@staticmethod
 	def get_supervised_emps(user):
@@ -109,9 +120,13 @@ class Employee(models.Model):
 
 	@property
 	def is_hod(self):
-		dep = get_instance(Department, {"hod__user": self.user})
-		if dep:
-			return True
+		try:
+			dep = get_instance(Department, {"hod__user": self.user})
+			if dep:
+				return True
+			return False
+		except:
+			pass
 		return False
 
 	@property
@@ -128,7 +143,7 @@ class Employee(models.Model):
 	@property
 	def has_pending_leave(self):
 		emp = self.user.employee
-		leaves = emp.leaves.exclude(Q(a_md="A") | Q(a_md="D") 
+		leaves = emp.leaves.exclude(Q(a_md="A") | Q(a_md="D")
 			| Q(a_hr="D") | Q(a_hod="D") | Q(a_s="D"))
 		for leave in leaves:
 			if leave.status == "P":
@@ -205,6 +220,8 @@ class Employee(models.Model):
 
 
 class Holiday(models.Model):
+	holiday_id = models.BigAutoField(primary_key=True)
+	id = models.CharField(max_length=ID_LENGTH, unique=True, editable=False)
 	name = models.CharField(max_length=100)
 	date = models.DateField()
 
@@ -216,8 +233,10 @@ class Holiday(models.Model):
 
 
 class Attendance(models.Model):
+	attendance_id = models.BigAutoField(primary_key=True)
+	id = models.CharField(max_length=ID_LENGTH, unique=True, editable=False)
 	employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="attendance")
-	date = models.DateField(default=now)	
+	date = models.DateField(default=now)
 	punch_in = models.TimeField()
 	punch_out = models.TimeField(blank=True, null=True)
 
@@ -254,6 +273,8 @@ class Attendance(models.Model):
 
 
 class Project(models.Model):
+	project_id = models.BigAutoField(primary_key=True)
+	id = models.CharField(max_length=ID_LENGTH, unique=True, editable=False)
 	name = models.CharField(max_length=255, unique=True)
 	created_by = models.ForeignKey(Employee, on_delete=models.SET_NULL,
 		related_name="created_by", blank=True, null=True)
@@ -298,6 +319,8 @@ class ProjectFile(models.Model):
 
 
 class Task(models.Model):
+	task_id = models.BigAutoField(primary_key=True)
+	id = models.CharField(max_length=ID_LENGTH, unique=True, editable=False)
 	project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="task")
 	name = models.CharField(max_length=255, unique=True)
 	priority = models.CharField(max_length=1, choices=PRIORITY_CHOICES, default="H")
@@ -309,4 +332,3 @@ class Task(models.Model):
 
 	def __str__(self):
 		return self.name
-

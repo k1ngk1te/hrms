@@ -1,4 +1,4 @@
-import { DataListType } from "./common";
+import { DataListType, PaginationType } from "./common";
 import { DepartmentType } from "./departments";
 import { ProfileType, ProfileDataType, UserInfoType, UserType } from "./user";
 
@@ -9,7 +9,7 @@ export interface AttendanceListType extends DataListType {
 }
 
 export type AttendanceType = {
-	id: number | string;
+	id: string;
 	date: string;
 	punch_in: string;
 	punch_out?: string;
@@ -36,14 +36,14 @@ export type ProfileErrorType = {
 }
 
 export type EmployeeType = {
-  id: string | number;
+  id: string;
   user: {
     first_name: string;
     last_name: string;
     email: string;
   };
   job?: {
-    id: number;
+    id: string;
     name: string;
   };
   status: "active" | "on leave" | "inactive";
@@ -117,11 +117,11 @@ export type ErrorsKeyType =
   | "job"
   | "supervisor"
   | "date_employed"
-  | "date_of_birth" 
-  | "gender" 
-  | "state" 
-  | "city" 
-  | "phone" 
+  | "date_of_birth"
+  | "gender"
+  | "state"
+  | "city"
+  | "phone"
   | "address";
 
 export interface ContactInfoType extends Omit<UserType, "full_name" | "active"> {
@@ -131,7 +131,7 @@ export interface ContactInfoType extends Omit<UserType, "full_name" | "active"> 
 }
 
 export type ClientType = {
-    id: string | number;
+    id: string;
     company: string;
     position: string;
     contact: ContactInfoType
@@ -150,6 +150,10 @@ export interface ClientListType extends DataListType {
   	inactive: number;
   	total: number;
 	results: ClientType[]
+}
+
+export interface ClientPaginationType extends PaginationType {
+	active?: boolean;
 }
 
 export type ClientFormErrorType = {
@@ -180,16 +184,16 @@ export type HolidayErrorType = {
 	date?: string;
 }
 
-export interface EmployeeUserType extends UserType {
-	empId: string | number
+export interface ProjectEmployeType extends UserType {
+	employee_id: string;
 }
 
 export type ProjectType = {
     id: string | number;
     client: ClientType;
-    leaders: { id: string | number; data: EmployeeUserType }[];
-    team: { id: string | number; data: EmployeeUserType }[];
-    created_by: { id: string | number; data: EmployeeUserType };
+    leaders: ProjectEmployeType[];
+    team: ProjectEmployeType[];
+    created_by: ProjectEmployeType;
     name: string;
     start_date: string;
     end_date: string;
@@ -204,15 +208,15 @@ export type ProjectType = {
 
 export type ProjectCreateType = {
 	client: string | number;
-	leaders: (string | number)[];
-	team: (string | number)[];
+	leaders: {employee_id:string}[];
+	team: {employee_id:string}[];
 	name: string;
 	start_date: string;
 	end_date: string;
 	initial_cost: number;
-    rate: number;
-    priority: "H" | "M" | "L";
-    description: string;
+  rate: number;
+  priority: "H" | "M" | "L";
+  description: string;
 }
 
 export type ProjectCreateErrorType = {

@@ -6,7 +6,7 @@ from .models import Job
 
 
 class JobSerializer(serializers.ModelSerializer):
-	id = serializers.IntegerField(required=False)
+	id = serializers.CharField(required=False)
 	name = serializers.CharField(required=False)
 
 	class Meta:
@@ -36,4 +36,3 @@ class JobSerializer(serializers.ModelSerializer):
 			if name is not None:
 				raise ValidationError("job with specified name already exists!")
 		return value
-

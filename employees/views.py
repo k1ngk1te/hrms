@@ -10,9 +10,10 @@ from rest_framework.views import APIView
 
 from common.utils import get_instance
 from core.views import (
-	ListCreateRetrieveUpdateView, 
+	ListCreateRetrieveUpdateView,
 	ListCreateRetrieveUpdateDestroyView
 )
+from .filters import ClientFilter
 from .models import Attendance, Client, Department, Employee, Holiday, Project
 from .pagination import AttendancePagination, ClientPagination, EmployeePagination
 from .permissions import (
@@ -24,8 +25,8 @@ from .permissions import (
 )
 from .serializers import (
 	AttendanceSerializer,
-	ClientSerializer, 
-	DepartmentSerializer, 
+	ClientSerializer,
+	DepartmentSerializer,
 	EmployeeSerializer,
 	HolidaySerializer,
 	ProjectSerializer
@@ -38,7 +39,7 @@ User = get_user_model()
 class AttendanceView(generics.ListCreateAPIView):
 	pagination_class = AttendancePagination
 	serializer_class = AttendanceSerializer
-	permission_classes = (IsEmployee, )	
+	permission_classes = (IsEmployee, )
 
 	def get(self, request, *args, **kwargs):
 		print(request.user.employee.has_punched_out)
@@ -67,14 +68,16 @@ class AttendanceView(generics.ListCreateAPIView):
 		}
 
 
+
 class ClientView(ListCreateRetrieveUpdateView):
 	queryset = Client.objects.all().order_by('-id')
 	pagination_class = ClientPagination
 	permission_classes = (IsHROrMD, )
 	serializer_class = ClientSerializer
-	ordering_fields = ('contact__first_name', 'contact__last_name', 'company')
-	search_fields = ('contact__first_name', 'contact__last_name', 'company')
+	ordering_fields = ('contact__first_name', 'contact__last_name', 'company', 'contact__is_active')
+	search_fields = ('contact__first_name', 'contact__last_name', 'company', 'contact__is_active')
 	lookup_field = 'id'
+	filterset_class = ClientFilter
 
 
 class DepartmentView(ListCreateRetrieveUpdateDestroyView):
@@ -88,7 +91,7 @@ class DepartmentView(ListCreateRetrieveUpdateDestroyView):
 	def put(self, request, *args, **kwargs):
 		if request.user.employee.is_hr or request.user.employee.is_md:
 			return self.custom_update(request, *args, **kwargs)
-		return Response({"detail": "You are not authorized to make this request"}, 
+		return Response({"detail": "You are not authorized to make this request"},
 			status=status.HTTP_403_FORBIDDEN)
 
 
@@ -103,7 +106,7 @@ class EmployeeView(ListCreateRetrieveUpdateView):
 	def get_queryset(self):
 		try:
 			queryset = Employee.objects.employees(
-				self.request.user.employee).order_by('-date_updated')
+				self.request.user.employee).order_by('user__first_name', 'user__last_name', 'id')
 			return queryset
 		except:
 			pass
@@ -130,7 +133,7 @@ class EmployeeExportDataView(APIView):
 			headers={'Content-Disposition': 'attachment; filename="employees.csv"'})
 		writer = csv.writer(response)
 		writer.writerow(self.get_emp_headers())
-		
+
 		employees = self.get_queryset()
 		for emp in employees:
 			writer.writerow(self.get_emp_data(emp))
@@ -161,14 +164,14 @@ class EmployeeExportDataView(APIView):
 		return response
 
 	def get_emp_headers(self):
-		return ['First Name', 'Last Name', 'E-mail', 'Department', 'Job', 'Status', 
+		return ['First Name', 'Last Name', 'E-mail', 'Department', 'Job', 'Status',
 			'Supervisor Name', 'Supervisor E-mail', 'Date Employed']
 
 	def get_emp_data(self, emp):
 		try:
 			return [
-				emp.user.first_name, emp.user.last_name, emp.user.email, emp.department_name, 
-				emp.job_name, emp.status, emp.get_supervisor("name"), 
+				emp.user.first_name, emp.user.last_name, emp.user.email, emp.department_name,
+				emp.job_name, emp.status, emp.get_supervisor("name"),
 				emp.get_supervisor("email"), str(emp.date_employed)
 			]
 		except:
@@ -182,8 +185,8 @@ class EmployeeExportDataView(APIView):
 				self.request.user.employee).order_by('-date_updated')
 			if name:
 				queryset = queryset.filter(
-					Q(user__first_name__icontains=name.lower()) | 
-					Q(user__last_name__icontains=name.lower()) | 
+					Q(user__first_name__icontains=name.lower()) |
+					Q(user__last_name__icontains=name.lower()) |
 					Q(user__email__icontains=name.lower()))
 			status = self.request.query_params.get('status', None)
 			if status:
@@ -197,18 +200,18 @@ class EmployeeExportDataView(APIView):
 # Use Allauth Get adapter validate password to do this
 class EmployeePasswordChangeView(APIView):
 	permission_classes = (IsHROrMD, )
-	
+
 	def post(self, request, *args, **kwargs):
 		email = self._validate_email(request.data.get("email"))
 		password = self._validate_passwords(
-			request.data.get("new_password1"), 
+			request.data.get("new_password1"),
 			request.data.get("new_password2"))
 
 		user = get_instance(User, { "email": email })
 		user.set_password(password)
 		user.save()
 		return Response({"detail": "Password Changed Successfully"})
-		
+
 	def _validate_email(self, value):
 		email = value.strip().lower()
 		request_user = self.request.user
@@ -291,7 +294,7 @@ class EmployeeDeactivateView(APIView):
 			raise ValidationError({"detail": "action is required" })
 		if action != "activate" and action != "deactivate":
 			raise ValidationError({"detail": "action is invalid. use activate or deactivate"})
-			
+
 		user = self._validate_email(self.request.data.get("email", None))
 		_type = self.request.data.get("type", None)
 
@@ -315,7 +318,7 @@ class EmployeeDeactivateView(APIView):
 			request_user.employee.is_hr is True and user.employee.is_md is True
 		):
 			raise PermissionDenied({"detail": "you are forbidden from making this request"})
-		
+
 		if request_user == user:
 			raise ValidationError({"detail": "you cannot deactivate yourself"})
 

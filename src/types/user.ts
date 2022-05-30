@@ -35,12 +35,13 @@ export interface ProfileFormType
 
 export type UserType = {
 	image?: string;
-  	first_name: string;
-  	last_name: string;
-  	full_name: string;
-  	email: string;	
-  	active: boolean;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  email: string;
+  active: boolean;
 }
+
 
 export interface UserInfoType extends UserType {
   job?: string;

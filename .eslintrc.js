@@ -31,4 +31,3 @@ module.exports = {
         "no-console": 2
     }
 }
-

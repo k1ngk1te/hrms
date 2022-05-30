@@ -28,7 +28,8 @@ const projectsApi = baseApi.injectEndpoints({
 			query: (data) => ({
 				url: PROJECTS_URL,
 				method: "POST",
-				credentials: "include"
+				credentials: "include",
+				body: data
 			}),
 			invalidatesTags: ["Project"]
 		}),

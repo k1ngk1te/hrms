@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.timezone import now
@@ -9,8 +10,12 @@ GENDER_CHOICES = (
     ('F', 'Female')
 )
 
+ID_LENGTH = settings.ID_MAX_LENGTH
+
 
 class User(AbstractBaseUser, PermissionsMixin):
+    user_id = models.BigAutoField(primary_key=True)
+    id = models.CharField(max_length=ID_LENGTH, unique=True, editable=False)
     email = models.EmailField(
         verbose_name='email address',
         max_length=255,
@@ -80,6 +85,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Profile(models.Model):
+    profile_id = models.BigAutoField(primary_key=True)
+    id = models.CharField(max_length=ID_LENGTH, unique=True, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     image = models.ImageField(upload_to="images/users/profile", default="images/users/profile/default.png")
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default='M')

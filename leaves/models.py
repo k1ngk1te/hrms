@@ -1,4 +1,5 @@
 import datetime
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils.timezone import now
@@ -24,7 +25,11 @@ LEAVE_DECISIONS = (
 	('P', 'Pending'),
 )
 
+ID_LENGTH = settings.LEAVE_ID_MAX_LENGTH
+
 class Leave(models.Model):
+	leave_id = models.BigAutoField(primary_key=True)
+	id = models.CharField(max_length=ID_LENGTH, unique=True, editable=False)
 	employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="leaves")
 	leave_type = models.CharField(max_length=3, choices=LEAVE_CHOICES, verbose_name="type")
 	start_date = models.DateField()
@@ -155,5 +160,4 @@ class Leave(models.Model):
 			return False
 		elif self.a_md == "P":
 			return True
-		return False	
-		
+		return False

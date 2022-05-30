@@ -5,6 +5,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+ID_MAX_LENGTH = 7
+ID_Z_FILL = 4
+
+LEAVE_ID_MAX_LENGTH = 10
+
 # Custom User Settings
 AUTH_USER_MODEL = 'users.User'
 
@@ -42,6 +47,7 @@ INSTALLED_APPS = [
     'anymail',
     'cloudinary',
     'corsheaders',
+    'django_filters',
     'dj_rest_auth',
     'rest_framework',
 ]
@@ -138,6 +144,7 @@ REST_FRAMEWORK = {
         'core.authentication.CustomSessionAuthentication',
     ),
     'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ),

@@ -19,6 +19,7 @@ import {
 	ClientType,
 	ClientCreateType,
 	ClientListType,
+	ClientPaginationType,
 	EmployeeType,
 	FormType,
 	HolidayType,
@@ -73,11 +74,11 @@ const employeesApi = baseApi.injectEndpoints({
 			}),
 			invalidatesTags: ["Client"],
 		}),
-		getClients: build.query<ClientListType, PaginationType>({
-			query: ({ limit, offset, search }) => ({
+		getClients: build.query<ClientListType, ClientPaginationType>({
+			query: ({ limit, offset, search, active }) => ({
 				url: `${CLIENTS_URL}?offset=${search ? 0 : offset}&limit=${
 					search ? 0 : limit
-				}&search=${search || ""}`,
+				}&search=${search || ""}&active=${active !== undefined ? active : ""}`,
 				method: "GET",
 				credentials: "include",
 			}),

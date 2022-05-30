@@ -13,12 +13,12 @@ import { DEFAULT_IMAGE, PROJECT_PAGE_URL } from "@/config";
 import { useOutClick } from "@/hooks";
 import { StatusProgressBar } from "@/components/common";
 import { Button } from "@/components/controls";
-import { EmployeeUserType, ProjectType } from "@/types/employees";
+import { IndexUserType, ProjectType } from "@/types/employees";
 
 const ImageBlocks = ({
 	team,
 }: {
-	team: { id: string | number; data: EmployeeUserType }[];
+	team: IndexUserType[];
 }) => (
 	<>
 		{team.length > 0 ? (
@@ -30,7 +30,7 @@ const ImageBlocks = ({
 					>
 						<img
 							className="h-full rounded-full w-full"
-							src={person.data.image || DEFAULT_IMAGE}
+							src={person.image || DEFAULT_IMAGE}
 							alt=""
 						/>
 					</div>

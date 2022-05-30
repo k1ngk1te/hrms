@@ -1,11 +1,12 @@
-import { useState } from "react"
-import { isErrorWithData } from "@/store";
+import { useCallback, useEffect, useState } from "react"
+import { isErrorWithData, isFormError } from "@/store";
+import { open as alertModalOpen } from "@/store/features/alert-modal-slice"
 import { open as modalOpen, close as modalClose } from "@/store/features/modal-slice";
 import { useGetProjectsQuery, useCreateProjectMutation } from "@/store/features/projects-slice";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { Container, Modal } from "@/components/common"
 import { Cards, Form, Project, Topbar } from "@/components/Projects";
-import { ProjectType, ProjectCreateType } from "@/types/employees";
+import { ProjectType, ProjectCreateType, ProjectCreateErrorType } from "@/types/employees";
 
 const Projects = () => {
 	const [offset, setOffset] = useState(0);
@@ -17,6 +18,21 @@ const Projects = () => {
 
 	const { data, error, refetch, isLoading, isFetching } = useGetProjectsQuery({ limit: 50, offset, search })
 	const [createProject, createData] = useCreateProjectMutation()
+
+	const handleSubmit = useCallback((form: ProjectCreateType) => {
+		createProject(form)
+	}, [createProject])
+
+	useEffect(() => {
+		if (createData.status === "fulfilled") {
+			dispatch(alertModalOpen({
+				color: "success",
+				header: "Project Created",
+				message: "Project was created successfully"
+			}))
+			dispatch(modalClose())
+		}
+	}, [dispatch, createData.status])
 
 	return (
 		<Container
@@ -57,8 +73,11 @@ const Projects = () => {
 			<Modal
 				close={() => dispatch(modalClose())}
 				component={<Form
+					editMode={false}
+					success={createData.status === "fulfilled"}
+					errors={isFormError<ProjectCreateErrorType>(createData.error) ? createData.error.data : undefined}
 					loading={createData.isLoading}
-					onSubmit={(form: ProjectCreateType) => createProject(form)}
+					onSubmit={handleSubmit}
 				/>}
 				editMode={editMode}
 				keepVisible

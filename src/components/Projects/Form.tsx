@@ -89,7 +89,7 @@ const Form: FC<FormProps> = ({
 	const modalVisible = useAppSelector((state) => state.modal.visible);
 
 	const clients = useGetClientsQuery(
-		{ limit: clientLimit, offset: 0 },
+		{ limit: clientLimit, offset: 0, active: true },
 		{
 			skip: !modalVisible,
 		}
@@ -127,7 +127,7 @@ const Form: FC<FormProps> = ({
 				title: `${toCapitalize(employee.user.first_name)} ${toCapitalize(
 					employee.user.last_name
 				)}`,
-				value: String(employee.id),
+				value: employee.id,
 			}));
 			setEmpOptions(options);
 		}
@@ -218,8 +218,8 @@ const Form: FC<FormProps> = ({
 
 	const handleSubmit = useCallback(
 		(form: ProjectCreateType) => {
-			// const invalidates = ["state", "city", "address", "date_of_birth"]
-			const { valid, result } = validateForm(form);
+			const invalidates = ["client", "team", 'leaders']
+			const { valid, result } = validateForm(form, invalidates);
 			if (valid)
 				onSubmit(form)
 			else if (valid === false) setErrors(result);
@@ -236,8 +236,8 @@ const Form: FC<FormProps> = ({
 					client: client.value,
 					priority: priority.value,
 					description: description.value,
-					leaders: leaders.value,
-					team: team.value,
+					leaders: leaders.value.map(leader => ({id: leader})),
+					team: team.value.map(team => ({id: team})),
 					start_date: start_date.value,
 					end_date: end_date.value,
 					initial_cost: initial_cost.value,
@@ -278,6 +278,7 @@ const Form: FC<FormProps> = ({
 						error={clientsError || formErrors?.client || errors?.client || ""}
 						label="Client"
 						onChange={client.onChange}
+						required={false}
 						placeholder="Select Client"
 						options={clientOptions}
 						value={client.value}
@@ -371,7 +372,7 @@ const Form: FC<FormProps> = ({
 						multiple
 						placeholder="Select Team Leaders"
 						options={empOptions}
-						required
+						required={false}
 						value={leaders.value}
 					/>
 				</div>
@@ -398,7 +399,7 @@ const Form: FC<FormProps> = ({
 						multiple
 						placeholder="Select Team Members"
 						options={empOptions}
-						required
+						required={false}
 						value={team.value}
 					/>
 				</div>
