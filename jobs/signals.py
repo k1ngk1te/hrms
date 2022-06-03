@@ -7,4 +7,4 @@ from .models import Job
 @receiver(pre_save, sender=Job)
 def set_job_id(sender, instance, **kwargs):
 	if not instance.id:
-		instance.id = generate_id("JOB", key="job_id", model=Job)
+		instance.id = generate_id("job", key="job_id", model=Job)

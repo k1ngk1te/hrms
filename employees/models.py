@@ -321,10 +321,14 @@ class ProjectFile(models.Model):
 class Task(models.Model):
 	task_id = models.BigAutoField(primary_key=True)
 	id = models.CharField(max_length=ID_LENGTH, unique=True, editable=False)
+	created_by = models.ForeignKey(Employee, on_delete=models.SET_NULL,
+		related_name="task_creator", blank=True, null=True)
 	project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="task")
 	name = models.CharField(max_length=255, unique=True)
+	description = models.TextField(blank=True, null=True)
 	priority = models.CharField(max_length=1, choices=PRIORITY_CHOICES, default="H")
-	followers = models.ManyToManyField(Employee)
+	leaders = models.ManyToManyField(Employee, related_name="task_leaders", blank=True)
+	followers = models.ManyToManyField(Employee, related_name="followers", blank=True)
 	create_date = models.DateField(default=now)
 	due_date = models.DateField()
 	completed = models.BooleanField(default=False)

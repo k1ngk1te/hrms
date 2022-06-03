@@ -28,6 +28,7 @@ export const baseApi = createApi({
 		"Notification",
 		"Profile",
 		"Project",
+		"Task",
 		"User",
 	],
 });

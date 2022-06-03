@@ -1,8 +1,9 @@
-import { Dispatch, FC, ReactNode, SetStateAction, useCallback } from "react";
+import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BiRefresh } from "react-icons/bi";
 import { FaArrowLeft } from "react-icons/fa";
 import { close as alertClose } from "../../store/features/alert-slice";
+import { logout } from "../../store/features/auth-slice";
 import { close } from "../../store/features/alert-modal-slice";
 import Error from "../../pages/error";
 import { useAppDispatch, useAppSelector } from "../../hooks";
@@ -89,6 +90,10 @@ const Container: FC<ContainerProps> = ({
 	const closeModal = useCallback(() => {
 		dispatch(close());
 	}, [dispatch]);
+
+	useEffect(() => {
+		if (error && error.statusCode === 401) dispatch(logout())
+	}, [dispatch, error])
 
 	return (
 		<>

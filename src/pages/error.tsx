@@ -8,16 +8,31 @@ const PageError = ({
 	statusCode?: number;
 	title?: string;
 }) => (
-	<div className="flex justify-center h-full items-center min-h-[70vh] w-full">
+    <div style={{
+			display: "flex",
+			justifyContent: "center",
+			alignItems: "center",
+			marginRight: "auto",
+			marginLeft: "auto",
+			minHeight: "70vh",
+			minWidth: "70vw",
+			height: "100%",
+			width: "100%"
+		}}>
 		{/* <PageTitle title={NOT_FOUND_TITLE} /> */}
-		<p className="text-lg">{statusCode || 500}</p>
-		<div className="h-[10px] w-[1.25px]" />
-		<p className="text-base">
-			{title && typeof title === "string"
-				? title
-				: "A server error occurred! Please try again later."}
-		</p>
+		<p style={{fontSize: "3rem"}}>{statusCode || 500}</p>
+		<div style={{
+			display: "block",
+			background: "black",
+			marginRight: "10px",
+			marginLeft: "10px",
+			height: "80px",
+			width: "2px"
+		}} />
+		<p style={{fontSize: "1.5rem"}}>{title && typeof title === "string"
+			? title
+			: "A server error occurred! Please try again later."}</p>
 	</div>
-);
+)
 
-export default PageError;
+export default PageError

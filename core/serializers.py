@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework.fields import empty
 
 User = get_user_model()
 
@@ -16,13 +17,16 @@ class PersonSerializer(serializers.ModelSerializer):
         fields = ('image', 'email', 'first_name', 'last_name',
             'full_name', 'active')
 
-    def __init__(self, **kwargs):
+    def __init__(self, instance=None, data=empty, **kwargs):
         self.meta_model = self.Meta.model if self.Meta is not None else None
         self.relation_key = self.Meta.relation_key if self.Meta is not None else None
         assert self.meta_model is not None, (
             'Person field must provide a `model`in Meta Class, ')
         assert self.relation_key is not None, (
             'Person field must provide a `relation`in Meta Class, ')
+        self.instance = instance
+        if data is not empty:
+            self.initial_data = data
         super().__init__(**kwargs)
 
     def get_user(self, pk=None):

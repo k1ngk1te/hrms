@@ -31,6 +31,14 @@ module.exports = {
           900: "#993d00",
         },
       },
+      screens: {
+        'xs': '400px',
+        'sm': '580px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px'
+      },
     },
     fontSize: {
       tiny: "0.5rem",
@@ -47,14 +55,6 @@ module.exports = {
       "7xl": "4rem",
       "8xl": "5rem",
     },
-    screens: {
-    	'xs': '400px',
-      'sm': '580px',
-      'md': '768px',
-      'lg': '1024px',
-      'xl': '1280px',
-      '2xl': '1536px'
-    }
   },
   variants: {
     animation: ["responsive", "motion-safe", "motion-reduce"],

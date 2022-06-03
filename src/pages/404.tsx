@@ -1,13 +1,30 @@
 // import { NOT_FOUND_TITLE } from "@/config";
 // import { PageTitle } from "@/utils";
 
-const PageNotFound = () => (
-	<div className="flex justify-center h-screen items-center w-screen">
+const NotFound = () => (
+    <div style={{
+			display: "flex",
+			justifyContent: "center",
+			alignItems: "center",
+			marginRight: "auto",
+			marginLeft: "auto",
+			minHeight: "70vh",
+			minWidth: "70vw",
+			height: "100%",
+			width: "100%"
+		}}>
 		{/* <PageTitle title={NOT_FOUND_TITLE} /> */}
-		<p className="text-lg">404</p>
-		<div className="h-[10px] w-[1.25px]" />
-		<p className="text-base">Page Not Found</p>
+		<p style={{fontSize: "3rem"}}>404</p>
+		<div style={{
+			display: "block",
+			background: "black",
+			marginRight: "10px",
+			marginLeft: "10px",
+			height: "80px",
+			width: "2px"
+		}} />
+		<p style={{fontSize: "1.5rem"}}>Page Not Found</p>
 	</div>
 )
 
-export default PageNotFound;
+export default NotFound

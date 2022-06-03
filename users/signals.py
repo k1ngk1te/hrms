@@ -10,12 +10,12 @@ User = get_user_model()
 @receiver(pre_save, sender=Profile)
 def set_profile_id(sender, instance, **kwargs):
 	if not instance.id:
-		instance.id = generate_id("PLE", key="profile_id", model=Profile)
+		instance.id = generate_id("ple", key="profile_id", model=Profile)
 
 @receiver(pre_save, sender=User)
 def set_user_id(sender, instance, **kwargs):
 	if not instance.id:
-		instance.id = generate_id("USR", key="user_id", model=User)
+		instance.id = generate_id("usr", key="user_id", model=User)
 
 @receiver(post_save, sender=User)
 def set_profile(sender, instance, created, **kwargs):

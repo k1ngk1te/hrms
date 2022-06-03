@@ -69,3 +69,6 @@ class EmployeeRelatedField(CustomRelatedField):
 	def to_representation(self, value):
 		data = get_user_info(value.user, self.context.get("request"))
 		return data
+
+
+

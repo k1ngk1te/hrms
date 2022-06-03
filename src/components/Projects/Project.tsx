@@ -10,58 +10,60 @@ import {
 } from "react-icons/fa";
 
 import { DEFAULT_IMAGE, PROJECT_PAGE_URL } from "@/config";
-import { useOutClick } from "@/hooks";
-import { StatusProgressBar } from "@/components/common";
+import { useOutClick, useDeleteProject, useMarkProject } from "@/hooks";
+import { Avatars, StatusProgressBar } from "@/components/common";
 import { Button } from "@/components/controls";
-import { IndexUserType, ProjectType } from "@/types/employees";
+import { ProjectEmployeeType, ProjectType } from "@/types/employees";
+import { InitStateType } from "./Form";
 
-const ImageBlocks = ({
-	team,
-}: {
-	team: IndexUserType[];
-}) => (
-	<>
-		{team.length > 0 ? (
-			<div className="flex flex-wrap items-center mt-1">
-				{team.slice(0, 4).map((person, index) => (
-					<div
-						key={index}
-						className="h-[25px] mx-1 w-[25px] rounded-full md:h-[30px] md:w-[30px]"
-					>
-						<img
-							className="h-full rounded-full w-full"
-							src={person.image || DEFAULT_IMAGE}
-							alt=""
-						/>
-					</div>
-				))}
-				{team.length > 4 && (
-					<div className="bg-red-600 flex h-[20px] items-center justify-center mx-1 rounded-full w-[20px] xs:h-[25px] xs:w-[25px] md:h-[30px] md:w-[30px] lg:h-[25px] lg:w-[25px]">
-						<span className="text-xs text-white">+{team.length - 4}</span>
-					</div>
-				)}
-			</div>
-		) : (
-			<p className="capitalize font-semibold my-1 text-gray-500 text-sm md:text-base lg:text-sm">
-				-----------------
-			</p>
-		)}
-	</>
-);
+const ImageBlocks = ({ team }: { team: ProjectEmployeeType[] }) => {
+	const images = team.slice(0, 4).map((person) => ({
+		src: person.image || DEFAULT_IMAGE,
+		alt: ""
+	}))
+
+	return (
+		<>
+			{team.length > 0 ? (
+				<div className="flex flex-wrap items-center mt-1">
+					<Avatars images={images} more={team.length > 4 ? `+${team.length - 4}` : undefined} />
+					
+				</div>
+			) : (
+				<p className="capitalize font-semibold my-1 text-gray-500 text-sm md:text-base lg:text-sm">
+					-----------------
+				</p>
+			)}
+		</>
+	);
+}
+
+export interface ProjectObjecttype extends ProjectType {
+	editProject: (id: string, string: InitStateType) => void;
+}
 
 const Project = ({
 	id,
+	start_date,
+	client,
+	completed,
 	end_date,
 	name,
+	initial_cost,
+	rate,
 	description,
 	priority,
 	team,
 	leaders,
-}: ProjectType) => {
+	editProject,
+}: ProjectObjecttype) => {
 	const { buttonRef, ref, setVisible, visible } = useOutClick<
 		HTMLDivElement,
 		HTMLSpanElement
 	>();
+
+	const markProject = useMarkProject()
+	const deleteProject = useDeleteProject()
 
 	return (
 		<div className="bg-white p-4 relative rounded-md shadow-lg">
@@ -90,16 +92,22 @@ const Project = ({
 			</div>
 			<div className="my-1">
 				<p className="font-semibold my-2 text-left text-sm text-gray-600 md:text-base">
-					{description.slice(0, 135)} {description.length > 135 ? "..." : ""}
+					{description.slice(0, 75)} {description.length > 75 ? "..." : ""}
 				</p>
 			</div>
 			<div className="flex flex-wrap items-end my-1">
 				<h6 className="capitalize font-medium text-gray-800 text-base md:text-lg lg:text-base">
 					Priority:
 				</h6>
-				<p className={`${
-					priority === "H" ? "text-red-600" : priority === "M" ? "text-yellow-600" : "text-success-600"
-				} capitalize flex flex-wrap items-center font-semibold mx-2 text-sm md:text-base lg:text-sm`}>
+				<p
+					className={`${
+						priority === "H"
+							? "text-red-600"
+							: priority === "M"
+							? "text-yellow-600"
+							: "text-success-600"
+					} capitalize flex flex-wrap items-center font-semibold mx-2 text-sm md:text-base lg:text-sm`}
+				>
 					{priority === "H" ? "High" : priority === "M" ? "Medium" : "Low"}
 					<span className="mx-2 pb-1">
 						<FaExclamationCircle className="text-sm" />
@@ -115,8 +123,8 @@ const Project = ({
 				</p>
 			</div>
 			<div className="my-1">
-				<h6 className="capitalize font-medium text-gray-800 text-base md:text-lg lg:text-base">
-					Team Leader:
+				<h6 className="font-medium text-gray-800 text-base md:text-lg lg:text-base">
+					Team Leader{leaders.length > 1 ? "s" : ""}:
 				</h6>
 				<ImageBlocks team={leaders} />
 			</div>
@@ -152,9 +160,10 @@ const Project = ({
 				<ul className="divide-y divde-gray-500 divide-opacity-50">
 					<li className="p-1 w-full">
 						<Button
-							bg="bg-gray-50 hover:bg-yellow-100 focus:ring-2"
+							bg="bg-gray-50 hover:bg-yellow-100"
 							border="border border-secondary-400 border-opacity-75"
 							caps
+							focus=""
 							color="text-gray-600 hover:text-gray-800"
 							IconLeft={FaEye}
 							link={PROJECT_PAGE_URL(id || "#")}
@@ -164,37 +173,59 @@ const Project = ({
 					</li>
 					<li className="p-1 w-full">
 						<Button
-							bg="bg-gray-50 hover:bg-blue-100 focus:ring-2"
+							bg="bg-gray-50 hover:bg-blue-100"
 							border="border border-primary-400 border-opacity-75"
 							caps
+							focus=""
 							color="text-gray-600 hover:text-gray-800"
 							IconLeft={FaPen}
-							onClick={() => {}}
+							onClick={() =>
+								editProject(id, {
+									name,
+									description,
+									priority,
+									leaders: leaders.map((leader) => leader.id),
+									team: team.map((member) => member.id),
+									start_date,
+									end_date,
+									client: client.id,
+									initial_cost,
+									rate,
+								})
+							}
 							title="edit"
 							titleSize="text-sm md:text-base lg:text-sm"
 						/>
 					</li>
 					<li className="p-1 w-full">
 						<Button
-							bg="bg-gray-50 hover:bg-red-100 focus:ring-2"
+							bg="bg-gray-50 hover:bg-red-100"
 							border="border border-red-400 border-opacity-75"
 							caps
+							focus=""
 							color="text-gray-600 hover:text-gray-800"
 							IconLeft={FaTrash}
-							onClick={() => {}}
+							disabled={deleteProject.isLoading}
+							loading={deleteProject.isLoading}
+							loader
+							onClick={() => deleteProject.onSubmit(id)}
 							title="delete"
 							titleSize="text-sm md:text-base lg:text-sm"
 						/>
 					</li>
 					<li className="p-1 w-full">
 						<Button
-							bg="bg-gray-50 hover:bg-green-100 focus:ring-2"
+							bg="bg-gray-50 hover:bg-green-100"
 							border="border border-green-400 border-opacity-75"
 							caps
+							focus=""
 							color="text-gray-600 hover:text-gray-800"
-							onClick={() => {}}
+							disabled={markProject.isLoading}
+							loading={markProject.isLoading}
+							loader
+							onClick={() => markProject.onSubmit(id, !completed)}
 							IconLeft={FaCheckCircle}
-							title="mark as completed"
+							title={completed ? "mark ongoing" : "mark as completed"}
 							titleSize="text-sm md:text-base lg:text-sm"
 						/>
 					</li>

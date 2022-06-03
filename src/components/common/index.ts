@@ -11,6 +11,7 @@ export { default as InfoTopBar } from "./InfoTopBar";
 export { default as MenuIcon } from "./MenuIcon";
 export { default as Modal } from "./Modal";
 export { default as Pagination } from "./Pagination";
+export { default as PersonCard } from "./PersonCard";
 export { default as SplashScreen } from "./SplashScreen";
 export { default as StatusProgressBar } from "./StatusProgressBar";
 export { default as TabNavigator } from "./TabNavigator";

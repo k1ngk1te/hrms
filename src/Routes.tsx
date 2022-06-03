@@ -29,6 +29,7 @@ import LeavesAdminDetailPage from "@/pages/admin/leaves/detail";
 import ProjectsPage from "@/pages/projects";
 import ProjectPage from "@/pages/projects/detail";
 import ProjectTasksPage from "@/pages/projects/detail/tasks";
+import ProjectTaskPage from "@/pages/projects/detail/tasks/detail";
 import ProjectTeamPage from "@/pages/projects/detail/team";
 
 const AppRoutes = () => (
@@ -72,7 +73,10 @@ const AppRoutes = () => (
 						<Route path="" element={<ProjectsPage />} />
 						<Route path=":id">
 							<Route path="" element={<ProjectPage />} />
-							<Route path="tasks" element={<ProjectTasksPage />} />
+							<Route path="tasks">
+								<Route path="" element={<ProjectTasksPage />} />
+								<Route path=":task_id" element={<ProjectTaskPage />} />
+							</Route>
 							<Route path="team" element={<ProjectTeamPage />} />
 						</Route>
 					</Route>

@@ -11,17 +11,17 @@ def check_attendance(sender, instance, **kwargs):
 	if instance.punch_out and instance.punch_in > instance.punch_out:
 		raise ValidationError({"punch_out": "Invalid Time. Punch in time is greater than punch out time."})
 	if not instance.id:
-		instance.id = generate_id("ATD", key="attendance_id", model=Attendance)
+		instance.id = generate_id("atd", key="attendance_id", model=Attendance)
 
 @receiver(pre_save, sender=Client)
 def set_client_id(sender, instance, **kwargs):
 	if not instance.id:
-		instance.id = generate_id("CLI", key="client_id", model=Client)
+		instance.id = generate_id("cli", key="client_id", model=Client)
 
 @receiver(pre_save, sender=Department)
 def set_department_id(sender, instance, **kwargs):
 	if not instance.id:
-		instance.id = generate_id("DEP", key="department_id", model=Department)
+		instance.id = generate_id("dep", key="department_id", model=Department)
 
 @receiver(pre_save, sender=Department)
 def check_hod(sender, instance, **kwargs):
@@ -37,19 +37,19 @@ def check_hod(sender, instance, **kwargs):
 @receiver(pre_save, sender=Employee)
 def set_employee_id(sender, instance, **kwargs):
 	if not instance.id:
-		instance.id = generate_id("EMP", key="employee_id", model=Employee)
+		instance.id = generate_id("emp", key="employee_id", model=Employee)
 
 @receiver(pre_save, sender=Holiday)
 def set_holiday_id(sender, instance, **kwargs):
 	if not instance.id:
-		instance.id = generate_id("HOL", key="holiday_id", model=Holiday)
+		instance.id = generate_id("hol", key="holiday_id", model=Holiday)
 
 @receiver(pre_save, sender=Project)
 def set_project_id(sender, instance, **kwargs):
 	if not instance.id:
-		instance.id = generate_id("PRJ", key="project_id", model=Project)
+		instance.id = generate_id("prj", key="project_id", model=Project)
 
 @receiver(pre_save, sender=Task)
 def set_task_id(sender, instance, **kwargs):
 	if not instance.id:
-		instance.id = generate_id("TSK", key="task_id", model=Task)
+		instance.id = generate_id("tsk", key="task_id", model=Task)

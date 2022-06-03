@@ -3,7 +3,7 @@ import { IconType } from "react-icons";
 import { FaTimesCircle } from "react-icons/fa"
 import DecisionButton, { ButtonProps as DecisionButtonTypes } from "./Button";
 
-const containerStyle = "duration-1000 max-w-xs mx-auto rounded-lg transform transition-all w-full";
+const containerStyle = "duration-1000 max-w-xs mx-auto px-4 rounded-lg transform transition-all w-full sm:px-0";
 const wrapperStyle = "duration-500 fixed flex h-full items-center left-0 top-0 transform transition-opacity w-full z-50"
 
 export type ModalProps = {

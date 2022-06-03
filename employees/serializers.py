@@ -11,7 +11,8 @@ from jobs.models import Job
 from jobs.serializers import JobSerializer
 from users.models import Profile
 from users.serializers import ProfileSerializer, UserProfileSerializer, UserSerializer, UserDetailsSerializer
-from .models import Attendance, Client, Department, Employee, Holiday, Project
+from .models import Attendance, Client, Department, Employee, Holiday, Project, Task
+from .utils import get_employees
 
 User = get_user_model()
 
@@ -336,17 +337,104 @@ class HolidaySerializer(serializers.ModelSerializer):
 
 class ProjectEmployeeSerializer(PersonSerializer):
 	id = serializers.CharField()
+	job = serializers.SerializerMethodField('get_job')
 
 	class Meta:
 		model = Employee
 		relation_key = 'user'
-		fields = ('id', ) + PersonSerializer.Meta.fields
+		fields = ('id', 'job',) + PersonSerializer.Meta.fields
+
+	def get_job(self, obj):
+		try:
+			return obj.job.name
+		except:
+			pass
+		return ""
+
+
+class TaskSerializer(serializers.ModelSerializer):
+	id = serializers.CharField(read_only=True)
+	project = serializers.SerializerMethodField('get_project_info')
+	leaders = ProjectEmployeeSerializer(many=True, required=False)
+	followers = ProjectEmployeeSerializer(many=True, required=False)
+	created_by = ProjectEmployeeSerializer(read_only=True)
+	create_date = serializers.DateField(read_only=True)
+	completed = serializers.BooleanField(read_only=True)
+	verified = serializers.BooleanField(read_only=True)
+
+	class Meta:
+		model = Task
+		exclude = ('task_id',)
+
+	def create(self, validated_data):
+		created_by = self.context.get("request").user.employee
+		create_date = now().date()
+		project = self.get_project()
+
+		followers = validated_data.pop("followers", None)
+		leaders = validated_data.pop("leaders", None)
+
+		task_leaders = get_employees("leaders", leaders) if leaders is not None else []
+		task_members = get_employees("followers", followers) if followers is not None else []
+
+		task = Task.objects.create(create_date=create_date, created_by=created_by,
+			project=project, **validated_data)
+		self.set_team(task, task_leaders, task_members)
+
+		return task
+
+	def update(self, instance, validated_data):
+		created_by = self.context.get("request").user.employee
+
+		if created_by != instance.created_by:
+			raise PermissionDenied({"detail":
+				"You do not have permission to perform this request!"})
+
+		followers = validated_data.pop("followers", None)
+		leaders = validated_data.pop("leaders", None)
+
+		task_leaders = get_employees("leaders", leaders) if leaders is not None else []
+		task_members = get_employees("followers", followers) if followers is not None else []
+
+		self.set_team(instance, task_leaders, task_members)
+
+		instance.name = validated_data.get("name", instance.name)
+		instance.description = validated_data.get("description", instance.description)
+		instance.due_date = validated_data.get("due_date", instance.due_date)
+		instance.priority = validated_data.get("priority", instance.priority)
+		instance.save()
+
+		return instance
+
+	def get_project_info(self, obj):
+		return {
+			"id": obj.project.id,
+			"name": obj.project.name
+		}
+
+	def get_project(self):
+		kwargs = self.context.get("view").kwargs
+		project_id = kwargs.get("project_id", None)
+		if project_id is None:
+			raise ValidationError({"detail": "Project ID is required!"})
+		project = get_instance(Project, {"id": project_id})
+		if not project:
+			raise NotFound({"detail": f"Project with ID {project_id} was not found!"})
+		return project
+
+	def set_team(self, task, leaders=[], followers=[]):
+		task.leaders.set(leaders)
+		total_team_members = followers + leaders
+		task.followers.set(total_team_members)
+		return task
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-	client = ClientRelatedField(queryset=Client.objects.filter(contact__is_active=True))
-	leaders = ProjectEmployeeSerializer(many=True)
-	team = ProjectEmployeeSerializer(many=True)
+	id = serializers.CharField(read_only=True)
+	client = ClientRelatedField(queryset=Client.objects.filter(
+		contact__is_active=True), required=False)
+	leaders = ProjectEmployeeSerializer(many=True, required=False)
+	team = ProjectEmployeeSerializer(many=True, required=False)
 	created_by = ProjectEmployeeSerializer(read_only=True)
 	completed = serializers.BooleanField(read_only=True)
 	verified = serializers.BooleanField(read_only=True)
@@ -354,48 +442,53 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Project
-		fields = '__all__'
+		exclude = ('project_id',)
 
 	def create(self, validated_data):
 		created_by = self.context.get("request").user.employee
 		team = validated_data.pop("team", None)
 		leaders = validated_data.pop("leaders", None)
 
-		team_leaders = self.get_employees("leaders", leaders)
-		team_members = self.get_employees("team", team)
+		team_leaders = get_employees("leaders", leaders) if leaders is not None else []
+		team_members = get_employees("team", team) if team is not None else []
 
 		project = Project.objects.create(created_by=created_by, **validated_data)
 
-		if team_leaders and len(team_leaders) > 1:
-			for emp in team_leaders:
-				project.leaders.add(emp)
-				project.team.add(emp)
-		if team_members and len(team_members) > 1:
-			for emp in team_leaders:
-				project.team.add(emp)
+		self.set_team(project, team_leaders, team_members)
 		return project
 
-	def get_employees(self, key, employee_list=None):
-		if not employee_list:
-			return []
-		employees = []
-		if len(employee_list) > 0:
-			for employee in employee_list:
-				id = employee.get("id", None)
-				if id is None:
-					raise ValidationError({key: "Employee ID is required!"})
-				instance = get_instance(Employee, {"id": id})
-				if not instance:
-					raise ValidationError({key: (
-						f"There is no employee with ID {id}")
-						})
-				if instance.status.lower() != "active":
-					raise ValidationError({key: (
-						f"Employee with ID {id}",
-						f"is {instance.status.lower()}" )
-					})
-				employees.append(instance)
-		return employees
+	def update(self, instance, validated_data):
+		created_by = self.context.get("request").user.employee
+
+		if created_by != instance.created_by:
+			raise PermissionDenied({"detail":
+				"You do not have permission to perform this request!"})
+
+		team = validated_data.pop("team", None)
+		leaders = validated_data.pop("leaders", None)
+
+		team_leaders = get_employees("leaders", leaders) if leaders is not None else []
+		team_members = get_employees("team", team) if team is not None else []
+
+		self.set_team(instance, team_leaders, team_members)
+
+		instance.name = validated_data.get("name", instance.name)
+		instance.description = validated_data.get("description", instance.description)
+		instance.initial_cost = validated_data.get("initial_cost", instance.initial_cost)
+		instance.rate = validated_data.get("rate", instance.rate)
+		instance.client = validated_data.get("client", instance.client)
+		instance.start_date = validated_data.get("start_date", instance.start_date)
+		instance.end_date = validated_data.get("end_date", instance.end_date)
+		instance.priority = validated_data.get("priority", instance.priority)
+		instance.save()
+
+		return instance
+
+	def set_team(self, project, leaders=[], team=[]):
+		project.leaders.set(leaders)
+		total_team_members = team + leaders
+		project.team.set(total_team_members)
+		return project
 
 	def get_is_active(self, obj):
 		return obj.is_active

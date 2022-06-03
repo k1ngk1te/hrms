@@ -10,7 +10,7 @@ import {
 	useFormTextArea,
 } from "@/hooks";
 import { toCapitalize, validateForm } from "@/utils";
-import { Button, File, Input, Select, Textarea } from "@/components/controls";
+import { Button, Input, Select, Textarea } from "@/components/controls";
 import { ProjectCreateType, ProjectCreateErrorType } from "@/types/employees";
 
 export type FormProps = {
@@ -32,18 +32,32 @@ const initialState = {
 	client: "",
 	start_date: "",
 	end_date: "",
-	initial_cost: "",
-	rate: "",
+	initial_cost: 0,
+	rate: 0,
 	priority: "H",
 	leaders: [],
 	team: [],
 	description: "",
 };
 
-type InitStateType = typeof initialState;
-interface InitErrorType extends Omit<InitStateType, "team" | "leaders"> {
+export type InitStateType = {
+	name: string;
+	client: string;
+	start_date: string;
+	end_date: string;
+	initial_cost: number;
+	rate: number;
+	priority: string;
+	leaders: string[];
+	team: string[];
+	description: string;
+};
+interface InitErrorType extends Omit<InitStateType, "team" | "leaders" | "initial_cost" | "priority" | "rate"> {
 	team: string;
 	leaders: string;
+	initial_cost: string;
+	rate: string;
+	priority: string;
 }
 
 const initErrorState: InitErrorType | undefined = {
@@ -236,8 +250,8 @@ const Form: FC<FormProps> = ({
 					client: client.value,
 					priority: priority.value,
 					description: description.value,
-					leaders: leaders.value.map(leader => ({id: leader})),
-					team: team.value.map(team => ({id: team})),
+					leaders: leaders.value.map((leader: string) => ({id: leader})),
+					team: team.value.map((team: string) => ({id: team})),
 					start_date: start_date.value,
 					end_date: end_date.value,
 					initial_cost: initial_cost.value,

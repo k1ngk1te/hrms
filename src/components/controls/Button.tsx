@@ -30,6 +30,7 @@ const Button = ({
   caps,
   color,
   disabled,
+  focus,
   IconLeft,
   IconRight,
   link,
@@ -72,7 +73,7 @@ const Button = ({
   return (
     <div className="relative w-full">
       <Container
-        className={`${bgColor} ${rounded} ${textTrans} ${fontWeight} ${
+        className={`${bgColor} ${focus} ${rounded} ${textTrans} ${fontWeight} ${
           margin || ""
         } ${padding} ${
           disabled ? "cursor-not-allowed" : "cursor-pointer"
@@ -114,6 +115,7 @@ Button.defaultProps = {
   border: "border-none",
   caps: false,
   color: "text-white",
+  focus: "focus:ring-2 focus:ring-primary-500 focus:ring-offset-2",
   padding: "px-4 py-2",
   rounded: "rounded",
   ref: null,
@@ -137,6 +139,7 @@ export interface ButtonProps {
   caps?: boolean;
   color?: string;
   disabled?: boolean;
+  focus?: string;
   IconLeft?: IconType;
   IconRight?: IconType;
   link?: string;

@@ -1,13 +1,22 @@
 import os
+import environ
 
 from HRMS.settings.base import *
 from HRMS.settings.base import INSTALLED_APPS
+
+env = environ.Env(
+    USE_REST_FRAMEWORK_SWAGGER=(bool, False)
+)
 
 ALLOWED_HOSTS = ['localhost', 'testserver']
 
 DEBUG = True
 
-SECRET_KEY = 'hi@potez^(d0)vzu)*71kl-^t^$d6+_6sylm^alp(vf!%cvw!m'
+SECRET_KEY = env('SECRET_KEY')
+
+# USE_REST_FRAMEWORK_SWAGGER = env('USE_REST_FRAMEWORK_SWAGGER')
+# if USE_REST_FRAMEWORK_SWAGGER is True:
+# 	INSTALLED_APPS += ['drf_yasg']
 
 DATABASES = {
     'default': {
@@ -22,8 +31,8 @@ INTERNAL_IPS = ['127.0.0.1', 'localhost']
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # CONTACT_SUPPORT_EMAIL = ""
-LEAVE_EMAIL = "kitewebdevelopers@gmail.com"
-DEFAULT_FROM_EMAIL = "kitewebdevelopers@gmail.com"
+LEAVE_EMAIL = env('LEAVE_EMAIL')
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 
 ANYMAIL = {
     "SENDGRID_API_KEY": os.environ.get("SENDGRID_API_KEY"),
@@ -45,4 +54,3 @@ CORS_ALLOWED_ORIGINS = [
 
 # Celery Settings
 CELERY_BROKER_URL = 'redis://localhost:6379'
-

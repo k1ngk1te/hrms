@@ -9,6 +9,7 @@ export type AvatarType = {
 }
 
 export type AvatarsType = {
+	more?: string | number;
 	spacing?: string;
 	images: AvatarType[];
 	ringSize?: string;
@@ -37,7 +38,7 @@ Avatar.defaultProps = {
 	size: "h-8 w-8"
 }
 
-const Avatars = ({ images, spacing, ringColor, ringSize, rounded, size }: AvatarsType) => {
+const Avatars = ({ images, more, spacing, ringColor, ringSize, rounded, size }: AvatarsType) => {
 
 	const classes = `inline-block ${size} ${rounded} ${ringSize} ${ringColor}`
 
@@ -53,6 +54,11 @@ const Avatars = ({ images, spacing, ringColor, ringSize, rounded, size }: Avatar
 					alt={image.alt || ""}
 				/>
 			))}
+			{more && (
+				<div className="bg-red-600 flex h-7 items-center justify-center mx-1 rounded-full w-7">
+					<span className="text-xs text-white">{more}</span>
+				</div>
+			)}
 		</div>
 	)
 }

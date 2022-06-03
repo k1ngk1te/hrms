@@ -1,0 +1,60 @@
+import { useCallback, useEffect } from "react";
+import { isErrorWithData } from "@/store";
+import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
+import { useDeleteProjectMutation } from "@/store/features/projects-slice";
+import { useAppDispatch } from "@/hooks";
+
+const useDeleteProject = () => {
+  const dispatch = useAppDispatch();
+
+  const [deleteProject, { error, isLoading, status }] = useDeleteProjectMutation()
+
+  const handleSubmit = useCallback((id: string) => {
+    dispatch(alertModalOpen({
+      color: "danger",
+      header: "Delete Project?",
+      message: "Do you wish to delete this project?",
+      decisions: [
+        {
+          bg: "bg-yellow-600 hover:bg-yellow-500",
+          caps: true,
+          title: "cancel"
+        },
+        {
+          bg: "bg-red-600 hover:bg-red-500",
+          caps: true,
+          onClick: () => deleteProject(id),
+          title: "proceed"
+        },
+      ]
+    }))
+  }, [deleteProject, dispatch])
+
+  useEffect(() => {
+		if (status === "fulfilled") {
+			dispatch(alertModalOpen({
+				color: "warning",
+				header: "Project Deleted",
+				message: "Project was deleted successfully"
+			}))
+		}
+	}, [dispatch, status])
+
+  useEffect(() => {
+    if (isErrorWithData(error)) {
+      dispatch(alertModalOpen({
+        header: "Failed to delete project.",
+        message: String(error.data?.detail || error.data?.error || "A server error occurred!"),
+        color: "danger"
+      }))
+    }
+  }, [dispatch, error])
+
+  return {
+    success: status === "fulfilled" ? true : status === "rejected" ? false : undefined,
+    isLoading,
+    onSubmit: handleSubmit,
+  }
+}
+
+export default useDeleteProject

@@ -15,7 +15,7 @@ from .utils import send_email
 @receiver(pre_save, sender=Leave)
 def set_leave_id(sender, instance, **kwargs):
 	if not instance.id:
-		instance.id = generate_id("LVE", key="leave_id", model=Leave)
+		instance.id = generate_id("lve", key="leave_id", model=Leave)
 
 @receiver(post_save, sender=Leave)
 def send_leave_email(sender, instance, created, **kwargs):

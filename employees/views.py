@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.http import HttpResponse
 from rest_framework import generics, permissions, status
-from rest_framework.exceptions import PermissionDenied, ValidationError, server_error
+from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError, server_error
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -14,13 +14,20 @@ from core.views import (
 	ListCreateRetrieveUpdateDestroyView
 )
 from .filters import ClientFilter
-from .models import Attendance, Client, Department, Employee, Holiday, Project
-from .pagination import AttendancePagination, ClientPagination, EmployeePagination
+from .models import Attendance, Client, Department, Employee, Holiday, Project, Task
+from .pagination import (
+	AttendancePagination,
+	ClientPagination,
+	EmployeePagination,
+	ProjectPagination,
+	TaskPagination
+)
 from .permissions import (
 	IsEmployee,
 	IsHROrMD,
 	IsHROrMDOrAdminUser,
 	IsHROrMDOrReadOnly,
+	IsHROrMDOrLeaderOrReadOnlyEmployee,
 	IsHROrMDOrLeaderOrReadOnlyEmployeeAndClient
 )
 from .serializers import (
@@ -29,7 +36,9 @@ from .serializers import (
 	DepartmentSerializer,
 	EmployeeSerializer,
 	HolidaySerializer,
-	ProjectSerializer
+	ProjectSerializer,
+	ProjectEmployeeSerializer,
+	TaskSerializer
 )
 
 
@@ -66,7 +75,6 @@ class AttendanceView(generics.ListCreateAPIView):
 			'view': self,
 			'action': self.request.data.get("action", None)
 		}
-
 
 
 class ClientView(ListCreateRetrieveUpdateView):
@@ -334,7 +342,8 @@ class HolidayView(ListCreateRetrieveUpdateDestroyView):
 	lookup_field = 'id'
 
 
-class ProjectView(ListCreateRetrieveUpdateView):
+class ProjectView(ListCreateRetrieveUpdateDestroyView):
+	pagination_class = ProjectPagination
 	permission_classes = (IsHROrMDOrLeaderOrReadOnlyEmployeeAndClient, )
 	serializer_class = ProjectSerializer
 	search_fields = ('name', 'client__company')
@@ -352,3 +361,109 @@ class ProjectView(ListCreateRetrieveUpdateView):
 		else:
 			queryset = Project.objects.filter(Q(created_by__user=user) | Q(team=user.employee)).distinct()
 		return queryset
+
+
+class ProjectCompletedView(APIView):
+	permission_classes = (IsHROrMD, )
+
+	def post(self, request, *args, **kwargs):
+		project_id = kwargs.get("id", None)
+		if not project_id:
+			raise ValidationError({"detail": "Project 'id' is required"})
+		project = get_instance(Project, {"id": project_id})
+		if project is None:
+			raise NotFound({"detail": "Project was not Found"})
+		action = request.data.get("action", None)
+		if action is None:
+			raise ValidationError({"detail": "Action is required"})
+		if action is not True and action is not False:
+			raise ValidationError({"detail": "Action is either true or false"})
+
+		if (action is True and project.completed is True) or (action is False and
+			project.completed is False):
+			pass
+		else:
+			project.completed = action if action is True or action is False else False
+			project.save()
+
+		message = "completed" if action is True else "ongoing"
+
+		return Response({ "detail": f"Project is marked {message}"
+			}, status=status.HTTP_200_OK)
+
+
+class ProjectEmployeesView(generics.ListAPIView):
+	serializer_class = ProjectEmployeeSerializer
+	permission_classes = (IsHROrMDOrLeaderOrReadOnlyEmployeeAndClient, )
+
+	def get_queryset(self):
+		project_id = self.kwargs.get("id", None)
+		if not project_id:
+			raise ValidationError({"detail": "Project ID is required"})
+		project = get_instance(Project, {"id": project_id})
+		if not project:
+			raise NotFound({"detail": f"Project with ID {project_id} was not found"})
+		return project.team.all()
+
+
+class TaskView(ListCreateRetrieveUpdateDestroyView):
+	pagination_class = TaskPagination
+	permission_classes = (IsHROrMDOrLeaderOrReadOnlyEmployee, )
+	serializer_class = TaskSerializer
+	search_fields = ('name', )
+	ordering_fields = ('name', )
+	lookup_field = 'id'
+
+	def get(self, request, *args, **kwargs):
+		project_id = self.kwargs.get("project_id", None)
+		id = self.kwargs.get("id", None)
+
+		if project_id and id:
+			self.get_project(project_id)
+			self.get_task()
+			return self.retrieve(request, *args, **kwargs)
+
+		if project_id and not id:
+			return self.list(request, *args, **kwargs)
+
+		if not project_id and not id:
+			raise ValidationError({"detail": "Invalid route params"})
+
+	def delete(self, request, *args, **kwargs):
+		task = self.get_task()
+		if task is not None and task.created_by.user == request.user:
+			return self.destroy(request, *args, **kwargs)
+		raise PermissionDenied({"detail": "You do not have permission to make this request!"})
+
+	def get_queryset(self):
+		project_id = self.kwargs.get("project_id", None)
+
+		if not project_id:
+			raise ValidationError({"detail": "Project ID is required!"})
+		project = self.get_project(project_id)
+
+		try:
+			employee = self.request.user.employee
+			if employee.is_hr or employee.is_md:
+				queryset = project.task.all()
+			else:
+				queryset = project.task.filter(followers=employee)
+		except:
+			queryset = project.task.none()
+		return queryset
+
+	def get_project(self, id):
+		try:
+			project = Project.objects.get(id=id)
+			return project
+		except:
+			raise NotFound({"detail": f"Project was id {id} was not found"})
+
+	def get_task(self):
+		id = self.kwargs.get("id", None)
+		try:
+			task = Task.objects.get(id=id)
+			return task
+		except:
+			raise NotFound({"detail": f"Task was id {id} was not found"})
+		return None

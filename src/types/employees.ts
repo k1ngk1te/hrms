@@ -184,16 +184,17 @@ export type HolidayErrorType = {
 	date?: string;
 }
 
-export interface ProjectEmployeType extends UserType {
-	employee_id: string;
+export interface ProjectEmployeeType extends UserType {
+	id: string;
+	job: string;
 }
 
 export type ProjectType = {
     id: string | number;
     client: ClientType;
-    leaders: ProjectEmployeType[];
-    team: ProjectEmployeType[];
-    created_by: ProjectEmployeType;
+    leaders: ProjectEmployeeType[];
+    team: ProjectEmployeeType[];
+    created_by: ProjectEmployeeType;
     name: string;
     start_date: string;
     end_date: string;
@@ -208,8 +209,8 @@ export type ProjectType = {
 
 export type ProjectCreateType = {
 	client: string | number;
-	leaders: {employee_id:string}[];
-	team: {employee_id:string}[];
+	leaders: {id:string}[];
+	team: {id:string}[];
 	name: string;
 	start_date: string;
 	end_date: string;
@@ -234,4 +235,54 @@ export type ProjectCreateErrorType = {
 
 export interface ProjectListType extends DataListType {
 	results: ProjectType[]
+}
+
+
+export type TaskType = {
+	id: string;
+	project: {
+		id: string;
+		name: string;
+	}
+	completed: boolean;
+	verified: boolean;
+	name: string;
+	description: string;
+	priority: "L" | "M" | "H";
+	followers: ProjectEmployeeType[];
+	leaders: ProjectEmployeeType[];
+	created_by: ProjectEmployeeType;
+	create_date: string;
+	due_date: string;
+}
+
+export interface TaskListType extends DataListType {
+	 project: {
+        name: string;
+        id: string;
+    },
+    total: number;
+    completed: number;
+    verified: number;
+    count: number;
+    ongoing: number;
+	results: TaskType[]
+}
+
+export type TaskCreateType = {
+	leaders: {id:string}[];
+	followers: {id:string}[];
+	name: string;
+	due_date: string;
+  priority: "H" | "M" | "L";
+  description: string;
+}
+
+export type TaskCreateErrorType = {
+	leaders: string;
+	followers: string;
+	name: string;
+	due_date: string;
+  priority: string;
+  description: string;
 }

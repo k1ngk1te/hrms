@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, CSSProperties } from "react";
 import Badge, { BadgeProps } from "../common/Badge";
 import Button, { ButtonProps } from "./Button";
 
@@ -21,6 +21,7 @@ type TextareaProps = {
   placeholderColor?: string;
   rounded?: string;
   required?: boolean;
+  style?: CSSProperties;
   textSize?: string;
   value: string;
 };
@@ -44,6 +45,7 @@ const Textarea = ({
   placeholderColor,
   rounded,
   required,
+  style,
   textSize,
   value,
   ...props
@@ -110,6 +112,7 @@ const Textarea = ({
           placeholder={placeholder}
           required={required}
           value={value}
+          style={style}
           {...props}
         />
       </div>

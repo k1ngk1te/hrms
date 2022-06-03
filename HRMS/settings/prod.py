@@ -4,8 +4,12 @@ from UnifoamHr.settings.base import *
 
 env = environ.Env(
 	DEBUG=(bool, False),
-	CORS_ALLOW_CREDENTIALS=(bool, True)
 )
+
+DEBUG = env('DEBUG')
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
@@ -15,7 +19,9 @@ DATABASES = {
 	'default': env.db(),
 }
 
-DEBUG = env('DEBUG')
+# USE_REST_FRAMEWORK_SWAGGER = env('USE_REST_FRAMEWORK_SWAGGER')
+# if USE_REST_FRAMEWORK_SWAGGER is True:
+# 	INSTALLED_APPS += ['drf_yasg']
 
 # Heroku
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -45,13 +51,12 @@ if leave_email is not None:
 	LEAVE_EMAIL = leave_email
 else:
 	LEAVE_EMAIL = DEFAULT_FROM_EMAIL
-	
+
 
 # Cors Header Settings
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 JWT_AUTH_SECURE = True
-CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS')
 
 # Celery Settings
 CELERY_BROKER_URL = env('CELERY_BROKER_URL')
@@ -64,4 +69,3 @@ CLOUDINARY_STORAGE = {
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
