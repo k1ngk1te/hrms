@@ -96,36 +96,42 @@ const Detail = () => {
 								</p>
 							</div>
 						</div>
-						<div className="bg-gray-100 p-4 rounded-md shadow-lg">
-							<div className="my-2">
-								<h3 className="capitalize cursor-pointer font-bold text-lg text-gray-800 tracking-wide md:text-xl">
-									Task Leaders
-								</h3>
+						{data.leaders && data.leaders.length > 0 && (
+							<div className="bg-gray-100 p-4 rounded-md shadow-lg">
+								<div className="my-2">
+									<h3 className="capitalize cursor-pointer font-bold text-lg text-gray-800 tracking-wide md:text-xl">
+										Task Leaders
+									</h3>
+								</div>
+								<div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:gap-5 lg:grid-cols-3 lg:gap-3">
+									{data.leaders.map((leader, index) => (
+										<PersonCard 
+											key={index}
+											name={leader.full_name}
+											label={leader.job}
+										/>	
+									))}
+								</div>
 							</div>
-							<div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:gap-5 lg:grid-cols-3 lg:gap-3">
-								{data.leaders.map((leader, index) => (
-									<PersonCard 
-										key={index}
-										name={leader.full_name}
-										label={leader.job}
-									/>	
-								))}
+						)}
+						{data.followers && data.followers.length > 0 && (
+							<div className="bg-gray-100 p-4 rounded-md shadow-lg">
+								<div className="my-2">
+									<h3 className="capitalize cursor-pointer font-bold text-lg text-gray-800 tracking-wide md:text-xl">
+										Task Followers
+									</h3>
+								</div>
+								<div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:gap-5 lg:grid-cols-3 lg:gap-3">
+									{data.followers.map((follower, index) => (
+										<PersonCard 
+											key={index}
+											name={follower.full_name}
+											label={follower.job}
+										/>								
+									))}
+								</div>
 							</div>
-						</div>
-						<div className="bg-gray-100 p-4 rounded-md shadow-lg">
-							<div className="my-2">
-								<h3 className="capitalize cursor-pointer font-bold text-lg text-gray-800 tracking-wide md:text-xl">
-									Task Followers
-								</h3>
-							</div>
-							<div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:gap-5 lg:grid-cols-3 lg:gap-3">
-								<PersonCard />								
-								<PersonCard />								
-								<PersonCard />								
-								<PersonCard />								
-								<PersonCard />								
-							</div>
-						</div>
+						)}	
 					</div>
 					<Modal
 						close={() => dispatch(modalClose())}
