@@ -58,6 +58,7 @@ class CustomRelatedField(RelatedField):
 class ClientRelatedField(CustomRelatedField):
 	def to_representation(self, value):
 		data = {
+			"id": value.id,
 			"position": value.position,
 			"company": value.company,
 			"contact": get_user_info(value.contact, self.context.get("request"))

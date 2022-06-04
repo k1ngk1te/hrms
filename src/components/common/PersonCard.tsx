@@ -93,7 +93,7 @@ const PersonCard: FC<PersonCardType> = ({ actions, title, label, image, name, op
 									caps
 									focus=""
 									titleSize="text-sm md:text-base lg:text-sm"
-									{...action} 
+									{...option} 
 								/>
 							</li>
 						))}
