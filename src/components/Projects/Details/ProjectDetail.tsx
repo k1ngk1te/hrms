@@ -1,7 +1,7 @@
-import { DEFAULT_IMAGE } from "@/config";
-import { useFormSelect } from "@/hooks";
-import { StatusProgressBar } from "@/components/common";
-import { Select } from "@/components/controls";
+import { DEFAULT_IMAGE } from "../../../config";
+import { useFormSelect } from "../../../hooks";
+import { StatusProgressBar } from "../../common";
+import { Select } from "../../controls";
 
 const ProjectDetail = () => {
 	const priority = useFormSelect("H");

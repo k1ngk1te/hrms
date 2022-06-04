@@ -12,13 +12,13 @@ import {
 	FaUsers,
 	FaJournalWhills,
 } from "react-icons/fa";
-import * as routes from "@/config/routes";
-import { useAppDispatch, useAppSelector } from "@/hooks";
-import { baseApi } from "@/store/features/base";
-import { open } from "@/store/features/alert-modal-slice";
-import { logout } from "@/store/features/auth-slice";
-import { useLogoutMutation } from "@/store/features/auth-api-slice";
-import { SimpleLink, ListLink } from "@/components/Layout/Link";
+import * as routes from "../../config/routes";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { baseApi } from "../../store/features/base";
+import { open } from "../../store/features/alert-modal-slice";
+import { logout } from "../../store/features/auth-slice";
+import { useLogoutMutation } from "../../store/features/auth-api-slice";
+import { SimpleLink, ListLink } from "./Link";
 
 const sidebarStyle =
 	"absolute bg-primary-500 duration-1000 h-full overflow-y-auto transform top-16 w-3/4 z-50 sm:top-14 md:px-2 md:w-1/3 lg:fixed lg:px-0 lg:py-6 lg:top-0 lg:translate-x-0 lg:w-1/6 xl:py-7";

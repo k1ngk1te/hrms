@@ -1,4 +1,4 @@
-import { StatusProgressBar } from "@/components/common";
+import { StatusProgressBar } from "../common";
 
 const Statistics = () => (
 	<div className="bg-white px-4 py-2 rounded-lg shadow-lg">

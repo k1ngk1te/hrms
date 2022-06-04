@@ -1,17 +1,17 @@
 import { FormEvent, FC, useCallback, useEffect, useState } from "react";
 
-import { useGetDepartmentsQuery } from "@/store/features/departments-slice";
-import { useGetEmployeesQuery } from "@/store/features/employees-slice";
-import { useGetJobsQuery } from "@/store/features/jobs-slice";
+import { useGetDepartmentsQuery } from "../../store/features/departments-slice";
+import { useGetEmployeesQuery } from "../../store/features/employees-slice";
+import { useGetJobsQuery } from "../../store/features/jobs-slice";
 import {
   useAppSelector,
   useFormInput,
   useFormSelect,
   useFormTextArea,
-} from "@/hooks";
-import { toCapitalize } from "@/utils";
-import { ErrorFormType, ErrorsKeyType, FormType, FormErrorType } from "@/types/employees";
-import { Button, File, Input, Select, Textarea } from "@/components/controls";
+} from "../../hooks";
+import { toCapitalize } from "../../utils";
+import { ErrorFormType, ErrorsKeyType, FormType, FormErrorType } from "../../types/employees";
+import { Button, File, Input, Select, Textarea } from "../../controls";
 
 type FormProps = {
   initState: FormType;

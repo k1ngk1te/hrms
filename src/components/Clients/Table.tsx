@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { FaEye } from "react-icons/fa";
-import { CLIENT_PAGE_URL } from "@/config";
-import { ClientType } from "@/types/employees";
-import Table, { HeadType, RowType } from "@/components/controls/Table";
+import { CLIENT_PAGE_URL } from "../../config";
+import { ClientType } from "../../types/employees";
+import Table, { HeadType, RowType } from "../controls/Table";
 
 const heads: HeadType = [
   { value: "company name" },

@@ -1,7 +1,7 @@
 import { FC, FormEvent, useCallback, useEffect } from "react";
-import { useFormInput } from "@/hooks";
-import { Button, Input } from "@/components/controls";
-import { HolidayCreateType, HolidayErrorType } from "@/types/employees";
+import { useFormInput } from "../../hooks";
+import { Button, Input } from "../controls";
+import { HolidayCreateType, HolidayErrorType } from "../../types/employees";
 
 type FormProps = {
 	initState: HolidayCreateType;

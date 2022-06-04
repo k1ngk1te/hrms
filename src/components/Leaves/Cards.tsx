@@ -1,5 +1,5 @@
 import { FaClock, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { Card } from "@/components/common";
+import { Card } from "../../common";
 
 const cards = [
 	{bgColor: "bg-yellow-400", icon: FaClock, "title": "PENDING LEAVES", txtColor: "text-yellow-400" },

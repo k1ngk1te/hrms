@@ -1,8 +1,8 @@
 import { FormEvent, FC, useCallback, useEffect, useState } from "react";
-import { useGetEmployeesQuery } from "@/store/features/employees-slice";
-import { useAppSelector, useFormInput, useFormSelect } from "@/hooks";
-import { toCapitalize } from "@/utils";
-import { Button, Input, Select } from "@/components/controls";
+import { useGetEmployeesQuery } from "../../store/features/employees-slice";
+import { useAppSelector, useFormInput, useFormSelect } from "../../hooks";
+import { toCapitalize } from "../../utils";
+import { Button, Input, Select } from "../controls";
 
 type FormType = {
   name: string;

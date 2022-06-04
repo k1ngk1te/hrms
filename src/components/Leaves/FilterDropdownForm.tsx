@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
-import { getDate } from "@/utils";
-import { Button, Input } from "@/components/controls";
+import { getDate } from "../../utils";
+import { Button, Input } from "../controls";
 
 type FormProps = {
 	loading: boolean;

@@ -1,4 +1,4 @@
-import { Card } from "@/components/common";
+import { Card } from "../common";
 
 const cards = [
 	{bgColor: "bg-yellow-400", image: "/static/images/users-yellow.png", "title": "TOTAL CLIENTS", txtColor: "text-yellow-400" },

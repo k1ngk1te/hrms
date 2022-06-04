@@ -1,14 +1,14 @@
 import { FC, FormEvent, useCallback, useEffect, useState } from "react";
 
-import { logout } from "@/store/features/auth-slice";
-import { isErrorWithData, isFormError } from "@/store";
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
-import { useChangeEmployeePasswordMutation } from "@/store/features/employees-slice";
-import { close as modalClose } from "@/store/features/modal-slice";
-import { useAppDispatch, useFormInput } from "@/hooks";
-import { validateForm } from "@/utils";
-import { ChangePasswordType } from "@/types/user";
-import { Button, Input } from "@/components/controls";
+import { logout } from "../../../store/features/auth-slice";
+import { isErrorWithData, isFormError } from "../../../store";
+import { open as alertModalOpen } from "../../../store/features/alert-modal-slice";
+import { useChangeEmployeePasswordMutation } from "../../../store/features/employees-slice";
+import { close as modalClose } from "../../../store/features/modal-slice";
+import { useAppDispatch, useFormInput } from "../../../hooks";
+import { validateForm } from "../../../utils";
+import { ChangePasswordType } from "../../../types/user";
+import { Button, Input } from "../../controls";
 
 type FormProps = {
 	email: string;

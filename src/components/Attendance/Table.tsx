@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { AttendanceType } from "@/types/employees";
-import Table, { HeadType, RowType } from "@/components/controls/Table";
+import { AttendanceType } from "../../types/employees";
+import Table, { HeadType, RowType } from "../controls/Table";
 
 const heads: HeadType = [
   { value: "date" },

@@ -2,16 +2,16 @@ import { FC, useCallback, useEffect, useState } from "react";
 import {
 	useGetClientsQuery,
 	useGetEmployeesQuery,
-} from "@/store/features/employees-slice";
+} from "../../store/features/employees-slice";
 import {
 	useAppSelector,
 	useFormInput,
 	useFormSelect,
 	useFormTextArea,
-} from "@/hooks";
-import { toCapitalize, validateForm } from "@/utils";
-import { Button, Input, Select, Textarea } from "@/components/controls";
-import { ProjectCreateType, ProjectCreateErrorType } from "@/types/employees";
+} from "../../hooks";
+import { toCapitalize, validateForm } from "../../utils";
+import { Button, Input, Select, Textarea } from "../controls";
+import { ProjectCreateType, ProjectCreateErrorType } from "../../types/employees";
 
 export type FormProps = {
 	editMode?: boolean;

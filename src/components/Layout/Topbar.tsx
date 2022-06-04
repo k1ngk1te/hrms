@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { FaBell } from "react-icons/fa"
-import { NOTIFICATIONS_PAGE_URL } from "@/config/routes";
-import { useNotificationsQuery } from "@/store/features/notifications-slice";
-import { useAppSelector } from "@/hooks";
+import { NOTIFICATIONS_PAGE_URL } from "../../config/routes";
+import { useNotificationsQuery } from "../../store/features/notifications-slice";
+import { useAppSelector } from "../../hooks";
 
 const Topbar = () => {
   const data = useAppSelector((state) => state.auth.data);

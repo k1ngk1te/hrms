@@ -9,11 +9,11 @@ import {
 	FaTrash,
 } from "react-icons/fa";
 
-import { DEFAULT_IMAGE, PROJECT_PAGE_URL } from "@/config";
-import { useOutClick, useDeleteProject, useMarkProject } from "@/hooks";
-import { Avatars, StatusProgressBar } from "@/components/common";
-import { Button } from "@/components/controls";
-import { ProjectEmployeeType, ProjectType } from "@/types/employees";
+import { DEFAULT_IMAGE, PROJECT_PAGE_URL } from "../../config";
+import { useOutClick, useDeleteProject, useMarkProject } from "../../hooks";
+import { Avatars, StatusProgressBar } from "../../common";
+import { Button } from "../../controls";
+import { ProjectEmployeeType, ProjectType } from "../../types/employees";
 import { InitStateType } from "./Form";
 
 const ImageBlocks = ({ team }: { team: ProjectEmployeeType[] }) => {

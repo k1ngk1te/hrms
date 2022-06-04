@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { FaPen, FaTrash } from "react-icons/fa";
-import { useAppSelector } from "@/hooks";
-import { toCapitalize } from "@/utils";
-import { DepartmentType } from "@/types/departments";
-import Table, { HeadType, RowType } from "@/components/controls/Table";
+import { useAppSelector } from "../../hooks";
+import { toCapitalize } from "../../utils";
+import { DepartmentType } from "../../types/departments";
+import Table, { HeadType, RowType } from "../controls/Table";
 
 const getRows = (
   data: DepartmentType[],

@@ -1,9 +1,9 @@
 import { FC, useEffect } from "react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
-import { useDeleteNotificationMutation } from "@/store/features/notifications-slice";
-import { useAppDispatch } from "@/hooks";
-import { Button } from "@/components/controls";
+import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
+import { useDeleteNotificationMutation } from "../../store/features/notifications-slice";
+import { useAppDispatch } from "../../hooks";
+import { Button } from "../controls";
 
 const weekdays = [
 	"sunday",

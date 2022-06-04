@@ -1,11 +1,11 @@
 import { useCallback, useEffect } from "react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { isErrorWithData, isFormError } from "@/store";
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
-import { close as modalClose } from "@/store/features/modal-slice";
-import { useUpdateClientMutation } from "@/store/features/employees-slice";
-import { useAppDispatch } from "@/hooks";
-import { ClientCreateType, ClientFormErrorType, ClientType } from "@/types/employees";
+import { isErrorWithData, isFormError } from "../../store";
+import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
+import { close as modalClose } from "../../store/features/modal-slice";
+import { useUpdateClientMutation } from "../../store/features/employees-slice";
+import { useAppDispatch } from "../../hooks";
+import { ClientCreateType, ClientFormErrorType, ClientType } from "../../types/employees";
 import Form from "./Form";
 
 const UpdateForm = ({ client }: { client: ClientType }) => {

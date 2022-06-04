@@ -1,8 +1,8 @@
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { FaCheck, FaCheckCircle, FaPen, FaTimes, FaTrash } from "react-icons/fa";
 
-import { useOutClick } from "@/hooks";
-import { Button } from "@/components/controls"
+import { useOutClick } from "../../../hooks";
+import { Button } from "../../controls"
 
 const Task = ({ title, completed }: { completed: boolean; title: string }) => {
 	const { buttonRef, ref, setVisible, visible } = useOutClick<

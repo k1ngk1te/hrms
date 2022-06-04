@@ -1,7 +1,7 @@
 import { FC, useEffect } from "react";
 import { FaSearch, FaPlus } from "react-icons/fa";
-import { useAppSelector, useFormInput } from "@/hooks";
-import { Button, InputButton } from "@/components/controls";
+import { useAppSelector, useFormInput } from "../../hooks";
+import { Button, InputButton } from "../../controls";
 
 type TopbarProps = {
 	openModal: () => void;

@@ -1,5 +1,5 @@
 import { FaFileUpload } from "react-icons/fa";
-import { Button } from "@/components/controls";
+import { Button } from "../../controls";
 
 const ProjectImages = () => (
 <div className="bg-white my-4 p-4 rounded-md shadow-lg">

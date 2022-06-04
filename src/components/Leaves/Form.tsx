@@ -1,10 +1,10 @@
 import { ChangeEvent, FormEvent, FC, useEffect, useState } from "react";
 
-import { useGetEmployeesQuery } from "@/store/features/employees-slice";
-import { useAppSelector } from "@/hooks";
-import { toCapitalize } from "@/utils";
-import { FormType } from "@/types/leaves";
-import { Button, Input, Select, Textarea } from "@/components/controls";
+import { useGetEmployeesQuery } from "../../store/features/employees-slice";
+import { useAppSelector } from "../../hooks";
+import { toCapitalize } from "../../utils";
+import { FormType } from "../../types/leaves";
+import { Button, Input, Select, Textarea } from "../../controls";
 
 type FormProps = {
   adminView?: boolean;

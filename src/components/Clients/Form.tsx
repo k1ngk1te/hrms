@@ -1,8 +1,8 @@
 import { FC, useCallback, useEffect, useState } from "react";
-import { useFormInput, useFormSelect, useFormTextArea } from "@/hooks";
-import { toCapitalize, validateForm } from "@/utils";
-import { Button, File, Input, Select, Textarea } from "@/components/controls";
-import { ClientCreateType, ClientFormErrorType } from "@/types/employees";
+import { useFormInput, useFormSelect, useFormTextArea } from "../../hooks";
+import { toCapitalize, validateForm } from "../../utils";
+import { Button, File, Input, Select, Textarea } from "../controls";
+import { ClientCreateType, ClientFormErrorType } from "../../types/employees";
 
 export type FormProps = {
 	editMode?: boolean;

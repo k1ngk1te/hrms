@@ -1,15 +1,15 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
-import { isErrorWithData, isFormError } from "@/store";
-import { logout } from "@/store/features/auth-slice";
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
-import { close as modalClose } from "@/store/features/modal-slice";
-import { useUpdateEmployeeMutation } from "@/store/features/employees-slice";
-import { useAppDispatch } from "@/hooks";
-import { omitKey, validateForm } from "@/utils";
-import { initErrorState } from "@/containers/Employees";
-import { EmployeeType, ErrorFormType, FormErrorType, FormType } from "@/types/employees";
-import { Form } from "@/components/Employees";
+import { isErrorWithData, isFormError } from "../../../store";
+import { logout } from "../../../store/features/auth-slice";
+import { open as alertModalOpen } from "../../../store/features/alert-modal-slice";
+import { close as modalClose } from "../../../store/features/modal-slice";
+import { useUpdateEmployeeMutation } from "../../../store/features/employees-slice";
+import { useAppDispatch } from "../../../hooks";
+import { omitKey, validateForm } from "../../../utils";
+import { initErrorState } from "../../../containers/Employees";
+import { EmployeeType, ErrorFormType, FormErrorType, FormType } from "../../../types/employees";
+import { Form } from "../../Employees";
 
 const EmployeeForm = ({
   empId,

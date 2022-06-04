@@ -1,6 +1,6 @@
 import { FormEvent, FC, useCallback, useEffect } from "react";
-import { useFormInput } from "@/hooks";
-import { Button, Input } from "@/components/controls";
+import { useFormInput } from "../../hooks";
+import { Button, Input } from "../controls";
 
 type FormType = {
   name: string;

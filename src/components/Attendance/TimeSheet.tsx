@@ -1,11 +1,11 @@
 import { FC, useCallback, useEffect, useState } from "react";
-import { isErrorWithData } from "@/store";
-import { open } from "@/store/features/alert-slice";
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
-import { usePunchActionMutation } from "@/store/features/employees-slice";
-import { useAppDispatch } from "@/hooks";
-import { Button, Loader } from "@/components/controls";
-import { getTime } from "@/utils";
+import { isErrorWithData } from "../../store";
+import { open } from "../../store/features/alert-slice";
+import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
+import { usePunchActionMutation } from "../../store/features/employees-slice";
+import { useAppDispatch } from "../../hooks";
+import { Button, Loader } from "../controls";
+import { getTime } from "../../utils";
 
 export type TimeSheetProps = {
 	loading: boolean;

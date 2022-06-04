@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { FaEye, FaPen, FaTrash } from "react-icons/fa";
 import { useParams } from "react-router-dom"
-import { PROJECT_TASK_PAGE_URL } from "@/config";
-import { TaskType, TaskCreateType } from "@/types/employees";
-import Table, { HeadType, RowType } from "@/components/controls/Table";
+import { PROJECT_TASK_PAGE_URL } from "../../../config";
+import { TaskType, TaskCreateType } from "../../../types/employees";
+import Table, { HeadType, RowType } from "../../controls/Table";
 
 const heads: HeadType = [
   { value: "name" },

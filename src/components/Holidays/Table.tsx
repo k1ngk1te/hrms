@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { FaPen, FaTrash } from "react-icons/fa";
-import { useAppSelector } from "@/hooks";
-import { HolidayType, HolidayCreateType } from "@/types/employees";
-import Table, { HeadType, RowType } from "@/components/controls/Table";
+import { useAppSelector } from "../../hooks";
+import { HolidayType, HolidayCreateType } from "../../types/employees";
+import Table, { HeadType, RowType } from "../../controls/Table";
 
 const heads: HeadType = [
 	{ value: "name" },

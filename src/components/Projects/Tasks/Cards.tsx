@@ -1,5 +1,5 @@
 import { FaClock, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { Card } from "@/components/common";
+import { Card } from "../../common";
 
 const cards = [
 	{bgColor: "bg-gray-400", icon: FaClock, "title": "TOTAL TASKS", txtColor: "text-gray-400" },

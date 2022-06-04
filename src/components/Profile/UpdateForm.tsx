@@ -1,20 +1,20 @@
 import { FormEvent, FC, useCallback, useEffect, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 
-import { isErrorWithData, isFormError } from "@/store";
-import { setData, logout } from "@/store/features/auth-slice";
-import { useUpdateProfileMutation } from "@/store/features/auth-api-slice";
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
-import { close as modalClose } from "@/store/features/modal-slice";
+import { isErrorWithData, isFormError } from "../../store";
+import { setData, logout } from "../../store/features/auth-slice";
+import { useUpdateProfileMutation } from "../../store/features/auth-api-slice";
+import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
+import { close as modalClose } from "../../store/features/modal-slice";
 import {
 	useAppDispatch,
 	useFormInput,
 	useFormSelect,
 	useFormTextArea,
-} from "@/hooks";
-import { omitKey, validateForm } from "@/utils";
-import { EmployeeType } from "@/types/employees";
-import { Button, File, Input, Select, Textarea } from "@/components/controls";
+} from "../../hooks";
+import { omitKey, validateForm } from "../../utils";
+import { EmployeeType } from "../../types/employees";
+import { Button, File, Input, Select, Textarea } from "../controls";
 
 type FormProps = {
 	initState?: EmployeeType;
