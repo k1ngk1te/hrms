@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AlertProps } from "@/components/controls/Alert";
+import { AlertProps } from "../../components/controls/Alert";
 
 const initialState: AlertProps = {
   message: undefined,

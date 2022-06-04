@@ -10,8 +10,6 @@ admin.site.site_header = "Human Resource Management Administration"
 admin.site.site_title = "Human Resource Management Administration Portal"
 admin.site.index_title = "Human Resource Management Administration Portal"
 
-# schema_view = get_swagger_view(title='Kite Human Resource Management System API')
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/login/', CustomLoginView.as_view(), name='rest_login'),

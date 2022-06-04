@@ -1,7 +1,7 @@
 import { baseApi } from "./base";
-import { DATA_LIFETIME, DEPARTMENTS_URL, DEPARTMENT_URL } from "@/config";
-import { PaginationType } from "@/types/common";
-import { GetDepartmentsDataType } from "@/types/departments";
+import { DATA_LIFETIME, DEPARTMENTS_URL, DEPARTMENT_URL } from "../../config";
+import { PaginationType } from "../../types/common";
+import { GetDepartmentsDataType } from "../../types/departments";
 
 const departmentsApi = baseApi.injectEndpoints({
 	endpoints: (build) => ({

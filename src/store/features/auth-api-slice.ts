@@ -6,8 +6,8 @@ import {
   PROFILE_URL,
   USER_DATA_URL,
 } from "@/config";
-import { EmployeeType } from "@/types/employees";
-import { ProfileFormType, UserInfoType } from "@/types/user";
+import { EmployeeType } from "../../types/employees";
+import { ProfileFormType, UserInfoType } from "../../types/user";
 
 const generateForm = (profile: ProfileFormType) => {
   const form = new FormData();

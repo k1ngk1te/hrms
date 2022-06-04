@@ -5,9 +5,9 @@ import {
 	LEAVE_DETAIL_URL,
 	LEAVES_ADMIN_URL,
 	LEAVE_ADMIN_DETAIL_URL,
-} from "@/config";
-import { PaginationType } from "@/types/common";
-import { GetLeavesDataType, FormType, LeaveType } from "@/types/leaves";
+} from "../../config";
+import { PaginationType } from "../../types/common";
+import { GetLeavesDataType, FormType, LeaveType } from "../../types/leaves";
 
 interface QueryType extends PaginationType {
 	name?: string;

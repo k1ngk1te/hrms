@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ModalProps } from "@/components/common/AlertModal";
+import { ModalProps } from "../../components/common/AlertModal";
 
 type ModalPropsType = Omit<ModalProps, "close"|"visible">
 

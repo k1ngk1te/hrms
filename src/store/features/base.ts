@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import cookie from "react-cookies";
-import { CSRF_HEADER_KEY, CSRF_TOKEN } from "@/config";
+import { CSRF_HEADER_KEY, CSRF_TOKEN } from "../../config";
 
 export const baseApi = createApi({
 	baseQuery: fetchBaseQuery({

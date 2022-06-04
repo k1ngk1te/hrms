@@ -1,7 +1,7 @@
 import { baseApi } from "./base";
-import { DATA_LIFETIME, JOBS_URL, JOB_URL } from "@/config";
-import { PaginationType } from "@/types/common";
-import { GetJobsDataType } from "@/types/jobs";
+import { DATA_LIFETIME, JOBS_URL, JOB_URL } from "../../config";
+import { PaginationType } from "../../types/common";
+import { GetJobsDataType } from "../../types/jobs";
 
 const jobsApi = baseApi.injectEndpoints({
 	endpoints: (build) => ({

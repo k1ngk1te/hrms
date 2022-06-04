@@ -10,8 +10,8 @@ import {
 	EMPLOYEE_PASSWORD_CHANGE_URL,
 	HOLIDAY_URL,
 	HOLIDAYS_URL,
-} from "@/config";
-import { PaginationType } from "@/types/common";
+} from "../../config";
+import { PaginationType } from "../../types/common";
 import {
 	AttendanceListType,
 	AttendanceType,
@@ -25,8 +25,8 @@ import {
 	HolidayType,
 	HolidayCreateType,
 	HolidayListType,
-} from "@/types/employees";
-import { ChangePasswordType } from "@/types/user";
+} from "../../types/employees";
+import { ChangePasswordType } from "../../types/user";
 import { generateEmployee, generateClient } from "../helpers";
 
 const employeesApi = baseApi.injectEndpoints({

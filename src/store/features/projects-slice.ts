@@ -7,7 +7,7 @@ import {
 	PROJECT_EMPLOYEES_URL,
 	TASKS_URL,
 	TASK_URL
-} from "@/config";
+} from "../../config";
 import {
 	ProjectListType,
 	PaginationType,
@@ -17,7 +17,7 @@ import {
 	TaskCreateType,
 	TaskListType,
 	TaskType
-} from "@/types";
+} from "../../types";
 
 export interface TaskPaginationType extends PaginationType {
 	project_id: string;

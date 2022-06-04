@@ -1,4 +1,4 @@
-import { ClientCreateType, FormType } from "@/types/employees";
+import { ClientCreateType, FormType } from "../types/employees";
 
 export const generateEmployee = (data: FormType) => {
 	const form = new FormData();

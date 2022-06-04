@@ -1,7 +1,7 @@
 import { baseApi } from "./base";
-import { DATA_LIFETIME, NOTIFICATIONS_URL, NOTIFICATION_URL } from "@/config";
-import { PaginationType } from "@/types/common";
-import { GetNotificationsDataType } from "@/types/notifications";
+import { DATA_LIFETIME, NOTIFICATIONS_URL, NOTIFICATION_URL } from "../../config";
+import { PaginationType } from "../../types/common";
+import { GetNotificationsDataType } from "../../types/notifications";
 
 const notificationsApi = baseApi.injectEndpoints({
 	endpoints: (build) => ({

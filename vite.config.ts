@@ -11,7 +11,7 @@ export default defineConfig({
   plugins: [react()],
   publicDir: "static",
   root: "src",
-  resolve: {
-    alias: [{ find: "@", replacement: path.resolve(__dirname, "src") }],
-  },
+  // resolve: {
+  //   alias: [{ find: "@", replacement: path.resolve(__dirname, "src") }],
+  // },
 })

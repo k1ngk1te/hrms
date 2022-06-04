@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { NODE_ENV } from "@/config";
-import { baseApi } from "@/store/features/base";
-import alertModalReducer from "@/store/features/alert-modal-slice";
-import alertReducer from "@/store/features/alert-slice";
-import authReducer from "@/store/features/auth-slice";
-import modalReducer from "@/store/features/modal-slice";
+import { NODE_ENV } from "../config";
+import { baseApi } from "./features/base";
+import alertModalReducer from "./features/alert-modal-slice";
+import alertReducer from "./features/alert-slice";
+import authReducer from "./features/auth-slice";
+import modalReducer from "./features/modal-slice";
 
 const store = configureStore({
   devTools: NODE_ENV === "development",
