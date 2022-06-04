@@ -1,4 +1,4 @@
-import { Loader } from "@/components/controls"
+import { Loader } from "../controls"
 
 const SplashScreen = () => (
 	<div 

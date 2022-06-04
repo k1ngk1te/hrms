@@ -1,9 +1,9 @@
 import { FC } from "react"
 import { FaPen, FaTimes } from "react-icons/fa";
 import { BiDotsVerticalRounded } from "react-icons/bi";
-import { DEFAULT_IMAGE } from "@/config";
-import { useOutClick } from "@/hooks"
-import Button, { ButtonProps } from "@/components/controls/Button"
+import { DEFAULT_IMAGE } from "../../config";
+import { useOutClick } from "../../hooks"
+import Button, { ButtonProps } from "../controls/Button"
 
 export type PersonCardType = {
 	image?: {
