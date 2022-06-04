@@ -57,7 +57,7 @@ const Team = () => {
 				]
 			}))
 		}
-	}, [dispatch, updateProject, data])
+	}, [dispatch, updateProject, id, data])
 
 	const appointLeader = useCallback((employee_id: string, appoint: boolean) => {
 		if (employee_id) {
@@ -103,7 +103,7 @@ const Team = () => {
 				]
 			}))
 		}
-	}, [dispatch, updateProject, data])
+	}, [dispatch, updateProject, id, data])
 
 	useEffect(() => {
 		if (updateProject.success) {
