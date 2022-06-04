@@ -5,8 +5,8 @@ import {
 	useLocation,
 	useSearchParams,
 } from "react-router-dom";
-import * as routes from "@/config/routes";
-import { useAppSelector } from "@/hooks";
+import * as routes from "../../config/routes";
+import { useAppSelector } from "../../hooks";
 
 const NotAuthenticated = () => {
 	const [nextRoute, setNextRoute] = useState(routes.HOME_PAGE_URL);

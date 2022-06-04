@@ -1,36 +1,36 @@
 import { Routes, Route } from "react-router-dom";
 
-import * as routes from "@/config/routes";
+import * as routes from "./config/routes";
 
-import Layout from "@/Layout";
+import Layout from "./Layout";
 
-import { Authenticated, CheckAuth, NotAuthenticated } from "@/utils";
+import { Authenticated, CheckAuth, NotAuthenticated } from "./utils";
 
-import NotFoundPage from "@/pages/404";
+import NotFoundPage from "./pages/404";
 
-import HomePage from "@/pages";
-import JobsPage from "@/pages/jobs";
-import LoginPage from "@/pages/account/login";
-import NotificationsPage from "@/pages/notifications";
-import ProfilePage from "@/pages/profile";
+import HomePage from "./pages";
+import JobsPage from "./pages/jobs";
+import LoginPage from "./pages/account/login";
+import NotificationsPage from "./pages/notifications";
+import ProfilePage from "./pages/profile";
 
 // Employees Section
-import AttendancePage from "@/pages/attendance";
-import ClientsPage from "@/pages/clients";
-import ClientPage from "@/pages/clients/detail";
-import DepartmentsPage from "@/pages/departments";
-import EmployeesPage from "@/pages/admin/employees";
-import EmployeesDetailPage from "@/pages/admin/employees/detail";
-import HolidaysPage from "@/pages/holidays";
-import LeavesPage from "@/pages/leaves";
-import LeavesDetailPage from "@/pages/leaves/detail";
-import LeavesAdminPage from "@/pages/admin/leaves";
-import LeavesAdminDetailPage from "@/pages/admin/leaves/detail";
-import ProjectsPage from "@/pages/projects";
-import ProjectPage from "@/pages/projects/detail";
-import ProjectTasksPage from "@/pages/projects/detail/tasks";
-import ProjectTaskPage from "@/pages/projects/detail/tasks/detail";
-import ProjectTeamPage from "@/pages/projects/detail/team";
+import AttendancePage from "./pages/attendance";
+import ClientsPage from "./pages/clients";
+import ClientPage from "./pages/clients/detail";
+import DepartmentsPage from "./pages/departments";
+import EmployeesPage from "./pages/admin/employees";
+import EmployeesDetailPage from "./pages/admin/employees/detail";
+import HolidaysPage from "./pages/holidays";
+import LeavesPage from "./pages/leaves";
+import LeavesDetailPage from "./pages/leaves/detail";
+import LeavesAdminPage from "./pages/admin/leaves";
+import LeavesAdminDetailPage from "./pages/admin/leaves/detail";
+import ProjectsPage from "./pages/projects";
+import ProjectPage from "./pages/projects/detail";
+import ProjectTasksPage from "./pages/projects/detail/tasks";
+import ProjectTaskPage from "./pages/projects/detail/tasks/detail";
+import ProjectTeamPage from "./pages/projects/detail/team";
 
 const AppRoutes = () => (
 	<Routes>

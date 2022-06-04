@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { LOGIN_PAGE_URL } from "@/config";
-import { useAppSelector } from "@/hooks";
+import { LOGIN_PAGE_URL } from "../../config";
+import { useAppSelector } from "../../hooks";
 
 const Authenticated = () => {
 	const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
