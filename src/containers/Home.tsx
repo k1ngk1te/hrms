@@ -1,12 +1,12 @@
 import { FaBell, FaSuitcase, FaUsers } from "react-icons/fa";
-import { LEAVES_PAGE_URL } from "@/config/routes";
-import { useGetEmployeesQuery } from "@/store/features/employees-slice";
-import { useGetAdminLeavesQuery } from "@/store/features/leaves-slice";
-import { useNotificationsQuery } from "@/store/features/notifications-slice";
-import { useAppSelector } from "@/hooks";
-import { getDateString } from "@/utils";
-import { Card, Container } from "@/components/common";
-import { Button } from "@/components/controls";
+import { LEAVES_PAGE_URL } from "../config/routes";
+import { useGetEmployeesQuery } from "../store/features/employees-slice";
+import { useGetAdminLeavesQuery } from "../store/features/leaves-slice";
+import { useNotificationsQuery } from "../store/features/notifications-slice";
+import { useAppSelector } from "../hooks";
+import { getDateString } from "../utils";
+import { Card, Container } from "../components/common";
+import { Button } from "../components/controls";
 
 const Home = () => {
   const user = useAppSelector((state) => state.auth.data);

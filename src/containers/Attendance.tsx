@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { isErrorWithData } from "@/store";
-import { useGetAttendanceQuery } from "@/store/features/employees-slice";
+import { isErrorWithData } from "../store";
+import { useGetAttendanceQuery } from "../store/features/employees-slice";
 import {
 	Activity,
 	Statistics,
 	AttendanceTable,
 	TimeSheet,
-} from "@/components/Attendance";
-import { Container } from "@/components/common";
+} from "../components/Attendance";
+import { Container } from "../components/common";
 
 const Attendance = () => {
 	const [offset, setOffset] = useState(0);

@@ -1,22 +1,22 @@
 import { useCallback, useEffect, useState } from "react";
 import { FaCheckCircle, FaSearch, FaPlus, FaTimesCircle } from "react-icons/fa";
-import { isErrorWithData } from "@/store";
-import { logout } from "@/store/features/auth-slice";
+import { isErrorWithData } from "../../store";
+import { logout } from "../../store/features/auth-slice";
 import {
 	useGetDepartmentsQuery,
 	useCreateDepartmentMutation,
 	useUpdateDepartmentMutation,
 	useDeleteDepartmentMutation,
-} from "@/store/features/departments-slice";
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
+} from "../../store/features/departments-slice";
+import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
 import {
 	close as modalClose,
 	open as modalOpen,
-} from "@/store/features/modal-slice";
-import { useAppDispatch, useAppSelector, useFormInput } from "@/hooks";
-import { Form, DepartmentTable } from "@/components/Departments";
-import { Container, Modal } from "@/components/common";
-import { Button, InputButton } from "@/components/controls";
+} from "../../store/features/modal-slice";
+import { useAppDispatch, useAppSelector, useFormInput } from "../../hooks";
+import { Form, DepartmentTable } from "../../components/Departments";
+import { Container, Modal } from "../../components/common";
+import { Button, InputButton } from "../../components/controls";
 
 const Departments = () => {
 	const [editMode, setEditMode] = useState(false);

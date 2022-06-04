@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { isErrorWithData } from "@/store";
-import { logout } from "@/store/features/auth-slice";
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
+import { isErrorWithData } from "../../store";
+import { logout } from "../../store/features/auth-slice";
+import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
 import {
 	useGetLeaveQuery,
 	useApproveLeaveMutation,
-} from "@/store/features/leaves-slice";
-import { useAppDispatch, useAppSelector } from "@/hooks";
-import { getDate } from "@/utils";
-import { Container, InfoComp, InfoTopBar } from "@/components/common";
+} from "../../store/features/leaves-slice";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { getDate } from "../../utils";
+import { Container, InfoComp, InfoTopBar } from "../../components/common";
 
 const Detail = ({ admin }: { admin?: boolean }) => {
 	const { id } = useParams();

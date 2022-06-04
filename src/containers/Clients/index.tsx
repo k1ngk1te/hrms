@@ -1,19 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { isErrorWithData, isFormError } from "@/store";
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
+import { isErrorWithData, isFormError } from "../../store";
+import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
 import {
 	close as modalClose,
 	open as modalOpen,
-} from "@/store/features/modal-slice";
+} from "../../store/features/modal-slice";
 import {
 	useGetClientsQuery,
 	useCreateClientMutation,
-} from "@/store/features/employees-slice";
-import { useAppDispatch, useAppSelector } from "@/hooks";
-import { Cards, ClientTable, Form, Topbar } from "@/components/Clients";
-import { Container, Modal } from "@/components/common";
-import { ClientCreateType } from "@/types/employees";
+} from "../../store/features/employees-slice";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { Cards, ClientTable, Form, Topbar } from "../../components/Clients";
+import { Container, Modal } from "../../components/common";
+import { ClientCreateType } from "../../types/employees";
 
 const Clients = () => {
 	const dispatch = useAppDispatch();

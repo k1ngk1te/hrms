@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { FaSadTear } from "react-icons/fa";
-import { logout } from "@/store/features/auth-slice";
-import { useNotificationsQuery } from "@/store/features/notifications-slice";
+import { logout } from "../../store/features/auth-slice";
+import { useNotificationsQuery } from "../../store/features/notifications-slice";
 import {
   ADMIN_LEAVE_DETAIL_PAGE_URL,
   LEAVE_DETAIL_PAGE_URL,
-} from "@/config/routes";
-import { useAppDispatch, useAppSelector } from "@/hooks";
-import { Container } from "@/components/common";
-import { Audit } from "@/components/Notifications";
+} from "../../config/routes";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { Container } from "../../components/common";
+import { Audit } from "../../components/Notifications";
 
 const NoData = () => (
   <div className="bg-gray-200 flex flex-col h-full items-center justify-center w-full">

@@ -1,21 +1,21 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { FaEye, FaPen } from "react-icons/fa";
-import { PROJECT_TASKS_PAGE_URL, PROJECT_TEAM_PAGE_URL } from "@/config";
-import { isErrorWithData, isFormError } from "@/store";
-import { open as modalOpen, close as modalClose } from "@/store/features/modal-slice";
-import { useGetProjectQuery } from "@/store/features/projects-slice";
-import { useAppDispatch, useAppSelector, useUpdateProject } from "@/hooks";
+import { PROJECT_TASKS_PAGE_URL, PROJECT_TEAM_PAGE_URL } from "../../../config";
+import { isErrorWithData, isFormError } from "../../../store";
+import { open as modalOpen, close as modalClose } from "../../../store/features/modal-slice";
+import { useGetProjectQuery } from "../../../store/features/projects-slice";
+import { useAppDispatch, useAppSelector, useUpdateProject } from "../../../hooks";
 import {
 	Form,
 	ProjectDetail,
 	ProjectFiles,
 	ProjectImages,
 	Task,
-} from "@/components/Projects";
-import { Container, Modal, TabNavigator } from "@/components/common";
-import { Button } from "@/components/controls";
-import { ProjectCreateType, ProjectCreateErrorType } from "@/types/employees";
+} from "../../../components/Projects";
+import { Container, Modal, TabNavigator } from "../../../components/common";
+import { Button } from "../../../components/controls";
+import { ProjectCreateType, ProjectCreateErrorType } from "../../../types/employees";
 
 const Tasks = () => (
 	<ul>

@@ -1,22 +1,22 @@
 import { useCallback, useEffect, useState } from "react";
 import { FaCheckCircle, FaLock, FaUserEdit } from "react-icons/fa"
 
-import { LEAVES_PAGE_URL } from "@/config/routes";
-import { isErrorWithData, isFormError } from "@/store"
-import { logout } from "@/store/features/auth-slice";
+import { LEAVES_PAGE_URL } from "../config/routes";
+import { isErrorWithData, isFormError } from "../store"
+import { logout } from "../store/features/auth-slice";
 import {
   open as modalOpen,
   close as modalClose,
-} from "@/store/features/modal-slice";
+} from "../store/features/modal-slice";
 import {
   useGetProfileQuery,
   useChangePasswordMutation,
-} from "@/store/features/auth-api-slice";
-import { useAppDispatch, useAppSelector } from "@/hooks";
-import { getDate, toCapitalize } from "@/utils";
-import { ChangePasswordForm } from "@/components/Employees";
-import { UpdateForm } from "@/components/Profile";
-import { Container, InfoComp, InfoTopBar, Modal } from "@/components/common";
+} from "../store/features/auth-api-slice";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import { getDate, toCapitalize } from "../utils";
+import { ChangePasswordForm } from "../components/Employees";
+import { UpdateForm } from "../components/Profile";
+import { Container, InfoComp, InfoTopBar, Modal } from "../components/common";
 
 const Profile = () => {
   const [formType, setFormType] = useState<"profile" | "password">("profile");

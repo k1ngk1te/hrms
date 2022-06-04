@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { isErrorWithData, isFormError } from "@/store";
-import { logout } from "@/store/features/auth-slice";
+import { isErrorWithData, isFormError } from "../../../../store";
+import { logout } from "../../../../store/features/auth-slice";
 import {
 	close as modalClose,
 	open as modalOpen,
-} from "@/store/features/modal-slice";
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
-import { useGetTasksQuery, useCreateTaskMutation } from "@/store/features/projects-slice";
-import { useAppDispatch, useAppSelector, useDeleteTask, useUpdateTask } from "@/hooks";
-import { TaskCards, TaskForm, TaskTable, TaskTopbar } from "@/components/Projects"
-import { Container, Modal } from "@/components/common";
-import { TaskCreateType, TaskCreateErrorType } from "@/types/employees";
+} from "../../../../store/features/modal-slice";
+import { open as alertModalOpen } from "../../../../store/features/alert-modal-slice";
+import { useGetTasksQuery, useCreateTaskMutation } from "../../../../store/features/projects-slice";
+import { useAppDispatch, useAppSelector, useDeleteTask, useUpdateTask } from "../../../../hooks";
+import { TaskCards, TaskForm, TaskTable, TaskTopbar } from "../../../../components/Projects"
+import { Container, Modal } from "../../../../components/common";
+import { TaskCreateType, TaskCreateErrorType } from "../../../../types/employees";
 
 
 const Tasks = () => {

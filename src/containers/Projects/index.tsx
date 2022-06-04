@@ -1,23 +1,23 @@
 import { useCallback, useEffect, useState } from "react";
-import { isErrorWithData, isFormError } from "@/store";
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
+import { isErrorWithData, isFormError } from "../../store";
+import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
 import {
 	open as modalOpen,
 	close as modalClose,
-} from "@/store/features/modal-slice";
+} from "../../store/features/modal-slice";
 import {
 	useGetProjectsQuery,
 	useCreateProjectMutation,
-} from "@/store/features/projects-slice";
-import { useAppDispatch, useAppSelector, useUpdateProject } from "@/hooks";
-import { Container, Modal } from "@/components/common";
-import { Cards, Form, Project, Topbar } from "@/components/Projects";
+} from "../../store/features/projects-slice";
+import { useAppDispatch, useAppSelector, useUpdateProject } from "../../hooks";
+import { Container, Modal } from "../../components/common";
+import { Cards, Form, Project, Topbar } from "../../components/Projects";
 import {
 	ProjectType,
 	ProjectCreateType,
 	ProjectCreateErrorType,
-} from "@/types/employees";
-import { InitStateType } from "@/components/Projects/Form";
+} from "../../types/employees";
+import { InitStateType } from "../../components/Projects/Form";
 
 const Projects = () => {
 	const [offset, setOffset] = useState(0);

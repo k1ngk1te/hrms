@@ -6,29 +6,29 @@ import {
 	useState,
 } from "react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { LEAVE_ADMIN_EXPORT_URL } from "@/config/django";
-import { isErrorWithData, isFormError } from "@/store";
-import { logout } from "@/store/features/auth-slice";
+import { LEAVE_ADMIN_EXPORT_URL } from "../../../config/django";
+import { isErrorWithData, isFormError } from "../../../store";
+import { logout } from "../../../store/features/auth-slice";
 import {
 	useGetAdminLeavesQuery,
 	useCreateLeaveMutation,
-} from "@/store/features/leaves-slice";
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
+} from "../../../store/features/leaves-slice";
+import { open as alertModalOpen } from "../../../store/features/alert-modal-slice";
 import {
 	close as modalClose,
 	open as modalOpen,
-} from "@/store/features/modal-slice";
+} from "../../../store/features/modal-slice";
 import {
 	downloadFile,
 	getDate,
 	getNextDate,
 	validateForm,
-} from "@/utils";
-import { useAppDispatch, useAppSelector } from "@/hooks";
-import { FormType } from "@/types/leaves";
-import LeaveTable from "@/components/Leaves/Admin/Table";
-import { Container, Modal } from "@/components/common";
-import { Form, Topbar, Cards } from "@/components/Leaves";
+} from "../../../utils";
+import { useAppDispatch, useAppSelector } from "../../../hooks";
+import { FormType } from "../../../types/leaves";
+import LeaveTable from "../../../components/Leaves/Admin/Table";
+import { Container, Modal } from "../../../components/common";
+import { Form, Topbar, Cards } from "../../../components/Leaves";
 
 const initState: FormType = {
 	leave_type: "C",

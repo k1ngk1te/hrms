@@ -6,22 +6,22 @@ import {
 	useState,
 } from "react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { isErrorWithData, isFormError } from "@/store";
-import { logout } from "@/store/features/auth-slice";
+import { isErrorWithData, isFormError } from "../../store";
+import { logout } from "../../store/features/auth-slice";
 import {
 	useGetLeavesQuery,
 	useRequestLeaveMutation,
-} from "@/store/features/leaves-slice";
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
+} from "../../store/features/leaves-slice";
+import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
 import {
 	close as modalClose,
 	open as modalOpen,
-} from "@/store/features/modal-slice";
-import { getDate, getNextDate, validateForm } from "@/utils";
-import { useAppDispatch, useAppSelector } from "@/hooks";
-import { FormType } from "@/types/leaves";
-import { Container, Modal } from "@/components/common";
-import { Cards, Form, Topbar, LeaveTable } from "@/components/Leaves";
+} from "../../store/features/modal-slice";
+import { getDate, getNextDate, validateForm } from "../../utils";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { FormType } from "../../types/leaves";
+import { Container, Modal } from "../../components/common";
+import { Cards, Form, Topbar, LeaveTable } from "../../components/Leaves";
 
 const initState: {
 	leave_type: string;

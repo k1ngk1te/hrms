@@ -1,23 +1,23 @@
 import { useCallback, useEffect, useState } from "react";
 import { FaCheckCircle, FaPlus, FaSearch, FaTimesCircle, FaUserPlus } from "react-icons/fa";
-import { isErrorWithData, isFormError } from "@/store";
+import { isErrorWithData, isFormError } from "../../store";
 import {
   useGetJobsQuery,
   useCreateJobMutation,
   useUpdateJobMutation,
   useDeleteJobMutation,
-} from "@/store/features/jobs-slice";
-import { logout } from "@/store/features/auth-slice";
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
+} from "../../store/features/jobs-slice";
+import { logout } from "../../store/features/auth-slice";
+import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
 import {
   close as modalClose,
   open as modalOpen,
-} from "@/store/features/modal-slice";
-import { useAppDispatch, useAppSelector, useFormInput } from "@/hooks";
-import { omitKey, validateForm } from "@/utils";
-import { Container, Modal } from "@/components/common";
-import { Button, InputButton } from "@/components/controls";
-import { Form, JobTable } from "@/components/Jobs";
+} from "../../store/features/modal-slice";
+import { useAppDispatch, useAppSelector, useFormInput } from "../../hooks";
+import { omitKey, validateForm } from "../../utils";
+import { Container, Modal } from "../../components/common";
+import { Button, InputButton } from "../../components/controls";
+import { Form, JobTable } from "../../components/Jobs";
 
 const Jobs = () => {
   const [initState, setInitState] = useState({ name: "" });

@@ -1,15 +1,15 @@
 import { useEffect } from "react"
 import { useParams } from "react-router-dom"
 import { FaPen, FaTrash } from "react-icons/fa";
-import { isErrorWithData } from "@/store"
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice"
-import { open as modalOpen, close as modalClose } from "@/store/features/modal-slice";
-import { useGetTaskQuery } from "@/store/features/projects-slice"
-import { useAppDispatch, useAppSelector, useDeleteTask, useUpdateTask } from "@/hooks"
-import { Container, Modal, PersonCard } from "@/components/common";
-import { Button } from "@/components/controls"
-import { TaskForm } from "@/components/Projects"
-import { TaskCreateType } from "@/types/employees"
+import { isErrorWithData } from "../../../../store"
+import { open as alertModalOpen } from "../../../../store/features/alert-modal-slice"
+import { open as modalOpen, close as modalClose } from "../../../../store/features/modal-slice";
+import { useGetTaskQuery } from "../../../../store/features/projects-slice"
+import { useAppDispatch, useAppSelector, useDeleteTask, useUpdateTask } from "../../../../hooks"
+import { Container, Modal, PersonCard } from "../../../../components/common";
+import { Button } from "../../../../components/controls"
+import { TaskForm } from "../../../../components/Projects"
+import { TaskCreateType } from "../../../../types/employees"
 
 
 const Detail = () => {

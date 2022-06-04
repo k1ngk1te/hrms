@@ -1,11 +1,11 @@
 import { useEffect } from "react"
 import { useParams } from "react-router-dom"
 import { FaPen, FaTrash } from "react-icons/fa";
-import { isErrorWithData } from "@/store"
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice"
-import { open as modalOpen, close as modalClose } from "@/store/features/modal-slice";
-import { useGetProjectQuery } from "@/store/features/projects-slice"
-import { Container, PersonCard } from "@/components/common";
+import { isErrorWithData } from "../../../store"
+import { open as alertModalOpen } from "../../../store/features/alert-modal-slice"
+import { open as modalOpen, close as modalClose } from "../../../store/features/modal-slice";
+import { useGetProjectQuery } from "../../../store/features/projects-slice"
+import { Container, PersonCard } from "../../../components/common";
 
 
 const Team = () => {

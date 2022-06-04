@@ -1,6 +1,6 @@
 import { ChangeEvent, FormEvent, FC } from "react";
 import { FaEnvelope, FaLock } from "react-icons/fa";
-import { Button, Input } from "@/components/controls";
+import { Button, Input } from "../../components/controls";
 
 const Login: FC<LoginProps> = ({
   error,

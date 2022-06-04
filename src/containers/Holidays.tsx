@@ -1,25 +1,25 @@
 import { useCallback, useEffect, useState } from "react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { isErrorWithData, isFormError } from "@/store";
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
+import { isErrorWithData, isFormError } from "../store";
+import { open as alertModalOpen } from "../store/features/alert-modal-slice";
 import {
 	close as modalClose,
 	open as modalOpen,
-} from "@/store/features/modal-slice";
+} from "../store/features/modal-slice";
 import {
 	useGetHolidaysQuery,
 	useCreateHolidayMutation,
 	useDeleteHolidayMutation,
 	useUpdateHolidayMutation,
-} from "@/store/features/employees-slice";
-import { useAppDispatch, useAppSelector } from "@/hooks";
-import { Form, Topbar, HolidayTable } from "@/components/Holidays";
+} from "../store/features/employees-slice";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import { Form, Topbar, HolidayTable } from "../components/Holidays";
 import {
 	HolidayType,
 	HolidayCreateType,
 	HolidayErrorType,
-} from "@/types/employees";
-import { Container, Modal } from "@/components/common";
+} from "../types/employees";
+import { Container, Modal } from "../components/common";
 
 const Holidays = () => {
 	const [offset, setOffset] = useState(0);

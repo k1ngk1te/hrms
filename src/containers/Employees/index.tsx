@@ -1,27 +1,27 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { EMPLOYEE_EXPORT_URL } from "@/config/django";
-import { isFormError } from "@/store";
+import { EMPLOYEE_EXPORT_URL } from "../../config/django";
+import { isFormError } from "../../store";
 import {
 	close as modalClose,
 	open as modalOpen,
-} from "@/store/features/modal-slice";
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
-import { logout } from "@/store/features/auth-slice";
+} from "../../store/features/modal-slice";
+import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
+import { logout } from "../../store/features/auth-slice";
 import {
 	useCreateEmployeeMutation,
 	useGetEmployeesQuery,
-} from "@/store/features/employees-slice";
-import { downloadFile, validateForm } from "@/utils";
-import { useAppDispatch, useAppSelector } from "@/hooks";
+} from "../../store/features/employees-slice";
+import { downloadFile, validateForm } from "../../utils";
+import { useAppDispatch, useAppSelector } from "../../hooks";
 import {
 	ErrorFormType,
 	ErrorsKeyType,
 	FormErrorType,
 	FormType,
-} from "@/types/employees";
-import { Cards, EmployeeTable, Form, Topbar } from "@/components/Employees";
-import { Container, Modal } from "@/components/common";
+} from "../../types/employees";
+import { Cards, EmployeeTable, Form, Topbar } from "../../components/Employees";
+import { Container, Modal } from "../../components/common";
 
 const initState = {
 	image: undefined,

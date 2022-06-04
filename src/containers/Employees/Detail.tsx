@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FaLock, FaUserEdit, FaUserCheck, FaUserSlash } from "react-icons/fa";
-import { EMPLOYEES_PAGE_URL } from "@/config/routes";
-import { isErrorWithData } from "@/store";
-import { logout } from "@/store/features/auth-slice";
-import { useGetEmployeeQuery } from "@/store/features/employees-slice";
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
+import { EMPLOYEES_PAGE_URL } from "../../config/routes";
+import { isErrorWithData } from "../../store";
+import { logout } from "../../store/features/auth-slice";
+import { useGetEmployeeQuery } from "../../store/features/employees-slice";
+import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
 import {
 	open as modalOpen,
 	close as modalClose,
-} from "@/store/features/modal-slice";
-import { useAppSelector, useAppDispatch } from "@/hooks";
-import { useDeactivateEmployee } from "@/hooks/employees";
-import { getDate, toCapitalize } from "@/utils";
-import { ChangePasswordForm, EmployeeForm } from "@/components/Employees";
-import { Container, InfoComp, InfoTopBar, Modal } from "@/components/common";
+} from "../../store/features/modal-slice";
+import { useAppSelector, useAppDispatch } from "../../hooks";
+import { useDeactivateEmployee } from "../../hooks/employees";
+import { getDate, toCapitalize } from "../../utils";
+import { ChangePasswordForm, EmployeeForm } from "../../components/Employees";
+import { Container, InfoComp, InfoTopBar, Modal } from "../../components/common";
 
 const Employee = () => {
 	const { id } = useParams();

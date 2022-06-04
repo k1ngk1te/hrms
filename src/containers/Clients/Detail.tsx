@@ -8,16 +8,16 @@ import {
 	FaUserSlash,
 	FaLock,
 } from "react-icons/fa";
-import { isErrorWithData } from "@/store";
-import { close as modalClose, open as modalOpen } from "@/store/features/modal-slice";
-import { useGetClientQuery } from "@/store/features/employees-slice";
-import { useAppDispatch, useAppSelector } from "@/hooks";
-import { useDeactivateEmployee } from "@/hooks/employees";
-import { UpdateForm } from "@/components/Clients";
-import { ChangePasswordForm } from "@/components/Employees";
-import { Container, InfoTopBar, InfoComp, Modal } from "@/components/common";
-import { toCapitalize, getDate } from "@/utils";
-import NotFound from "@/pages/404";
+import { isErrorWithData } from "../../store";
+import { close as modalClose, open as modalOpen } from "../../store/features/modal-slice";
+import { useGetClientQuery } from "../../store/features/employees-slice";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { useDeactivateEmployee } from "../../hooks/employees";
+import { UpdateForm } from "../../components/Clients";
+import { ChangePasswordForm } from "../../components/Employees";
+import { Container, InfoTopBar, InfoComp, Modal } from "../../components/common";
+import { toCapitalize, getDate } from "../../utils";
+import NotFound from "../../pages/404";
 
 const ClientDetail = () => {
 	const { id } = useParams();
