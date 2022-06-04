@@ -1,4 +1,4 @@
-import Attendance from "@/containers/Attendance";
+import Attendance from "../containers/Attendance";
 
 const Page = () => (
 	<Attendance />

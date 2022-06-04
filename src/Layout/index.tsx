@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
-import { ScrollToTop, Sidebar, Topbar } from "@/components/Layout";
-import { MenuIcon } from "@/components/common";
-import { useFadeIn, useOutClick } from "@/hooks";
+import { ScrollToTop, Sidebar, Topbar } from "../components/Layout";
+import { MenuIcon } from "../components/common";
+import { useFadeIn, useOutClick } from "../hooks";
 
 const Layout = () => {
   const menu = useOutClick<HTMLDivElement, HTMLDivElement>();

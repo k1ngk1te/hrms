@@ -1,4 +1,4 @@
-import Clients from "@/containers/Clients";
+import Clients from "../../containers/Clients";
 
 const Page = () => (
 	<Clients />

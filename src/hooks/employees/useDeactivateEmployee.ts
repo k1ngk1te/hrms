@@ -1,10 +1,10 @@
 import { useCallback, useEffect } from "react";
-import { isErrorWithData } from "@/store";
-import { logout } from "@/store/features/auth-slice";
-import { open } from "@/store/features/alert-modal-slice";
-import { useDeactivateEmployeeMutation } from "@/store/features/employees-slice";
-import { useAppDispatch } from "@/hooks";
-import { toCapitalize } from "@/utils";
+import { isErrorWithData } from "../../store";
+import { logout } from "../../store/features/auth-slice";
+import { open } from "../../store/features/alert-modal-slice";
+import { useDeactivateEmployeeMutation } from "../../store/features/employees-slice";
+import { useAppDispatch } from "../index";
+import { toCapitalize } from "../../utils";
 
 const useDeactivateEmployee = (
 	form_type?: "client" | "employee" = "employee"

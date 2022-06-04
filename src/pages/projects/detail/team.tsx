@@ -1,4 +1,4 @@
-import Team from "@/containers/Projects/Detail/Team"
+import Team from "../../../containers/Projects/Detail/Team"
 
 const Page = () => (
 	<Team />

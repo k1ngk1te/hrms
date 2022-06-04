@@ -1,5 +1,5 @@
 // import Layout from "@/Layout";
-import Departments from "@/containers/Departments"
+import Departments from "../../containers/Departments"
 
 const Page = () => (
 	// <Layout title="Departments">

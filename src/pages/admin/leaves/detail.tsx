@@ -1,5 +1,5 @@
 // import Layout from "@/Layout";
-import Leave from "@/containers/Leaves/Detail";
+import Leave from "../../../containers/Leaves/Detail";
 
 const Page = () => (
 	// <Layout title="Leave Information (Admin)">

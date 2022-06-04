@@ -1,4 +1,4 @@
-import TaskDetailPage from "@/containers/Projects/Detail/Tasks/Detail"
+import TaskDetailPage from "../../../../containers/Projects/Detail/Tasks/Detail"
 
 const Page = () => <TaskDetailPage />
 

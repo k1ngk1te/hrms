@@ -1,11 +1,11 @@
 import { useCallback, useEffect } from "react"
-import { isErrorWithData, isFormError } from "@/store";
-import { logout } from "@/store/features/auth-slice"
-import { close as modalClose } from "@/store/features/modal-slice";
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
-import { useUpdateTaskMutation } from "@/store/features/projects-slice";
-import { useAppDispatch } from "@/hooks"
-import { TaskCreateType, TaskCreateErrorType } from "@/types/employees";
+import { isErrorWithData, isFormError } from "../../store";
+import { logout } from "../../store/features/auth-slice"
+import { close as modalClose } from "../../store/features/modal-slice";
+import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
+import { useUpdateTaskMutation } from "../../store/features/projects-slice";
+import { useAppDispatch } from "../index"
+import { TaskCreateType, TaskCreateErrorType } from "../../types/employees";
 
 const useUpdateTask = () => {
 	const dispatch = useAppDispatch();

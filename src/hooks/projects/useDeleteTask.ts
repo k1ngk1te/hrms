@@ -1,9 +1,9 @@
 import { useCallback, useEffect } from "react"
-import { isErrorWithData } from "@/store";
-import { logout } from "@/store/features/auth-slice"
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
-import { useDeleteTaskMutation } from "@/store/features/projects-slice";
-import { useAppDispatch } from "@/hooks"
+import { isErrorWithData } from "../../store";
+import { logout } from "../../store/features/auth-slice"
+import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
+import { useDeleteTaskMutation } from "../../store/features/projects-slice";
+import { useAppDispatch } from "../index"
 
 const useDeleteTask = () => {
 	const dispatch = useAppDispatch();

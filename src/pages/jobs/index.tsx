@@ -1,5 +1,5 @@
 // import Layout from "@/Layout";
-import Jobs from "@/containers/Jobs"
+import Jobs from "../../containers/Jobs"
 
 const Page = () => (
 	// <Layout title="Jobs">

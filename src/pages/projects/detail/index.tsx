@@ -1,4 +1,4 @@
-import Project from "@/containers/Projects/Detail"
+import Project from "../../../containers/Projects/Detail"
 
 const Page = () => (
 	<Project />

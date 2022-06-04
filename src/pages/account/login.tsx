@@ -6,11 +6,11 @@ import {
   useState,
 } from "react";
 import { useLocation } from "react-router-dom"
-import { HOME_PAGE_URL, LOGIN_PAGE_URL } from "@/config/routes";
-import { useAppDispatch, useAppSelector } from "@/hooks";
-import { login } from "@/store/features/auth-slice";
-import { useLoginMutation } from "@/store/features/auth-api-slice";
-import Login from "@/containers/account/Login";
+import { HOME_PAGE_URL, LOGIN_PAGE_URL } from "../../config/routes";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { login } from "../../store/features/auth-slice";
+import { useLoginMutation } from "../../store/features/auth-api-slice";
+import Login from "../../containers/account/Login";
 
 const SignIn = () => {
   const [form, setForm] = useState({ email: "", password: "" });
