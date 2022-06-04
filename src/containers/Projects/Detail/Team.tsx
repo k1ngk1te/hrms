@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import { FaPen, FaTrash } from "react-icons/fa";
-import { EMPLOYEE_PAGE_URL } from "../../../config";
+import { CLIENT_PAGE_URL, EMPLOYEE_PAGE_URL } from "../../../config";
 import { isErrorWithData } from "../../../store"
 import { open as alertModalOpen } from "../../../store/features/alert-modal-slice"
 import { useGetProjectQuery } from "../../../store/features/projects-slice"
@@ -22,8 +22,8 @@ const Team = () => {
 
 	const handleRemoveEmployee = useCallback((employee_id: string) => {
 		if (employee_id) {
-			const newLeaders = data.leaders.filter(leader => leader.id !== employee_id && leader)
-			const newTeam = data.team.filter(member => member.id !== employee_id && member)
+			const newLeaders = data.leaders.filter(leader => leader.id !== employee_id)
+			const newTeam = data.team.filter(member => member.id !== employee_id)
 			const createData = {
 				name: data.name,
 				initial_cost: data.initial_cost,
@@ -61,16 +61,14 @@ const Team = () => {
 
 	const appointLeader = useCallback((employee_id: string, appoint: boolean) => {
 		if (employee_id) {
-			let newLeaders = [];
+			let newLeaders;
 			if (appoint === true) {
-				newLeaders = data.leaders.map(leader => leader.id && leader)
-				newLeaders.push(employee_id)
+				newLeaders = [...data.leaders]
+				const emp = data.team.find(member => member.id === employee_id)
+				newLeaders.push(emp)
 			} else {
-				newLeaders = data.leaders.filter(leader => leader.id !== employee_id && leader)
+				newLeaders = data.leaders.filter(leader => leader.id !== employee_id)
 			}
-
-			let newTeam = data.team.map(member => member.id && member)
-			newTeam.push(employee_id)
 
 			const createData = {
 				name: data.name,
@@ -81,7 +79,7 @@ const Team = () => {
 				start_date: data.start_date,
 				end_date: data.end_date,
 				leaders: newLeaders.map(leader => ({id: leader.id})),
-				team: newTeam.map(member => ({id: member.id})),
+				team: data.team.map(member => ({id: member.id})),
 			}
 			dispatch(alertModalOpen({
 				color: "warning",
@@ -99,8 +97,7 @@ const Team = () => {
 						bg: "bg-yellow-600 hover:bg-yellow-500",
 						caps: true,
 						focus: "",
-						onClick: () => console.log(createData),
-						// onClick: () => updateProject.onSubmit(id, createData),
+						onClick: () => updateProject.onSubmit(id, createData),
 						title: "Proceed"
 					},
 				]
@@ -173,8 +170,8 @@ const Team = () => {
 								<div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:gap-5 lg:grid-cols-3 lg:gap-4">
 									<PersonCard 
 										title="Project Creator"
-										name={data.created_by.full_name}
-										label={data.created_by.job}
+										name={data.created_by.full_name || "-----"}
+										label={data.created_by.job || "-----"}
 									/>								
 								</div>
 							) : (
@@ -192,9 +189,21 @@ const Team = () => {
 							{data.client ? (
 								<div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:gap-5 lg:grid-cols-3 lg:gap-4">
 									<PersonCard 
-										title={data.client.company}
-										name={data.client.contact.full_name}
-										label={data.client.position}
+										title={data.client.company || "------"}
+										name={data.client.contact.full_name || "------"}
+										label={data.client.position || "------"}
+										actions={[
+											{
+												bg: "bg-white hover:bg-success-100",
+												border: "border border-success-500 hover:border-success-600",
+												color: "text-success-500",
+												disabled: updateProject.isLoading,
+												loading: updateProject.isLoading,
+												loader: true,
+												link: CLIENT_PAGE_URL(data.client.id),
+												title: "view profile",
+											},
+										]}
 									/>								
 								</div>
 							) : (
@@ -215,8 +224,8 @@ const Team = () => {
 										<PersonCard 
 											key={index}
 											title="Team Leader"
-											name={leader.full_name || ""}
-											label={leader.job || ""}
+											name={leader.full_name || "-----"}
+											label={leader.job || "-----"}
 											options={[
 												{
 													bg: "bg-white hover:bg-red-100",
@@ -269,7 +278,7 @@ const Team = () => {
 							{data.team && data.team.length > 0 ? (
 								<div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:gap-5 lg:grid-cols-3 lg:gap-4">
 									{data.team.map((member, index) => {
-										if (member in data.leaders === false) {
+										if (data.leaders.some(leader => leader.id === member.id) === false) {
 											return (
 												<PersonCard 
 													key={index}

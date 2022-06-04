@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FaLock, FaUserEdit, FaUserCheck, FaUserSlash } from "react-icons/fa";
-import { EMPLOYEES_PAGE_URL } from "../../config/routes";
 import { isErrorWithData } from "../../store";
 import { logout } from "../../store/features/auth-slice";
 import { useGetEmployeeQuery } from "../../store/features/employees-slice";
@@ -42,7 +41,7 @@ const Employee = () => {
 	return (
 		<Container
 			heading="Employee Information"
-			icon={{ link: EMPLOYEES_PAGE_URL }}
+			icon
 			refresh={{
 				loading: isFetching,
 				onClick: () => refetch(),

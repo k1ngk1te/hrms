@@ -115,7 +115,7 @@ Button.defaultProps = {
   border: "border-none",
   caps: false,
   color: "text-white",
-  focus: "focus:ring-2 focus:ring-primary-500 focus:ring-offset-2",
+  focus: "",
   padding: "px-4 py-2",
   rounded: "rounded",
   ref: null,

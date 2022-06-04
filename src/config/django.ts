@@ -23,7 +23,7 @@ export const DEPARTMENT_URL = (id: string) => `${ROOT_URL}/departments/${id}/`;
 
 export const EMPLOYEES_URL = `${ROOT_URL}/employees/`;
 export const EMPLOYEE_URL = (id: string) => `${EMPLOYEES_URL}${id}/`;
-export const EMPLOYEE_DEACTIVATE_URL = `${ROOT_URL}/employees/deactivate/`;
+export const EMPLOYEE_DEACTIVATE_URL = `${ROOT_URL}/employees-deactivate/`;
 export const EMPLOYEE_PASSWORD_CHANGE_URL = `${ROOT_URL}/employees/password/change/`;
 export const EMPLOYEE_EXPORT_URL = (_type: string) =>
   `${ROOT_URL}/employees/export/${_type}/`;

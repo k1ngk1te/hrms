@@ -16,7 +16,7 @@ urlpatterns = [
 	path('api/departments/<str:id>/', DepartmentView.as_view(), name="department-detail"),
 	path('api/employees/', EmployeeView.as_view(), name="employees"),
 	path('api/employees/<str:id>/', EmployeeView.as_view(), name="employee-detail"),
-	path('api/employees/deactivate/',
+	path('api/employees-deactivate/',
 		EmployeeDeactivateView.as_view(), name="employee-deactivate"),
 	path('api/employees/export/<str:file_type>/',
 		EmployeeExportDataView.as_view(), name="employees-export"),
