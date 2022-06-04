@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { FaPen, FaTrash } from "react-icons/fa";
 import { toCapitalize } from "../../utils";
 import { JobType } from "../../types/jobs";
-import Table, { HeadType, RowType } from "../../controls/Table";
+import Table, { HeadType, RowType } from "../controls/Table";
 
 const heads: HeadType = [{ value: "name" }, { type: "actions", value: "edit" }];
 

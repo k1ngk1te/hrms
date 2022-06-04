@@ -11,8 +11,8 @@ import {
 
 import { DEFAULT_IMAGE, PROJECT_PAGE_URL } from "../../config";
 import { useOutClick, useDeleteProject, useMarkProject } from "../../hooks";
-import { Avatars, StatusProgressBar } from "../../common";
-import { Button } from "../../controls";
+import { Avatars, StatusProgressBar } from "../common";
+import { Button } from "../controls";
 import { ProjectEmployeeType, ProjectType } from "../../types/employees";
 import { InitStateType } from "./Form";
 

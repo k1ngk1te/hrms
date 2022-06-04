@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { EMPLOYEE_PAGE_URL } from "../../config/routes";
 import { EmployeeType } from "../../types/employees";
-import Table, { HeadType, RowType } from "../../controls/Table";
+import Table, { HeadType, RowType } from "../controls/Table";
 
 const heads: HeadType = [
   { value: "first name" },

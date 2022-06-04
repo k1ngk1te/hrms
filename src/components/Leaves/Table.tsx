@@ -3,7 +3,7 @@ import { FaEye } from "react-icons/fa";
 import { LEAVE_DETAIL_PAGE_URL } from "../../config/routes";
 import { LeaveType } from "../../types/leaves";
 import { getDate } from "../../utils";
-import Table, { HeadType, RowType } from "../../controls/Table";
+import Table, { HeadType, RowType } from "../controls/Table";
 
 type Leave = Omit<LeaveType, "user">;
 

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { FaEye } from "react-icons/fa";
-import { ADMIN_LEAVE_DETAIL_PAGE_URL } from "../../config/routes";
-import { LeaveType } from "../../types/leaves";
-import { getDate } from "../../utils";
+import { ADMIN_LEAVE_DETAIL_PAGE_URL } from "../../../config/routes";
+import { LeaveType } from "../../../types/leaves";
+import { getDate } from "../../../utils";
 import Table, { HeadType, RowType } from "../../controls/Table";
 
 const heads: HeadType = [

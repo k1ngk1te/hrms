@@ -11,7 +11,7 @@ import {
 } from "../../hooks";
 import { toCapitalize } from "../../utils";
 import { ErrorFormType, ErrorsKeyType, FormType, FormErrorType } from "../../types/employees";
-import { Button, File, Input, Select, Textarea } from "../../controls";
+import { Button, File, Input, Select, Textarea } from "../controls";
 
 type FormProps = {
   initState: FormType;
