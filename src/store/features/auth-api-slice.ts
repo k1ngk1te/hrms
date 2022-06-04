@@ -5,7 +5,7 @@ import {
   PASSWORD_CHANGE_URL,
   PROFILE_URL,
   USER_DATA_URL,
-} from "@/config";
+} from "../../config";
 import { EmployeeType } from "../../types/employees";
 import { ProfileFormType, UserInfoType } from "../../types/user";
 

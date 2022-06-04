@@ -1,9 +1,9 @@
 import { useCallback, useEffect } from "react";
-import { isErrorWithData, isFormError } from "@/store";
-import { open as alertModalOpen } from "@/store/features/alert-modal-slice";
-import { useUpdateProjectMutation } from "@/store/features/projects-slice";
-import { useAppDispatch } from "@/hooks";
-import { ProjectCreateType, ProjectCreateErrorType } from "@/types/employees";
+import { isErrorWithData, isFormError } from "../../store";
+import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
+import { useUpdateProjectMutation } from "../../store/features/projects-slice";
+import { useAppDispatch } from "../index";
+import { ProjectCreateType, ProjectCreateErrorType } from "../../types/employees";
 
 const useUpdateProject = () => {
   const dispatch = useAppDispatch();
