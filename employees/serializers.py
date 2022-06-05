@@ -11,7 +11,16 @@ from jobs.models import Job
 from jobs.serializers import JobSerializer
 from users.models import Profile
 from users.serializers import ProfileSerializer, UserProfileSerializer, UserSerializer, UserDetailsSerializer
-from .models import Attendance, Client, Department, Employee, Holiday, Project, Task
+from .models import (
+	Attendance, 
+	Client, 
+	Department, 
+	Employee, 
+	Holiday, 
+	Project, 
+	ProjectFile,
+	Task
+)
 from .utils import get_employees
 
 User = get_user_model()
@@ -492,3 +501,55 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 	def get_is_active(self, obj):
 		return obj.is_active
+
+
+class ProjectFileSerializer(serializers.ModelSerializer):
+	project = serializers.SerializerMethodField('get_project_info')
+	file_type = serializers.CharField(read_only=True)
+
+	class Meta:
+		model = ProjectFile
+		fields = '__all__'
+
+	def get_project_info(self, obj):
+		return {
+			"id": obj.project.id,
+			"name": obj.project.name
+		}
+
+	def get_project(self, project_id):
+		project = get_instance(Project, {"id": project_id})
+		if not project:
+			raise ValidationError({"detail": f"Project with ID {project_id} was not found"})
+		return project
+
+	def create(self, validated_data):
+		file = validated_data.get("file", None)
+		content_type = file.content_type.split("/")[0]
+		allowed_content_types = ["application", "image"]
+		employee = self.context.get("request").user.employee
+
+		if content_type not in allowed_content_types:
+			raise ValidationError({"file": "Invalid file. Send in an image, pdf or microsoft word file"})
+
+		project = self.get_project(self.context.get("view").kwargs.get("project_id"))
+
+		if not file:
+			raise ValidationError({"file": "File is required!"})
+
+		return ProjectFile.objects.create(
+			project=project, 
+			file_type=file.content_type,
+			uploaded_by=employee,
+			**validated_data
+		)
+
+	def update(self, instance, validated_data):
+		# Prevent the file from being updated
+		return instance
+		# instance.file = validated_data.get("file", instance.file)
+		# instance.image = validated_data.get("image", instance.image)
+		# instance.save()
+		# return instance
+
+

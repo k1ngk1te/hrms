@@ -1,16 +1,20 @@
 import { FC } from "react";
+import { FaUserPlus } from "react-icons/fa";
 import { DEFAULT_IMAGE } from "../../../config";
 import { useFormSelect } from "../../../hooks";
 import { StatusProgressBar } from "../../common";
-import { Select } from "../../controls";
+import { Button, Select } from "../../controls";
+import { ProjectEmployeeType } from "../../../types"
 
 export type ProjectDetailProps = {
 	changePriority: (priority: string) => void;
 	loading: boolean;
 	priority: "L" | "M" | "H";
+	leaders: ProjectEmployeeType[];
+	team: ProjectEmployeeType[];
 }
 
-const ProjectDetail: FC<ProjectDetailProps> = ({ changePriority, loading, priority }) => {
+const ProjectDetail: FC<ProjectDetailProps> = ({ changePriority, loading, leaders, team, priority }) => {
 	const level = useFormSelect(priority, {
 		onChange: ({ value }) => changePriority(value)
 	});
@@ -79,199 +83,89 @@ const ProjectDetail: FC<ProjectDetailProps> = ({ changePriority, loading, priori
 				</div>
 
 				<div className="bg-white my-4 p-4 rounded-md shadow-lg w-full md:w-[45%] lg:w-full">
-					<h3 className="capitalize cursor-pointer font-bold text-lg text-gray-800 tracking-wide md:text-xl">
-						assigned leaders
-					</h3>
-					<ul className="pb-1 pt-3">
-						<li className="flex items-start rounded-md px-1 py-2 odd:bg-gray-100">
-							<div className="w-[15%]">
-								<div className="h-[30px] mx-1 w-[30px] rounded-full">
-									<img className="h-full w-full" src={DEFAULT_IMAGE} alt="" />
-								</div>
-							</div>
-							<div className="px-2 w-[85%]">
-								<p className="capitalize text-sm text-gray-800 md:text-base">
-									william abner
-								</p>
-								<span className="capitalize text-gray-600 text-xs md:text-sm">
-									web developer
-								</span>
-							</div>
-						</li>
-						<li className="flex items-start rounded-md px-1 py-2 odd:bg-gray-100">
-							<div className="w-[15%]">
-								<div className="h-[30px] mx-1 w-[30px] rounded-full">
-									<img className="h-full w-full" src={DEFAULT_IMAGE} alt="" />
-								</div>
-							</div>
-							<div className="px-2 w-[85%]">
-								<p className="capitalize text-sm text-gray-800 md:text-base">
-									sarah abrams
-								</p>
-								<span className="capitalize text-gray-600 text-xs md:text-sm">
-									web designer
-								</span>
-							</div>
-						</li>
-						<li className="flex items-start rounded-md px-1 py-2 odd:bg-gray-100">
-							<div className="w-[15%]">
-								<div className="h-[30px] mx-1 w-[30px] rounded-full">
-									<img className="h-full w-full" src={DEFAULT_IMAGE} alt="" />
-								</div>
-							</div>
-							<div className="px-2 w-[85%]">
-								<p className="capitalize text-sm text-gray-800 md:text-base">
-									william kushkin
-								</p>
-								<span className="capitalize text-gray-600 text-xs md:text-sm">
-									content writer
-								</span>
-							</div>
-						</li>
-					</ul>
+					<div className="flex items-center justify-between w-full">
+						<h3 className="cursor-pointer font-bold text-lg text-gray-800 tracking-wide md:text-xl">
+							Assigned Leader{leaders && leaders.length > 1 ? "s" : ""}
+						</h3>
+						<div>
+							<Button 
+								bold="normal"
+								caps
+								padding="px-2 py-1"
+								title="add"
+								IconRight={FaUserPlus}
+							/>
+						</div>
+					</div>
+					{leaders && leaders.length > 0 ? (
+						<ul className="pb-1 pt-3">
+							{leaders.map((leader, index) => (
+								<li key={index} className="flex items-start rounded-md px-1 py-2 odd:bg-gray-100">
+									<div className="w-[15%]">
+										<div className="h-[30px] mx-1 w-[30px] rounded-full">
+											<img className="h-full w-full" src={leader.image || DEFAULT_IMAGE} alt="" />
+										</div>
+									</div>
+									<div className="px-2 w-[85%]">
+										<p className="capitalize text-sm text-gray-800 md:text-base">
+											{leader.full_name || "------"}
+										</p>
+										<span className="capitalize text-gray-600 text-xs md:text-sm">
+											{leader.job || "-------"}
+										</span>
+									</div>
+								</li>
+							))}
+						</ul>
+					) : (
+						<p className="text-sm text-gray-700">
+							There are no assigned leaders
+						</p>
+					)}
 				</div>
 			</div>
 
 			<div className="bg-white my-4 p-4 rounded-md shadow-lg w-full">
-				<h3 className="capitalize cursor-pointer font-bold text-lg text-gray-800 tracking-wide md:text-xl">
-					Team
-				</h3>
+				<div className="flex items-center justify-between w-full">
+					<h3 className="cursor-pointer font-bold text-lg text-gray-800 tracking-wide md:text-xl">
+						Assigned Team
+					</h3>
+					<div>
+						<Button 
+							bold="normal"
+							caps
+							padding="px-2 py-1"
+							title="add"
+							IconRight={FaUserPlus}
+						/>
+					</div>
+				</div>
 				<ul className="grid grid-cols-1 pb-1 pt-3 sm:grid-cols-2 lg:grid-cols-1">
-					<li className="flex items-start rounded-md px-1 py-2">
-						<div className="w-[15%]">
-							<div className="h-[30px] mx-1 w-[30px] rounded-full">
-								<img className="h-full w-full" src={DEFAULT_IMAGE} alt="" />
-							</div>
-						</div>
-						<div className="px-2 w-[85%]">
-							<p className="capitalize text-sm text-gray-800 md:text-base">
-								william abner
-							</p>
-							<span className="capitalize text-gray-600 text-xs md:text-sm">
-								web developer
-							</span>
-						</div>
-					</li>
-					<li className="flex items-start rounded-md px-1 py-2">
-						<div className="w-[15%]">
-							<div className="h-[30px] mx-1 w-[30px] rounded-full">
-								<img className="h-full w-full" src={DEFAULT_IMAGE} alt="" />
-							</div>
-						</div>
-						<div className="px-2 w-[85%]">
-							<p className="capitalize text-sm text-gray-800 md:text-base">
-								sarah abrams
-							</p>
-							<span className="capitalize text-gray-600 text-xs md:text-sm">
-								web designer
-							</span>
-						</div>
-					</li>
-					<li className="flex items-start rounded-md px-1 py-2">
-						<div className="w-[15%]">
-							<div className="h-[30px] mx-1 w-[30px] rounded-full">
-								<img className="h-full w-full" src={DEFAULT_IMAGE} alt="" />
-							</div>
-						</div>
-						<div className="px-2 w-[85%]">
-							<p className="capitalize text-sm text-gray-800 md:text-base">
-								william kushkin
-							</p>
-							<span className="capitalize text-gray-600 text-xs md:text-sm">
-								content writer
-							</span>
-						</div>
-					</li>
-					<li className="flex items-start rounded-md px-1 py-2">
-						<div className="w-[15%]">
-							<div className="h-[30px] mx-1 w-[30px] rounded-full">
-								<img className="h-full w-full" src={DEFAULT_IMAGE} alt="" />
-							</div>
-						</div>
-						<div className="px-2 w-[85%]">
-							<p className="capitalize text-sm text-gray-800 md:text-base">
-								william abner
-							</p>
-							<span className="capitalize text-gray-600 text-xs md:text-sm">
-								web developer
-							</span>
-						</div>
-					</li>
-					<li className="flex items-start rounded-md px-1 py-2">
-						<div className="w-[15%]">
-							<div className="h-[30px] mx-1 w-[30px] rounded-full">
-								<img className="h-full w-full" src={DEFAULT_IMAGE} alt="" />
-							</div>
-						</div>
-						<div className="px-2 w-[85%]">
-							<p className="capitalize text-sm text-gray-800 md:text-base">
-								sarah abrams
-							</p>
-							<span className="capitalize text-gray-600 text-xs md:text-sm">
-								web designer
-							</span>
-						</div>
-					</li>
-					<li className="flex items-start rounded-md px-1 py-2">
-						<div className="w-[15%]">
-							<div className="h-[30px] mx-1 w-[30px] rounded-full">
-								<img className="h-full w-full" src={DEFAULT_IMAGE} alt="" />
-							</div>
-						</div>
-						<div className="px-2 w-[85%]">
-							<p className="capitalize text-sm text-gray-800 md:text-base">
-								william kushkin
-							</p>
-							<span className="capitalize text-gray-600 text-xs md:text-sm">
-								content writer
-							</span>
-						</div>
-					</li>
-					<li className="flex items-start rounded-md px-1 py-2">
-						<div className="w-[15%]">
-							<div className="h-[30px] mx-1 w-[30px] rounded-full">
-								<img className="h-full w-full" src={DEFAULT_IMAGE} alt="" />
-							</div>
-						</div>
-						<div className="px-2 w-[85%]">
-							<p className="capitalize text-sm text-gray-800 md:text-base">
-								william abner
-							</p>
-							<span className="capitalize text-gray-600 text-xs md:text-sm">
-								web developer
-							</span>
-						</div>
-					</li>
-					<li className="flex items-start rounded-md px-1 py-2">
-						<div className="w-[15%]">
-							<div className="h-[30px] mx-1 w-[30px] rounded-full">
-								<img className="h-full w-full" src={DEFAULT_IMAGE} alt="" />
-							</div>
-						</div>
-						<div className="px-2 w-[85%]">
-							<p className="capitalize text-sm text-gray-800 md:text-base">
-								sarah abrams
-							</p>
-							<span className="capitalize text-gray-600 text-xs md:text-sm">
-								web designer
-							</span>
-						</div>
-					</li>
-					<li className="flex items-start rounded-md px-1 py-2">
-						<div className="w-[15%]">
-							<div className="h-[30px] mx-1 w-[30px] rounded-full">
-								<img className="h-full w-full" src={DEFAULT_IMAGE} alt="" />
-							</div>
-						</div>
-						<div className="px-2 w-[85%]">
-							<p className="capitalize text-sm text-gray-800 md:text-base">
-								william kushkin
-							</p>
-							<span className="capitalize text-gray-600 text-xs md:text-sm">
-								content writer
-							</span>
-						</div>
-					</li>
+					{team && team.length > 0 ? (
+						<ul className="pb-1 pt-3">
+							{team.map((member, index) => (
+								<li key={index} className="flex items-start rounded-md px-1 py-2 odd:bg-gray-100">
+									<div className="w-[15%]">
+										<div className="h-[30px] mx-1 w-[30px] rounded-full">
+											<img className="h-full w-full" src={member.image || DEFAULT_IMAGE} alt="" />
+										</div>
+									</div>
+									<div className="px-2 w-[85%]">
+										<p className="capitalize text-sm text-gray-800 md:text-base">
+											{member.full_name || "------"}
+										</p>
+										<span className="capitalize text-gray-600 text-xs md:text-sm">
+											{member.job || "-------"}
+										</span>
+									</div>
+								</li>
+							))}
+						</ul>
+					) : (
+						<p className="text-sm text-gray-700">
+							There is no team
+						</p>
+					)}
 				</ul>
 			</div>
 		</div>

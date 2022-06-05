@@ -82,6 +82,7 @@ const Detail = () => {
 							<Button
 								IconLeft={FaEye}
 								rounded="rounded-xl"
+								disabled={updateProject.isLoading}
 								title="manage tasks"
 								link={PROJECT_TASKS_PAGE_URL(id || "")}
 							/>
@@ -90,6 +91,7 @@ const Detail = () => {
 							<Button
 								IconLeft={FaEye}
 								rounded="rounded-xl"
+								disabled={updateProject.isLoading}
 								title="manage team"
 								link={PROJECT_TEAM_PAGE_URL(id || "")}
 							/>
@@ -99,6 +101,7 @@ const Detail = () => {
 								IconLeft={FaPen}
 								onClick={() => dispatch(modalOpen())}
 								rounded="rounded-xl"
+								disabled={updateProject.isLoading}
 								title="edit project"
 							/>
 						</div>
@@ -146,6 +149,8 @@ const Detail = () => {
 									updateProject.onSubmit(id, project)
 								}
 							}}
+							leaders={data.leaders || []}
+							team={data.team || []}
 							loading={updateProject.isLoading} 
 							priority={data.priority || "L"}
 						/>

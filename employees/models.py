@@ -302,20 +302,16 @@ class Project(models.Model):
 
 
 def file_folder(instance, filename):
-    return 'blogs/{}/{}'.format(instance.blog.slug, filename)
+    return 'blogs/{}/{}'.format(instance.project.name, filename)
 
 class ProjectFile(models.Model):
 	project = models.ForeignKey(Project, on_delete=models.CASCADE)
-	image = models.ImageField(upload_to=file_folder, help_text="To be used if file is an image", blank=True, null=True)
-	file = models.FileField(upload_to=file_folder, help_text="To be used if file is a document, audio or video", blank=True, null=True)
+	uploaded_by = models.ForeignKey(Employee, on_delete=models.SET_NULL, blank=True, null=True)
+	file = models.FileField(upload_to=file_folder)
+	file_type = models.CharField(max_length=50, verbose_name='type')
 
 	def __str__(self):
 		return self.project.name
-
-	def save(self, *args, **kwargs):
-		if not self.image and not self.file:
-			raise ValidationError("Provide either an image or a file")
-		return super().save(*args, **kwargs)
 
 
 class Task(models.Model):

@@ -3,7 +3,7 @@ from .views import (
 	AttendanceView, ClientView, DepartmentView, EmployeeView,
 	EmployeeDeactivateView, EmployeePasswordChangeView,
 	EmployeeExportDataView, HolidayView,
-	ProjectView, ProjectCompletedView, ProjectEmployeesView,
+	ProjectView, ProjectFileView, ProjectCompletedView, ProjectEmployeesView,
 	TaskView
 )
 
@@ -30,6 +30,10 @@ urlpatterns = [
 		ProjectCompletedView.as_view(),name="prject-completed"),
 	path('api/projects/<str:id>/employees/', ProjectEmployeesView.as_view(),
 		name="project-employees"),
+	path('api/projects/<str:project_id>/files/', ProjectFileView.as_view(),
+		name="project-files"),
+	path('api/projects/<str:project_id>/files/<int:id>/', ProjectFileView.as_view(),
+		name="project-files-detail"),
 	path('api/projects/<str:project_id>/tasks/', TaskView.as_view(), name="project-tasks"),
 	path('api/projects/<str:project_id>/tasks/<str:id>/',
 		TaskView.as_view(), name="project-task-detail"),

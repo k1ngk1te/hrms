@@ -10,11 +10,20 @@ from rest_framework.views import APIView
 
 from common.utils import get_instance
 from core.views import (
+	ListCreateRetrieveDestroyView,
 	ListCreateRetrieveUpdateView,
 	ListCreateRetrieveUpdateDestroyView
 )
 from .filters import ClientFilter
-from .models import Attendance, Client, Department, Employee, Holiday, Project, Task
+from .models import (
+	Attendance, 
+	Client, 
+	Department, 
+	Employee, Holiday, 
+	Project, 
+	ProjectFile, 
+	Task
+)
 from .pagination import (
 	AttendancePagination,
 	ClientPagination,
@@ -38,6 +47,7 @@ from .serializers import (
 	HolidaySerializer,
 	ProjectSerializer,
 	ProjectEmployeeSerializer,
+	ProjectFileSerializer,
 	TaskSerializer
 )
 
@@ -403,6 +413,22 @@ class ProjectEmployeesView(generics.ListAPIView):
 		if not project:
 			raise NotFound({"detail": f"Project with ID {project_id} was not found"})
 		return project.team.all()
+
+
+class ProjectFileView(ListCreateRetrieveDestroyView):
+	permission_classes = (IsHROrMDOrLeaderOrReadOnlyEmployeeAndClient, )
+	serializer_class = ProjectFileSerializer
+	lookup_field = 'id'
+
+	def get_queryset(self):
+		project_id = self.kwargs.get('project_id', None)
+		if not project_id:
+			raise ValidationError({"detail": "Project ID is required"})
+		project = get_instance(Project, {"id": project_id})
+		if not project:
+			raise ValidationError({"detail": f"Project with ID {project_id} was not found!"})
+		queryset = ProjectFile.objects.filter(project=project)
+		return queryset
 
 
 class TaskView(ListCreateRetrieveUpdateDestroyView):

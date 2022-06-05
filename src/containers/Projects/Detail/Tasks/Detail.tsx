@@ -241,52 +241,48 @@ const Detail = () => {
 							</div>
 							{data.followers && data.followers.length > 0 ? (
 								<div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:gap-5 lg:grid-cols-3 lg:gap-4">
-									{data.followers.map((member, index) => {
-										if (data.leaders.some(leader => leader.id === member.id) === false) {
-											return (
-												<PersonCard 
-													key={index}
-													title="Task follower"
-													name={member.full_name || ""}
-													job={member.job || ""}
-													options={[
-														{
-															bg: "bg-white hover:bg-blue-100",
-															border: "border border-primary-500 hover:border-primary-600",
-															color: "text-primary-500",
-															disabled: updateTask.isLoading || deleteTask.isLoading,
-															loading: updateTask.isLoading || deleteTask.isLoading,
-															loader: true,
-															onClick: () => appointLeader(member.id, true),
-															title: "Appoint Leader",
-														},
-													]}
-													actions={[
-														{
-															bg: "bg-white hover:bg-blue-100",
-															border: "border border-primary-500 hover:border-primary-600",
-															color: "text-primary-500",
-															disabled: updateTask.isLoading || deleteTask.isLoading,
-															loading: updateTask.isLoading || deleteTask.isLoading,
-															loader: true,
-															link: EMPLOYEE_PAGE_URL(member.id),
-															title: "view profile",
-														},
-														{
-															bg: "bg-white hover:bg-red-100",
-															border: "border border-red-500 hover:border-red-600",
-															color: "text-red-500",
-															disabled: updateTask.isLoading || deleteTask.isLoading,
-															loading: updateTask.isLoading || deleteTask.isLoading,
-															loader: true,
-															onClick: () => handleRemoveEmployee(member.id),
-															title: "Remove"
-														},
-													]}
-												/>
-											)
-										}
-									})}	
+									{data.followers.map((member, index) => (
+										<PersonCard 
+											key={index}
+											title="Task follower"
+											name={member.full_name || ""}
+											job={member.job || ""}
+											options={[
+												{
+													bg: "bg-white hover:bg-blue-100",
+													border: "border border-primary-500 hover:border-primary-600",
+													color: "text-primary-500",
+													disabled: updateTask.isLoading || deleteTask.isLoading,
+													loading: updateTask.isLoading || deleteTask.isLoading,
+													loader: true,
+													onClick: () => appointLeader(member.id, true),
+													title: "Appoint Leader",
+												},
+											]}
+											actions={[
+												{
+													bg: "bg-white hover:bg-blue-100",
+													border: "border border-primary-500 hover:border-primary-600",
+													color: "text-primary-500",
+													disabled: updateTask.isLoading || deleteTask.isLoading,
+													loading: updateTask.isLoading || deleteTask.isLoading,
+													loader: true,
+													link: EMPLOYEE_PAGE_URL(member.id),
+													title: "view profile",
+												},
+												{
+													bg: "bg-white hover:bg-red-100",
+													border: "border border-red-500 hover:border-red-600",
+													color: "text-red-500",
+													disabled: updateTask.isLoading || deleteTask.isLoading,
+													loading: updateTask.isLoading || deleteTask.isLoading,
+													loader: true,
+													onClick: () => handleRemoveEmployee(member.id),
+													title: "Remove"
+												},
+											]}
+										/>
+									))}	
 								</div>
 							) : (
 								<p className="text-gray-700 text-sm md:text-base">

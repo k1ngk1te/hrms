@@ -1,11 +1,10 @@
-import { useCallback, useEffect } from "react"
+import { useEffect } from "react"
 import { useParams } from "react-router-dom"
-import { FaPen, FaTrash } from "react-icons/fa";
 import { CLIENT_PAGE_URL, EMPLOYEE_PAGE_URL } from "../../../config";
 import { isErrorWithData } from "../../../store"
 import { open as alertModalOpen } from "../../../store/features/alert-modal-slice"
 import { useGetProjectQuery } from "../../../store/features/projects-slice"
-import { useAppDispatch, useUpdateProject } from "../../../hooks";
+import { useAppDispatch, useAppointProjectLeader, useRemoveProjectEmployee } from "../../../hooks";
 import { Container, PersonCard } from "../../../components/common";
 
 
@@ -18,103 +17,30 @@ const Team = () => {
 
 	const dispatch = useAppDispatch();
 
-	const updateProject = useUpdateProject();
+	const removeEmployee = useRemoveProjectEmployee()
+	const appointLeader = useAppointProjectLeader()
 
-	const handleRemoveEmployee = useCallback((employee_id: string) => {
-		if (employee_id) {
-			const newLeaders = data.leaders.filter(leader => leader.id !== employee_id)
-			const newTeam = data.team.filter(member => member.id !== employee_id)
-			const createData = {
-				name: data.name,
-				initial_cost: data.initial_cost,
-				rate: data.rate,
-				description: data.description,
-				priority: data.priority,
-				start_date: data.start_date,
-				end_date: data.end_date,
-				leaders: newLeaders.map(leader => ({id: leader.id})),
-				team: newTeam.map(member => ({id: member.id})),
-			}
-			dispatch(alertModalOpen({
-				color: "danger",
-				header: "Remove Team Member",
-				message: "Do you wish to remove this member?",
-				decisions: [
-					{
-						bg: "bg-gray-500 hover:bg-gray-400",
-						caps: true,
-						focus: "",
-						onClick: () => {},
-						title: "Cancel"
-					},
-					{
-						bg: "bg-red-600 hover:bg-red-500",
-						caps: true,
-						focus: "",
-						onClick: () => updateProject.onSubmit(id, createData),
-						title: "Proceed"
-					},
-				]
-			}))
-		}
-	}, [dispatch, updateProject, id, data])
-
-	const appointLeader = useCallback((employee_id: string, appoint: boolean) => {
-		if (employee_id) {
-			let newLeaders;
-			if (appoint === true) {
-				newLeaders = [...data.leaders]
-				const emp = data.team.find(member => member.id === employee_id)
-				newLeaders.push(emp)
-			} else {
-				newLeaders = data.leaders.filter(leader => leader.id !== employee_id)
-			}
-
-			const createData = {
-				name: data.name,
-				initial_cost: data.initial_cost,
-				rate: data.rate,
-				description: data.description,
-				priority: data.priority,
-				start_date: data.start_date,
-				end_date: data.end_date,
-				leaders: newLeaders.map(leader => ({id: leader.id})),
-				team: data.team.map(member => ({id: member.id})),
-			}
-			dispatch(alertModalOpen({
-				color: "warning",
-				header: appoint ? "Add New Leader?" : "Remove Leader?",
-				message: appoint ? "Do you wish to appoint this member as a leader?" : "Click Proceed to continue",
-				decisions: [
-					{
-						bg: "bg-gray-500 hover:bg-gray-400",
-						caps: true,
-						focus: "",
-						onClick: () => {},
-						title: "Cancel"
-					},
-					{
-						bg: "bg-yellow-600 hover:bg-yellow-500",
-						caps: true,
-						focus: "",
-						onClick: () => updateProject.onSubmit(id, createData),
-						title: "Proceed"
-					},
-				]
-			}))
-		}
-	}, [dispatch, updateProject, id, data])
+	const loading = removeEmployee.isLoading || appointLeader.isLoading
 
 	useEffect(() => {
-		if (updateProject.success) {
+		if (appointLeader.success) {
 			dispatch(alertModalOpen({
 				color: "success",
-				header: "Project Info Updated",
-				message: "Project information was updated successfully!",
+				header: "Leader Appointment",
+				message: "Employee was re-appointed successfully!",
 			}))
 		}
-	}, [updateProject.success])
+	}, [appointLeader.success])
 
+	useEffect(() => {
+		if (removeEmployee.success) {
+			dispatch(alertModalOpen({
+				color: "success",
+				header: "Employee Removed",
+				message: "Employee was removed successfully!",
+			}))
+		}
+	}, [removeEmployee.success])
 
 	return (
 		<Container
@@ -197,8 +123,6 @@ const Team = () => {
 												bg: "bg-white hover:bg-green-100",
 												border: "border border-green-500 hover:border-green-600",
 												color: "text-green-600",
-												disabled: updateProject.isLoading,
-												loading: updateProject.isLoading,
 												loader: true,
 												link: CLIENT_PAGE_URL(data.client.id),
 												title: "view profile",
@@ -231,10 +155,10 @@ const Team = () => {
 													bg: "bg-white hover:bg-red-100",
 													border: "border border-red-500 hover:border-red-600",
 													color: "text-red-500",
-													disabled: updateProject.isLoading,
-													loading: updateProject.isLoading,
+													disabled: loading,
+													loading: loading,
 													loader: true,
-													onClick: () => appointLeader(leader.id, false),
+													onClick: () => appointLeader.onSubmit(data, leader.id, false),
 													title: "Remove Leader",
 												},
 											]}
@@ -243,8 +167,8 @@ const Team = () => {
 													bg: "bg-white hover:bg-blue-100",
 													border: "border border-primary-500 hover:border-primary-600",
 													color: "text-primary-500",
-													disabled: updateProject.isLoading,
-													loading: updateProject.isLoading,
+													disabled: loading,
+													loading: loading,
 													loader: true,
 													link: EMPLOYEE_PAGE_URL(leader.id),
 													title: "view profile",
@@ -253,10 +177,10 @@ const Team = () => {
 													bg: "bg-white hover:bg-red-100",
 													border: "border border-red-500 hover:border-red-600",
 													color: "text-red-500",
-													disabled: updateProject.isLoading,
-													loading: updateProject.isLoading,
+													disabled: loading,
+													loading: loading,
 													loader: true,
-													onClick: () => handleRemoveEmployee(leader.id),
+													onClick: () => removeEmployee.onSubmit(data, leader.id),
 													title: "Remove"
 												},
 											]}
@@ -277,52 +201,48 @@ const Team = () => {
 							</div>
 							{data.team && data.team.length > 0 ? (
 								<div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:gap-5 lg:grid-cols-3 lg:gap-4">
-									{data.team.map((member, index) => {
-										if (data.leaders.some(leader => leader.id === member.id) === false) {
-											return (
-												<PersonCard 
-													key={index}
-													title="Team member"
-													name={member.full_name || ""}
-													job={member.job || ""}
-													options={[
-														{
-															bg: "bg-white hover:bg-success-100",
-															border: "border border-success-500 hover:border-success-600",
-															color: "text-success-500",
-															disabled: updateProject.isLoading,
-															loading: updateProject.isLoading,
-															loader: true,
-															onClick: () => appointLeader(member.id, true),
-															title: "Appoint Leader",
-														},
-													]}
-													actions={[
-														{
-															bg: "bg-white hover:bg-blue-100",
-															border: "border border-primary-500 hover:border-primary-600",
-															color: "text-primary-500",
-															disabled: updateProject.isLoading,
-															loading: updateProject.isLoading,
-															loader: true,
-															link: EMPLOYEE_PAGE_URL(member.id),
-															title: "view profile",
-														},
-														{
-															bg: "bg-white hover:bg-red-100",
-															border: "border border-red-500 hover:border-red-600",
-															color: "text-red-500",
-															disabled: updateProject.isLoading,
-															loading: updateProject.isLoading,
-															loader: true,
-															onClick: () => handleRemoveEmployee(member.id),
-															title: "Remove"
-														},
-													]}
-												/>
-											)
-										}
-									})}	
+									{data.team.map((member, index) => (
+										<PersonCard 
+											key={index}
+											title="Team member"
+											name={member.full_name || "------"}
+											label={member.job || "------"}
+											options={[
+												{
+													bg: "bg-white hover:bg-success-100",
+													border: "border border-success-500 hover:border-success-600",
+													color: "text-success-500",
+													disabled: loading,
+													loading: loading,
+													loader: true,
+													onClick: () => appointLeader.onSubmit(data, member.id, true),
+													title: "Appoint Leader",
+												},
+											]}
+											actions={[
+												{
+													bg: "bg-white hover:bg-blue-100",
+													border: "border border-primary-500 hover:border-primary-600",
+													color: "text-primary-500",
+													disabled: loading,
+													loading: loading,
+													loader: true,
+													link: EMPLOYEE_PAGE_URL(member.id),
+													title: "view profile",
+												},
+												{
+													bg: "bg-white hover:bg-red-100",
+													border: "border border-red-500 hover:border-red-600",
+													color: "text-red-500",
+													disabled: loading,
+													loading: loading,
+													loader: true,
+													onClick: () => removeEmployee.onSubmit(data, member.id),
+													title: "Remove"
+												},
+											]}
+										/>
+									))}	
 								</div>
 							) : (
 								<p className="text-gray-700 text-sm md:text-base">

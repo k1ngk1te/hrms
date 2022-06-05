@@ -3,9 +3,7 @@ from rest_framework.exceptions import server_error, MethodNotAllowed
 from rest_framework.generics import GenericAPIView
 
 
-class ListCreateUpdateView(mixins.ListModelMixin,
-											mixins.CreateModelMixin,
-											mixins.UpdateModelMixin,
+class ListCreateView(mixins.ListModelMixin, mixins.CreateModelMixin,
 											GenericAPIView):
 
 	def get(self, request, *args, **kwargs):
@@ -14,17 +12,9 @@ class ListCreateUpdateView(mixins.ListModelMixin,
 	def post(self, request, *args, **kwargs):
 		return self.custom_create(request, *args, **kwargs)
 
-	def put(self, request, *args, **kwargs):
-		return self.custom_update(request, *args, **kwargs)
-
 	def custom_create(self, request, *args, **kwargs):
 		if self.validate_lookup_field(kwargs.get(self.lookup_field, None), False) is True:
 			return self.create(request, *args, **kwargs)
-		return server_error(request, *args, **kwargs)
-
-	def custom_update(self, request, *args, **kwargs):
-		if self.validate_lookup_field(kwargs.get(self.lookup_field, None), True) is True:
-			return self.update(request, *args, **kwargs)
 		return server_error(request, *args, **kwargs)
 
 	def validate_lookup_field(self, lookup_field, id_required=True):
@@ -38,6 +28,26 @@ class ListCreateUpdateView(mixins.ListModelMixin,
 			raise MethodNotAllowed(self.request.method)
 
 
+class ListCreateRetrieveView(mixins.RetrieveModelMixin, ListCreateView):
+
+	def get(self, request, *args,  **kwargs):
+		if self.lookup_field and kwargs.get(self.lookup_field, None) is not None:
+			return self.retrieve(request, *args, **kwargs)
+		return self.list(request, *args, **kwargs)
+
+
+class ListCreateUpdateView(ListCreateView,  mixins.UpdateModelMixin,
+											GenericAPIView):
+
+	def put(self, request, *args, **kwargs):
+		return self.custom_update(request, *args, **kwargs)
+
+	def custom_update(self, request, *args, **kwargs):
+		if self.validate_lookup_field(kwargs.get(self.lookup_field, None), True) is True:
+			return self.update(request, *args, **kwargs)
+		return server_error(request, *args, **kwargs)
+
+
 class ListCreateRetrieveUpdateView(mixins.RetrieveModelMixin, 
 													   ListCreateUpdateView):
 
@@ -45,6 +55,13 @@ class ListCreateRetrieveUpdateView(mixins.RetrieveModelMixin,
 		if self.lookup_field and kwargs.get(self.lookup_field, None) is not None:
 			return self.retrieve(request, *args, **kwargs)
 		return self.list(request, *args, **kwargs)
+
+
+class ListCreateRetrieveDestroyView(mixins.DestroyModelMixin, ListCreateRetrieveView):
+	def delete(self, request, *args,  **kwargs):
+		if self.validate_lookup_field(kwargs.get(self.lookup_field, None), True) is True:
+			return self.destroy(request, *args, **kwargs)
+		return server_error(request, *args, **kwargs)
 
 
 class ListCreateRetrieveUpdateDestroyView(ListCreateRetrieveUpdateView,
