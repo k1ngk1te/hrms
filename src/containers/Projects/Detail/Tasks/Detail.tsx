@@ -251,9 +251,9 @@ const Detail = () => {
 													job={member.job || ""}
 													options={[
 														{
-															bg: "bg-white hover:bg-success-100",
-															border: "border border-success-500 hover:border-success-600",
-															color: "text-success-500",
+															bg: "bg-white hover:bg-blue-100",
+															border: "border border-primary-500 hover:border-primary-600",
+															color: "text-primary-500",
 															disabled: updateTask.isLoading || deleteTask.isLoading,
 															loading: updateTask.isLoading || deleteTask.isLoading,
 															loader: true,
@@ -263,9 +263,9 @@ const Detail = () => {
 													]}
 													actions={[
 														{
-															bg: "bg-white hover:bg-success-100",
-															border: "border border-success-500 hover:border-success-600",
-															color: "text-success-500",
+															bg: "bg-white hover:bg-blue-100",
+															border: "border border-primary-500 hover:border-primary-600",
+															color: "text-primary-500",
 															disabled: updateTask.isLoading || deleteTask.isLoading,
 															loading: updateTask.isLoading || deleteTask.isLoading,
 															loader: true,

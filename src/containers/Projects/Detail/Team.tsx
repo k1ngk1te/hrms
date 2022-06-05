@@ -194,9 +194,9 @@ const Team = () => {
 										label={data.client.position || "------"}
 										actions={[
 											{
-												bg: "bg-white hover:bg-success-100",
-												border: "border border-success-500 hover:border-success-600",
-												color: "text-success-500",
+												bg: "bg-white hover:bg-green-100",
+												border: "border border-green-500 hover:border-green-600",
+												color: "text-green-600",
 												disabled: updateProject.isLoading,
 												loading: updateProject.isLoading,
 												loader: true,
@@ -299,9 +299,9 @@ const Team = () => {
 													]}
 													actions={[
 														{
-															bg: "bg-white hover:bg-success-100",
-															border: "border border-success-500 hover:border-success-600",
-															color: "text-success-500",
+															bg: "bg-white hover:bg-blue-100",
+															border: "border border-primary-500 hover:border-primary-600",
+															color: "text-primary-500",
 															disabled: updateProject.isLoading,
 															loading: updateProject.isLoading,
 															loader: true,

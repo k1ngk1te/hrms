@@ -72,8 +72,7 @@ class AttendanceView(generics.ListCreateAPIView):
 		return {
 			'request': self.request,
 			'format': self.format_kwarg,
-			'view': self,
-			'action': self.request.data.get("action", None)
+			'view': self
 		}
 
 

@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django_filters',
     'dj_rest_auth',
     'rest_framework',
+    'rest_framework_swagger',
 ]
 
 MIDDLEWARE = [
@@ -152,6 +153,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": (
         'users.permissions.IsAuthenticated',
     ),
+    "DEFAULT_SCHEMA_CLASS": 'rest_framework.schemas.coreapi.AutoSchema',
     "NON_FIELD_ERRORS_KEY": 'error',
     "PAGE_SIZE": 50
 }

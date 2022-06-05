@@ -16,6 +16,7 @@ import {
 import { Container, Modal, TabNavigator } from "../../../components/common";
 import { Button } from "../../../components/controls";
 import { ProjectCreateType, ProjectCreateErrorType } from "../../../types/employees";
+import { createProject } from "../../../utils/projects";
 
 const Tasks = () => (
 	<ul>
@@ -138,7 +139,16 @@ const Detail = () => {
 							</div>
 						</div>
 
-						<ProjectDetail />
+						<ProjectDetail 
+							changePriority={(priority: string) => {
+								if (priority !== data.priority) {
+									const project = { ...createProject(data), priority }
+									updateProject.onSubmit(id, project)
+								}
+							}}
+							loading={updateProject.isLoading} 
+							priority={data.priority || "L"}
+						/>
 					</div>
 					<Modal
 						close={() => dispatch(modalClose())}

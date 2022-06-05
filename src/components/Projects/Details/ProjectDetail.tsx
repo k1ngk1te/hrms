@@ -1,10 +1,19 @@
+import { FC } from "react";
 import { DEFAULT_IMAGE } from "../../../config";
 import { useFormSelect } from "../../../hooks";
 import { StatusProgressBar } from "../../common";
 import { Select } from "../../controls";
 
-const ProjectDetail = () => {
-	const priority = useFormSelect("H");
+export type ProjectDetailProps = {
+	changePriority: (priority: string) => void;
+	loading: boolean;
+	priority: "L" | "M" | "H";
+}
+
+const ProjectDetail: FC<ProjectDetailProps> = ({ changePriority, loading, priority }) => {
+	const level = useFormSelect(priority, {
+		onChange: ({ value }) => changePriority(value)
+	});
 
 	return (
 		<div className="py-2 w-full sm:px-4 lg:w-1/3">
@@ -34,8 +43,12 @@ const ProjectDetail = () => {
 							<p>Priority:</p>
 							<div>
 								<Select
-									onChange={priority.onChange}
-									value={priority.value}
+									bg={level.value === "H" ? "bg-red-100" : level.value === "M" ? "bg-yellow-100" : "bg-green-100"}
+									bdrColor={level.value === "H" ? "border-red-600" : level.value === "M" ? "border-yellow-600" : "border-green-600"}
+									color={level.value === "H" ? "text-red-700" : level.value === "M" ? "text-yellow-700" : "text-green-700"}
+									disabled={loading}
+									onChange={level.onChange}
+									value={level.value}
 									options={[
 										{ title: "High", value: "H" },
 										{ title: "Medium", value: "M" },

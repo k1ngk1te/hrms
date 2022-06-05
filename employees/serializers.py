@@ -37,7 +37,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
 		return attendance
 
 	def get_action(self):
-		action = self.context.get("action", None)
+		action = self.context.get("request").data.get("action", None)
 		if action is None:
 			raise ValidationError({"detail": "Invalid request. Please provide action value."})
 		if action != "in" and action != "out":
