@@ -115,6 +115,9 @@ const projectsApi = baseApi.injectEndpoints({
 				url: PROJECT_FILES_URL(project_id),
 				method: "POST",
 				credentials: "include",
+				headers: {
+					"default-content-type": "use-browser-default",
+				},
 				body: generateProjectFile(data),
 			}),
 			invalidatesTags: (result) => (result ? ["Project"] : []),

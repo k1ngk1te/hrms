@@ -1,23 +1,21 @@
 import { FC, useState } from "react";
-import { useParams } from "react-router-dom"
+import { useParams } from "react-router-dom";
 import { FaTimes, FaFileUpload } from "react-icons/fa";
 import { ProjectFileType } from "../../../types";
 import { Button } from "../../controls";
 import Form from "./AddProjectFileForm";
 
 export type ProjectImagesProps = {
-	files: ProjectFileType[]
-}
+	files: ProjectFileType[];
+};
 
 const ProjectImages: FC<ProjectImagesProps> = ({ files }) => {
 	const { id } = useParams();
-	const [visible, setVisible] = useState(false)
+	const [visible, setVisible] = useState(false);
 
 	return (
 		<div className="bg-white my-4 p-4 rounded-md shadow-lg">
-			<h3
-				className="capitalize cursor-pointer font-bold text-lg text-gray-800 tracking-wide md:text-xl"
-			>
+			<h3 className="capitalize cursor-pointer font-bold text-lg text-gray-800 tracking-wide md:text-xl">
 				uploaded images
 			</h3>
 			{visible ? (
@@ -30,7 +28,13 @@ const ProjectImages: FC<ProjectImagesProps> = ({ files }) => {
 							<FaTimes className="text-xs sm:text-sm" />
 						</div>
 					</div>
-					<Form label="image" project_id={id || ""} onClose={() => setVisible(false)} />	
+					<Form
+						accept="image/*"
+						type="image"
+						label="image"
+						project_id={id || ""}
+						onClose={() => setVisible(false)}
+					/>
 				</div>
 			) : (
 				<div className="flex justify-start my-2 w-full px-3">
@@ -56,7 +60,8 @@ const ProjectImages: FC<ProjectImagesProps> = ({ files }) => {
 								/>
 							</div>
 							<p className="my-1 text-left text-sm text-gray-700 md:text-base">
-								{file.name.split(0, 40)}{file.name.length > 40 ? "..." : ""}
+								{file.name.split(0, 40)}
+								{file.name.length > 40 ? "..." : ""}
 							</p>
 						</div>
 					))}
@@ -67,7 +72,7 @@ const ProjectImages: FC<ProjectImagesProps> = ({ files }) => {
 				</p>
 			)}
 		</div>
-	)
-}
+	);
+};
 
 export default ProjectImages;

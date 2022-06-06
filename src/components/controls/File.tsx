@@ -2,6 +2,7 @@ import { ChangeEvent } from "react";
 import { IconType } from "react-icons";
 
 type FileProps = {
+	accept?: string;
 	bg?: string;
 	bdr?: string;
 	bdrColor?: string;
@@ -24,6 +25,7 @@ type FileProps = {
 }
 
 const File = ({
+	accept,
 	bg,
 	bdr,
 	bdrColor,
@@ -90,6 +92,7 @@ const File = ({
 						{placeholder}
 					</p>
 					<input
+						accept={accept}
 						className="h-[1px] opacity-0 w-[1px]"
 						disabled={disabled}
 						onChange={onChange}
@@ -115,6 +118,7 @@ const File = ({
 };
 
 File.defaultProps = {
+	accept: "*",
 	bg: "bg-primary-500 hover:bg-primary-400",
 	bdr: "border",
 	errorSize: "text-xs",
