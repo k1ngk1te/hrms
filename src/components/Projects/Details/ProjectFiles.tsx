@@ -18,7 +18,7 @@ const ProjectFiles: FC<ProjectFilesProps> = ({ files }) => (
 				<Button
 					IconLeft={FaFileUpload}
 					rounded="rounded-lg"
-					title="add files"
+					title="add file"
 				/>
 			</div>
 		</div>
@@ -58,7 +58,7 @@ const ProjectFiles: FC<ProjectFilesProps> = ({ files }) => (
 			</ul>
 		) : (
 			<p className="text-sm text-gray-700">
-				There are currently no image files.
+				There are currently no files/documents on this project.
 			</p>
 		)}		
 	</div>

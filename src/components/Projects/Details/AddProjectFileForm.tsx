@@ -6,7 +6,7 @@ import { useAppDispatch, useFormInput } from "../../../hooks";
 import { validateForm } from "../../../utils";
 import { Button, File, Input } from "../../controls";
 
-const AddProjectFileForm = () => {
+const AddProjectFileForm = ({ project_id, onClose, label }: {label?: string; project_id: string; onClose: () => void }) => {
 	const [formErrors, setFormErrors] = useState<{name?: string; file?: string}>({
 		name: undefined, file: undefined
 	})
@@ -21,14 +21,17 @@ const AddProjectFileForm = () => {
 		onChange: () => setFormErrors({ ...formErrors, file: undefined})
 	})
 
+  const nameReset = name.reset;
+  const fileReset = file.reset;
+
 	const [createProjectFile, { error, status, isLoading }] = useCreateProjectFileMutation()
 
 	const handleSubmit = useCallback((form: { name: any; file: any }) => {
 		const {valid, result} = validateForm(form)
-		if (valid)
-			createProjectFile({name: string, file: file})
+		if (valid && project_id !== undefined && project_id !== "")
+			createProjectFile({project_id, data: form})
 		else setErrors(result)
-	}, [createProjectFile])
+	}, [createProjectFile, project_id])
 
 	const fileError =
     typeof formErrors?.file === "string" ?
@@ -53,8 +56,11 @@ const AddProjectFileForm = () => {
   			color: "success",
   			message: "File was added to project successfully"
   		}))
+      onClose()
+      nameReset()
+      fileReset()
   	}
-  }, [dispatch, status])
+  }, [dispatch, status, nameReset, fileReset, onClose])
 
 	return (
 		<form onSubmit={(e) => {
@@ -67,9 +73,9 @@ const AddProjectFileForm = () => {
             <File
               disabled={isLoading}
               error={fileError || errors?.file}
-              label="File"
+              label={label || "File"}
               onChange={file.onChange}
-              placeholder="upload file"
+              placeholder={`upload ${label || "file"}`}
               required
               value={file.value?.name || ""}
             />
@@ -97,7 +103,7 @@ const AddProjectFileForm = () => {
             disabled={isLoading}
             loader
             loading={isLoading}
-            title="submit"
+            title="upload"
             type="submit"
           />
         </div>
