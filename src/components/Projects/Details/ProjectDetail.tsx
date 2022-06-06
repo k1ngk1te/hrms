@@ -3,26 +3,28 @@ import { DEFAULT_IMAGE } from "../../../config";
 import { useFormSelect } from "../../../hooks";
 import { StatusProgressBar } from "../../common";
 import { Select } from "../../controls";
-import { ProjectEmployeeType } from "../../../types";
+import { ProjectType } from "../../../types";
 
 export type ProjectDetailProps = {
 	changePriority: (priority: string) => void;
 	loading: boolean;
-	priority: "L" | "M" | "H";
-	leaders: ProjectEmployeeType[];
-	team: ProjectEmployeeType[];
+	data: ProjectType[];
 };
 
 const ProjectDetail: FC<ProjectDetailProps> = ({
 	changePriority,
 	loading,
-	leaders,
-	team,
-	priority
+	data
 }) => {
-	const level = useFormSelect(priority, {
+	const level = useFormSelect(data.priority, {
 		onChange: ({ value }) => changePriority(value),
 	});
+
+	const start_date = new Date(data.start_date)
+	const end_date = new Date(data.end_date)
+	const hours = (end_date - start_date) / (1000 * 60 * 60)
+
+	const total_cost = (data.initial_cost || 0) + ((data.rate || 0) * hours)
 
 	return (
 		<div className="py-2 w-full sm:px-4 lg:w-1/3">
@@ -33,20 +35,28 @@ const ProjectDetail: FC<ProjectDetailProps> = ({
 					</h3>
 					<ul className="pb-1 pt-3">
 						<li className="odd:bg-gray-100 rounded-sm flex items-center justify-between p-2 capitalize font-medium text-gray-800 text-base md:text-lg lg:text-base">
-							<p>cost:</p>
-							<p>$1200</p>
+							<p>initial cost:</p>
+							<p>${data.initial_cost || 0}</p>
+						</li>
+						<li className="odd:bg-gray-100 rounded-sm flex items-center justify-between p-2 font-medium text-gray-800 text-base md:text-lg lg:text-base">
+							<p>Total Hours:</p>
+							<p>{hours} hour{hours > 1 ? "s" : ""}</p>
+						</li>
+						<li className="odd:bg-gray-100 rounded-sm flex items-center justify-between p-2 font-medium text-gray-800 text-base md:text-lg lg:text-base">
+							<p>Rate / Hour:</p>
+							<p>${data.rate || 0}</p>
 						</li>
 						<li className="odd:bg-gray-100 rounded-sm flex items-center justify-between p-2 capitalize font-medium text-gray-800 text-base md:text-lg lg:text-base">
-							<p>total hours:</p>
-							<p>100 hours</p>
+							<p>total cost:</p>
+							<p>${total_cost}</p>
 						</li>
 						<li className="odd:bg-gray-100 rounded-sm flex items-center justify-between p-2 capitalize font-medium text-gray-800 text-base md:text-lg lg:text-base">
 							<p>created:</p>
-							<p>25 Feb, 2019</p>
+							<p>{start_date.toDateString()}</p>
 						</li>
 						<li className="odd:bg-gray-100 rounded-sm flex items-center justify-between p-2 capitalize font-medium text-gray-800 text-base md:text-lg lg:text-base">
 							<p>deadline:</p>
-							<p>12 Jun, 2019</p>
+							<p>{end_date.toDateString()}</p>
 						</li>
 						<li className="odd:bg-gray-100 rounded-sm flex items-center justify-between p-2 capitalize font-medium text-gray-800 text-base md:text-lg lg:text-base">
 							<p>Priority:</p>
@@ -86,7 +96,7 @@ const ProjectDetail: FC<ProjectDetailProps> = ({
 						</li>
 						<li className="odd:bg-gray-100 rounded-sm flex items-center justify-between p-2 capitalize font-medium text-gray-800 text-base md:text-lg lg:text-base">
 							<p>created by</p>
-							<p>barry cuda</p>
+							<p>{data.created_by ? data.created_by.full_name : "-------"}</p>
 						</li>
 						<li className="odd:bg-gray-100 rounded-sm flex items-center justify-between p-2 capitalize font-medium text-gray-800 text-base md:text-lg lg:text-base">
 							<p>status:</p>
@@ -107,11 +117,11 @@ const ProjectDetail: FC<ProjectDetailProps> = ({
 
 				<div className="bg-white my-4 p-4 rounded-md shadow-lg w-full md:w-[45%] lg:w-full">
 					<h3 className="cursor-pointer font-bold text-lg text-gray-800 tracking-wide md:text-xl">
-						Assigned Leader{leaders && leaders.length > 1 ? "s" : ""}
+						Assigned Leader{data.leaders && data.leaders.length > 1 ? "s" : ""}
 					</h3>
-					{leaders && leaders.length > 0 ? (
+					{data.leaders && data.leaders.length > 0 ? (
 						<ul className="pb-1 pt-3">
-							{leaders.map((leader, index) => (
+							{data.leaders.map((leader, index) => (
 								<li
 									key={index}
 									className="flex items-start rounded-md px-1 py-2 odd:bg-gray-100"
@@ -149,9 +159,9 @@ const ProjectDetail: FC<ProjectDetailProps> = ({
 					Assigned Team
 				</h3>
 				<ul className="grid grid-cols-1 pb-1 pt-3 sm:grid-cols-2 lg:grid-cols-1">
-					{team && team.length > 0 ? (
+					{data.team && data.team.length > 0 ? (
 						<ul className="pb-1 pt-3">
-							{team.map((member, index) => (
+							{data.team.map((member, index) => (
 								<li
 									key={index}
 									className="flex items-start rounded-md px-1 py-2 odd:bg-gray-100"

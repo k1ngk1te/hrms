@@ -149,10 +149,8 @@ const Detail = () => {
 									updateProject.onSubmit(id, project)
 								}
 							}}
-							leaders={data.leaders || []}
-							team={data.team || []}
+							data={data}
 							loading={updateProject.isLoading} 
-							priority={data.priority || "L"}
 						/>
 					</div>
 					<Modal
