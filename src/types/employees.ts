@@ -205,6 +205,11 @@ export type ProjectType = {
     completed: boolean;
     verified: boolean;
     is_active: boolean;
+    tasks: {
+      id: string;
+      name: string;
+      completed: string;
+    }[]
 }
 
 export type ProjectCreateType = {

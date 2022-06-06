@@ -14,7 +14,7 @@ const NotFound = () => (
 			width: "100%"
 		}}>
 		{/* <PageTitle title={NOT_FOUND_TITLE} /> */}
-		<p style={{fontSize: "3rem"}}>404</p>
+		<p style={{fontSize: "2rem"}}>404</p>
 		<div style={{
 			display: "block",
 			background: "black",
@@ -23,7 +23,7 @@ const NotFound = () => (
 			height: "80px",
 			width: "2px"
 		}} />
-		<p style={{fontSize: "1.5rem"}}>Page Not Found</p>
+		<p style={{fontSize: "1rem"}}>Page Not Found</p>
 	</div>
 )
 

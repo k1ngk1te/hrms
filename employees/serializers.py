@@ -445,6 +445,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 	leaders = ProjectEmployeeSerializer(many=True, required=False)
 	team = ProjectEmployeeSerializer(many=True, required=False)
 	created_by = ProjectEmployeeSerializer(read_only=True)
+	tasks = serializers.SerializerMethodField('get_tasks')
 	completed = serializers.BooleanField(read_only=True)
 	verified = serializers.BooleanField(read_only=True)
 	is_active = serializers.SerializerMethodField('get_is_active')
@@ -498,6 +499,24 @@ class ProjectSerializer(serializers.ModelSerializer):
 		total_team_members = team + leaders
 		project.team.set(total_team_members)
 		return project
+
+	def get_tasks(self, obj):
+		# Check if the request is in detail view to avoid loading tasks on list view
+		try:
+			project_id = self.context.get("view").kwargs.get("id", None)
+			if not project_id:
+				return []
+			tasks = []
+			for task in obj.task.all()[:15]:
+				tasks.append({
+					"id": task.id,
+					"name": task.name,
+					"completed": task.completed
+				})
+			return tasks
+		except:
+			pass
+		return []
 
 	def get_is_active(self, obj):
 		return obj.is_active

@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     'django_filters',
     'dj_rest_auth',
     'rest_framework',
-    'rest_framework_swagger',
 ]
 
 MIDDLEWARE = [

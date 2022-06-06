@@ -20,7 +20,7 @@ const PageError = ({
 			width: "100%"
 		}}>
 		{/* <PageTitle title={NOT_FOUND_TITLE} /> */}
-		<p style={{fontSize: "3rem"}}>{statusCode || 500}</p>
+		<p style={{fontSize: "2rem"}}>{statusCode || 500}</p>
 		<div style={{
 			display: "block",
 			background: "black",
@@ -29,7 +29,7 @@ const PageError = ({
 			height: "80px",
 			width: "2px"
 		}} />
-		<p style={{fontSize: "1.5rem"}}>{title && typeof title === "string"
+		<p style={{fontSize: "1rem"}}>{title && typeof title === "string"
 			? title
 			: "A server error occurred! Please try again later."}</p>
 	</div>

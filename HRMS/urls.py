@@ -5,7 +5,6 @@ from django.views.generic import TemplateView
 from django.urls import include, path, re_path
 from rest_framework.documentation import include_docs_urls
 from rest_framework.schemas import get_schema_view
-# from rest_framework_swagger.views import get_swagger_view
 
 from users.views import CustomLoginView
 
@@ -26,9 +25,6 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name="base.html")),
 
     path('docs/', include_docs_urls('Kite Human Resource Management Administration')),
-    # path('docs/swagger/', get_swagger_view(
-    #     title='Kite Human Resource Management Administration')
-    # ),
     path('docs/openapi/', get_schema_view(
         title="Kite Human Resource Management Administration",
         description="API for all system functions",

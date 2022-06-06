@@ -18,16 +18,17 @@ import { Button } from "../../../components/controls";
 import { ProjectCreateType, ProjectCreateErrorType } from "../../../types/employees";
 import { createProject } from "../../../utils/projects";
 
-const Tasks = () => (
-	<ul>
-		<Task title="Patient appointment booking" completed={false} />
-		<Task title="Patient appointment booking" completed={false} />
-		<Task title="Patient appointment booking" completed={false} />
-		<Task title="Patient appointment booking" completed />
-		<Task title="Patient appointment booking" completed={false} />
-		<Task title="Patient appointment booking" completed />
-	</ul>
-);
+const Tasks = ({ tasks }: { tasks: {id: string; name: string; completed: boolean }[] }) => {
+	return tasks && tasks.length > 0 ? (
+		<ul>
+			{tasks.map((task, index) => (
+				<Task key={index} title={task.name} completed={task.completed} />
+			))}
+		</ul>
+	) : <div className="p-2">
+		<p className="text-sm text-gray-700">There are no tasks in this section</p>
+	</div>;
+}
 
 const Detail = () => {
 	const { id } = useParams();
@@ -44,9 +45,9 @@ const Detail = () => {
 	const updateProject = useUpdateProject();
 
 	const screens = [
-		{ title: "all tasks", component: <Tasks /> },
-		{ title: "pending tasks", component: <Tasks /> },
-		{ title: "completed tasks", component: <Tasks /> },
+		{ title: "all tasks", component: <Tasks tasks={data?.tasks || []} /> },
+		{ title: "completed tasks", component: <Tasks tasks={data ? data.tasks.filter(task => task.completed === true) : []} /> },
+		{ title: "pending tasks", component: <Tasks tasks={data ? data.tasks.filter(task => task.completed === false) : []} /> },
 	];
 
 	useEffect(() => {
@@ -139,6 +140,17 @@ const Detail = () => {
 
 							<div className="bg-white my-4 p-4 rounded-md shadow-lg">
 								<TabNavigator container="" screens={screens} />
+								<div className="w-1/3">
+									<Button 
+										bg="bg-gray-300 hover:bg-blue-100"
+										border="border-gray-700 hover:bg-primary-600"
+										caps
+										color="text-primary-500"
+										focus="focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+										link={PROJECT_TASKS_PAGE_URL(id || "")}
+										title="See all"
+									/>
+								</div>
 							</div>
 						</div>
 
