@@ -3,9 +3,16 @@ import { useParams } from "react-router-dom";
 import { FaEye, FaPen } from "react-icons/fa";
 import { PROJECT_TASKS_PAGE_URL, PROJECT_TEAM_PAGE_URL } from "../../../config";
 import { isErrorWithData, isFormError } from "../../../store";
-import { open as modalOpen, close as modalClose } from "../../../store/features/modal-slice";
+import {
+	open as modalOpen,
+	close as modalClose,
+} from "../../../store/features/modal-slice";
 import { useGetProjectQuery } from "../../../store/features/projects-slice";
-import { useAppDispatch, useAppSelector, useUpdateProject } from "../../../hooks";
+import {
+	useAppDispatch,
+	useAppSelector,
+	useUpdateProject,
+} from "../../../hooks";
 import {
 	Form,
 	ProjectDetail,
@@ -15,20 +22,31 @@ import {
 } from "../../../components/Projects";
 import { Container, Modal, TabNavigator } from "../../../components/common";
 import { Button } from "../../../components/controls";
-import { ProjectCreateType, ProjectCreateErrorType } from "../../../types/employees";
+import {
+	ProjectCreateType,
+	ProjectCreateErrorType,
+} from "../../../types/employees";
 import { createProject } from "../../../utils/projects";
 
-const Tasks = ({ tasks }: { tasks: {id: string; name: string; completed: boolean }[] }) => {
+const Tasks = ({
+	tasks,
+}: {
+	tasks: { id: string; name: string; completed: boolean }[];
+}) => {
 	return tasks && tasks.length > 0 ? (
 		<ul>
 			{tasks.map((task, index) => (
 				<Task key={index} title={task.name} completed={task.completed} />
 			))}
 		</ul>
-	) : <div className="p-2">
-		<p className="text-sm text-gray-700">There are no tasks in this section</p>
-	</div>;
-}
+	) : (
+		<div className="p-2">
+			<p className="text-sm text-gray-700">
+				There are no tasks in this section
+			</p>
+		</div>
+	);
+};
 
 const Detail = () => {
 	const { id } = useParams();
@@ -46,8 +64,26 @@ const Detail = () => {
 
 	const screens = [
 		{ title: "all tasks", component: <Tasks tasks={data?.tasks || []} /> },
-		{ title: "completed tasks", component: <Tasks tasks={data ? data.tasks.filter(task => task.completed === true) : []} /> },
-		{ title: "pending tasks", component: <Tasks tasks={data ? data.tasks.filter(task => task.completed === false) : []} /> },
+		{
+			title: "completed tasks",
+			component: (
+				<Tasks
+					tasks={
+						data ? data.tasks.filter((task) => task.completed === true) : []
+					}
+				/>
+			),
+		},
+		{
+			title: "pending tasks",
+			component: (
+				<Tasks
+					tasks={
+						data ? data.tasks.filter((task) => task.completed === false) : []
+					}
+				/>
+			),
+		},
 	];
 
 	useEffect(() => {
@@ -134,14 +170,30 @@ const Detail = () => {
 								</div>
 							</div>
 
-							<ProjectImages />
+							<ProjectImages
+								files={
+									data?.files && data?.files.length > 0
+										? data.files.filter(
+												(file) => file.split("/")[0] === "image" && file
+										  )
+										: []
+								}
+							/>
 
-							<ProjectFiles />
+							<ProjectFiles
+								files={
+									data?.files && data?.files.length > 0
+										? data.files.filter(
+												(file) => file.split("/")[0] !== "image" && file
+										  )
+										: []
+								}
+							/>
 
 							<div className="bg-white my-4 p-4 rounded-md shadow-lg">
 								<TabNavigator container="" screens={screens} />
 								<div className="w-1/3">
-									<Button 
+									<Button
 										bg="bg-gray-300 hover:bg-blue-100"
 										border="border-gray-700 hover:bg-primary-600"
 										caps
@@ -154,15 +206,15 @@ const Detail = () => {
 							</div>
 						</div>
 
-						<ProjectDetail 
+						<ProjectDetail
 							changePriority={(priority: string) => {
 								if (priority !== data.priority) {
-									const project = { ...createProject(data), priority }
-									updateProject.onSubmit(id, project)
+									const project = { ...createProject(data), priority };
+									updateProject.onSubmit(id, project);
 								}
 							}}
 							data={data}
-							loading={updateProject.isLoading} 
+							loading={updateProject.isLoading}
 						/>
 					</div>
 					<Modal
@@ -170,9 +222,9 @@ const Detail = () => {
 						component={
 							<Form
 								initState={{
-									...createProject(data), 
-									leaders: data.leaders.map(leader => leader.id),
-									team: data.team.map(member => member.id)
+									...createProject(data),
+									leaders: data.leaders.map((leader) => leader.id),
+									team: data.team.map((member) => member.id),
 								}}
 								editMode
 								errors={

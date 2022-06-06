@@ -28,8 +28,8 @@ export interface TaskPaginationType extends PaginationType {
 
 const generateProjectFile = (data: ProjectFileCreateType) => {
 	const form = new FormData()
-	form.append("name") = data.name
-	form.append("file") = data.file
+	form.append("name",data.name)
+	form.append("file",data.file)
 	return form;
 }
 

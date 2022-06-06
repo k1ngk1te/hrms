@@ -305,7 +305,7 @@ def file_folder(instance, filename):
     return 'blogs/{}/{}'.format(instance.project.name, filename)
 
 class ProjectFile(models.Model):
-	project = models.ForeignKey(Project, on_delete=models.CASCADE)
+	project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="files")
 	name = models.CharField(max_length=255)
 	uploaded_by = models.ForeignKey(Employee, on_delete=models.SET_NULL, blank=True, null=True)
 	file = models.FileField(upload_to=file_folder)
