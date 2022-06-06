@@ -1,41 +1,102 @@
+import { useCallback, useEffect, useState } from "react";
+import { isErrorWithData, isFormError } from "../../../store";
+import { open as alertModalOpen } from "../../../store/features/alert-modal-slice";
 import { useCreateProjectFileMutation } from "../../../store/features/projects-slice";
+import { useAppDispatch, useFormInput } from "../../../hooks";
+import { validateForm } from "../../../utils";
 import { Button, File, Input } from "../../controls";
 
 const AddProjectFileForm = () => {
+	const [formErrors, setFormErrors] = useState<{name?: string; file?: string}>({
+		name: undefined, file: undefined
+	})
+
+	const dispatch = useAppDispatch();
+
+	const name = useFormInput("", {
+		onChange: () => setFormErrors({ ...formErrors, name: undefined })
+	})
+
+	const file = useFormInput("", {
+		onChange: () => setFormErrors({ ...formErrors, file: undefined})
+	})
+
+	const [createProjectFile, { error, status, isLoading }] = useCreateProjectFileMutation()
+
+	const handleSubmit = useCallback((form: { name: any; file: any }) => {
+		const {valid, result} = validateForm(form)
+		if (valid)
+			createProjectFile({name: string, file: file})
+		else setErrors(result)
+	}, [createProjectFile])
+
+	const fileError =
+    typeof formErrors?.file === "string" ?
+    formErrors?.file : "";
+
+  const errors = isFormError<{name?: string; file?: string;}>(error) ? error.data : undefined
+
+  useEffect(() => {
+  	if (error && isErrorWithData(error)) {
+  		dispatch(alertModalOpen({
+  			header: "Upload Failed",
+  			color: "danger",
+  			message: String(error.data.detail || error.data.error || "Unable to upload file")
+  		}))
+  	}
+  }, [error])
+
+  useEffect(() => {
+  	if (status === "fulfilled") {
+  		dispatch(alertModalOpen({
+  			header: "File Added",
+  			color: "success",
+  			message: "File was added to project successfully"
+  		}))
+  	}
+  }, [dispatch, status])
+
 	return (
-		<form className="p-4">
+		<form onSubmit={(e) => {
+			e.preventDefault()
+			handleSubmit(name.value, file.value)
+		}} className="p-4">
 			<div className="gap-2 grid grid-cols-1 md:grid-cols-2 md:gap-4 lg:gap-6">
         <div className="w-full md:col-span-2 md:flex md:flex-col md:justify-end">
           <div className="w-full md:w-1/2 lg:w-1/3">
             <File
-              disabled={loading}
-              error={imageError || errors?.profile?.image}
-              label="Image"
-              onChange={image.onChange}
-              placeholder="upload image"
-              required={editMode ? false : true}
-              value={image.value?.name || ""}
+              disabled={isLoading}
+              error={fileError || errors?.file}
+              label="File"
+              onChange={file.onChange}
+              placeholder="upload file"
+              required
+              value={file.value?.name || ""}
             />
           </div>
         </div>
         <div className="w-full md:col-span-2 md:flex md:flex-col md:justify-end">
           <Input
-            disabled={loading}
-            error={formErrors?.first_name || errors?.user?.first_name || ""}
+          	badge={{
+          		bg: "info",
+          		title: "optional"
+          	}}
+            disabled={isLoading}
+            error={formErrors?.name || errors?.name || ""}
             label="File Name"
-            onChange={first_name.onChange}
-            placeholder="File Name"
-            required
-            value={first_name.value}
+            onChange={name.onChange}
+            placeholder="Enter file name"
+            required={false}
+            value={name.value}
           />
         </div>
       </div>
 			<div className="flex items-center justify-center my-4 sm:my-5 md:mt-8">
         <div className="w-full sm:w-1/2 md:w-1/3">
           <Button
-            disabled={loading}
+            disabled={isLoading}
             loader
-            loading={loading}
+            loading={isLoading}
             title="submit"
             type="submit"
           />
