@@ -429,7 +429,7 @@ class ProjectFileView(ListCreateRetrieveDestroyView):
 			raise ValidationError({"detail": f"Project with ID {project_id} was not found!"})
 		queryset = ProjectFile.objects.filter(project=project)
 		return queryset
-
+		
 
 class TaskView(ListCreateRetrieveUpdateDestroyView):
 	pagination_class = TaskPagination

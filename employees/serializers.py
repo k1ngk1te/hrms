@@ -446,6 +446,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 	team = ProjectEmployeeSerializer(many=True, required=False)
 	created_by = ProjectEmployeeSerializer(read_only=True)
 	tasks = serializers.SerializerMethodField('get_tasks')
+	files = serializers.SerializerMethodField('get_files')
 	completed = serializers.BooleanField(read_only=True)
 	verified = serializers.BooleanField(read_only=True)
 	is_active = serializers.SerializerMethodField('get_is_active')
@@ -524,11 +525,24 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 class ProjectFileSerializer(serializers.ModelSerializer):
 	project = serializers.SerializerMethodField('get_project_info')
+	name = serializers.CharField(required=False)
 	file_type = serializers.CharField(read_only=True)
+	uploaded_by = serializers.SerializerMethodField('get_uploaded_by')
+	size = serializers.SerializerMethodField('get_size')
+	date = serializers.DateTimeField(read_only=True)
 
 	class Meta:
 		model = ProjectFile
 		fields = '__all__'
+
+	def get_uploaded_by(self, obj):
+		return {
+			"id": self.uploaded_by.id,
+			"name": self.uploaded_by.user.get_full_name()
+		}
+
+	def get_size(self, obj):
+		return obj.file.size
 
 	def get_project_info(self, obj):
 		return {
@@ -556,19 +570,20 @@ class ProjectFileSerializer(serializers.ModelSerializer):
 		if not file:
 			raise ValidationError({"file": "File is required!"})
 
+		name = validated_data.pop("name", None)
+		if not name:
+			name = file.name[:245] + file.name.split(".")[-1] if len(file.name) > 250 else file.name
+
 		return ProjectFile.objects.create(
 			project=project, 
 			file_type=file.content_type,
 			uploaded_by=employee,
+			name=name,
 			**validated_data
 		)
 
 	def update(self, instance, validated_data):
 		# Prevent the file from being updated
 		return instance
-		# instance.file = validated_data.get("file", instance.file)
-		# instance.image = validated_data.get("image", instance.image)
-		# instance.save()
-		# return instance
 
 

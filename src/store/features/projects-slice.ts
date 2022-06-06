@@ -5,6 +5,8 @@ import {
 	PROJECT_URL,
 	PROJECT_COMPLETED_URL,
 	PROJECT_EMPLOYEES_URL,
+	PROJECT_FILE_URL,
+	PROJECT_FILES_URL,
 	TASKS_URL,
 	TASK_URL
 } from "../../config";
@@ -13,7 +15,8 @@ import {
 	PaginationType,
 	ProjectType,
 	ProjectCreateType,
-	ProjectEmployeeListType,
+	ProjectFileCreateType,
+	ProjectFileType,
 	TaskCreateType,
 	TaskListType,
 	TaskType
@@ -21,6 +24,13 @@ import {
 
 export interface TaskPaginationType extends PaginationType {
 	project_id: string;
+}
+
+const generateProjectFile = (data: ProjectFileCreateType) => {
+	const form = new FormData()
+	form.append("name") = data.name
+	form.append("file") = data.file
+	return form;
 }
 
 const projectsApi = baseApi.injectEndpoints({
@@ -97,6 +107,18 @@ const projectsApi = baseApi.injectEndpoints({
 			}),
 			invalidatesTags: (result) => (result ? ["Task"] : []),
 		}),
+		createProjectFile: build.mutation<
+			ProjectFileType,
+			{project_id: string; data: ProjectFileCreateType}
+		>({
+			query: ({ project_id, data }) => ({
+				url: PROJECT_FILES_URL(project_id),
+				method: "POST",
+				credentials: "include",
+				body: generateProjectFile(data),
+			}),
+			invalidatesTags: (result) => (result ? ["Project"] : []),
+		}),
 		updateProject: build.mutation<
 			ProjectType,
 			{ id: string; data: ProjectCreateType }
@@ -137,6 +159,14 @@ const projectsApi = baseApi.injectEndpoints({
 			}),
 			invalidatesTags: (result, error) => (!error ? ["Task", "Project"] : []),
 		}),
+		deleteProjectFile: build.mutation<unknown, {project_id: string; id: number}>({
+			query: ({ project_id, id }) => ({
+				url: PROJECT_FILE_URL(project_id, id),
+				method: "DELETE",
+				credentials: "include",
+			}),
+			invalidatesTags: (result, error) => (!error ? ["Project"] : []),
+		}),
 		markProjectCompleted: build.mutation<
 			{ detail: string },
 			{ id: string; action: boolean }
@@ -160,10 +190,12 @@ export const {
 	useGetTasksQuery,
 	useGetTaskQuery,
 	useCreateProjectMutation,
+	useCreateProjectFileMutation,
 	useCreateTaskMutation,
 	useUpdateProjectMutation,
 	useUpdateTaskMutation,
 	useDeleteProjectMutation,
+	useDeleteProjectFileMutation,
 	useDeleteTaskMutation,
 	useMarkProjectCompletedMutation,
 } = projectsApi;

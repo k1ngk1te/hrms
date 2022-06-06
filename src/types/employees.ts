@@ -209,7 +209,8 @@ export type ProjectType = {
       id: string;
       name: string;
       completed: string;
-    }[]
+    }[];
+    files: ProjectFileType[]
 }
 
 export type ProjectCreateType = {
@@ -290,4 +291,32 @@ export type TaskCreateErrorType = {
 	due_date: string;
   priority: string;
   description: string;
+}
+
+export type ProfileFileType = {
+  id: number,
+  project: {
+    id: string;
+    name: string;
+  };
+  name: string;
+  file_type: string;
+  file: string;
+  size: string;
+  date: string;
+  uploaded_by: {
+    name: string;
+    id: string;
+  }
+}
+
+export type ProjectFileCreateType = {
+  id: number;
+  name: string;
+  file: any;
+}
+
+export type ProjectFileCreateErrorType = {
+  name: string;
+  file: string;
 }

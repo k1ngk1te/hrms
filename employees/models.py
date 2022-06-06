@@ -306,12 +306,14 @@ def file_folder(instance, filename):
 
 class ProjectFile(models.Model):
 	project = models.ForeignKey(Project, on_delete=models.CASCADE)
+	name = models.CharField(max_length=255)
 	uploaded_by = models.ForeignKey(Employee, on_delete=models.SET_NULL, blank=True, null=True)
 	file = models.FileField(upload_to=file_folder)
 	file_type = models.CharField(max_length=50, verbose_name='type')
+	date = models.DateTimeField(auto_now=True)
 
 	def __str__(self):
-		return self.project.name
+		return "%s - %s" % (self.project.name,self.name)
 
 
 class Task(models.Model):

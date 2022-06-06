@@ -1,3 +1,5 @@
+// Unused. This code was not implemented. Delete if not needed
+
 import { FC, useCallback, useEffect, useState } from "react";
 import { useGetEmployeesQuery } from "../../../store/features/employees-slice";
 import { useAppSelector, useFormSelect } from "../../../hooks";
