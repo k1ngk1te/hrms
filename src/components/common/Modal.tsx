@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { FaTimes } from "react-icons/fa"
 
 const wrapperStyle =
-	"duration-500 fixed flex h-full items-center justify-center left-0 overflow-hidden top-0 transform transition-opacity w-full z-40";
+	"duration-500 fixed flex h-full items-center justify-center left-0 overflow-hidden px-3 top-0 transform transition-opacity w-full z-40";
 const containerStyle =
 	"bg-white border border-dashed border-primary-500 duration-1000 max-w-2xl mx-auto overflow-y-auto p-3 relative rounded-lg shadow-lg transform transition-all w-full z-50";
 const hideContainer = "-translate-y-full opacity-0 invisible ";

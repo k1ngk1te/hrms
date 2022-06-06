@@ -139,7 +139,7 @@ export const ListLink: FC<ListLinkType> = ({ Icon, onClick, links, title }) => {
 				<div className="flex items-center">
 					{Icon && (
 						<span>
-							<Icon className="text-tiny" />
+							<Icon className="text-tiny sm:text-sm" />
 						</span>
 					)}
 					<span className="mx-2">{title}</span>

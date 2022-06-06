@@ -1,10 +1,9 @@
 import { FC } from "react";
-import { FaUserPlus } from "react-icons/fa";
 import { DEFAULT_IMAGE } from "../../../config";
 import { useFormSelect } from "../../../hooks";
 import { StatusProgressBar } from "../../common";
-import { Button, Select } from "../../controls";
-import { ProjectEmployeeType } from "../../../types"
+import { Select } from "../../controls";
+import { ProjectEmployeeType } from "../../../types";
 
 export type ProjectDetailProps = {
 	changePriority: (priority: string) => void;
@@ -12,11 +11,17 @@ export type ProjectDetailProps = {
 	priority: "L" | "M" | "H";
 	leaders: ProjectEmployeeType[];
 	team: ProjectEmployeeType[];
-}
+};
 
-const ProjectDetail: FC<ProjectDetailProps> = ({ changePriority, loading, leaders, team, priority }) => {
+const ProjectDetail: FC<ProjectDetailProps> = ({
+	changePriority,
+	loading,
+	leaders,
+	team,
+	priority
+}) => {
 	const level = useFormSelect(priority, {
-		onChange: ({ value }) => changePriority(value)
+		onChange: ({ value }) => changePriority(value),
 	});
 
 	return (
@@ -47,9 +52,27 @@ const ProjectDetail: FC<ProjectDetailProps> = ({ changePriority, loading, leader
 							<p>Priority:</p>
 							<div>
 								<Select
-									bg={level.value === "H" ? "bg-red-100" : level.value === "M" ? "bg-yellow-100" : "bg-green-100"}
-									bdrColor={level.value === "H" ? "border-red-600" : level.value === "M" ? "border-yellow-600" : "border-green-600"}
-									color={level.value === "H" ? "text-red-700" : level.value === "M" ? "text-yellow-700" : "text-green-700"}
+									bg={
+										level.value === "H"
+											? "bg-red-100"
+											: level.value === "M"
+											? "bg-yellow-100"
+											: "bg-green-100"
+									}
+									bdrColor={
+										level.value === "H"
+											? "border-red-600"
+											: level.value === "M"
+											? "border-yellow-600"
+											: "border-green-600"
+									}
+									color={
+										level.value === "H"
+											? "text-red-700"
+											: level.value === "M"
+											? "text-yellow-700"
+											: "text-green-700"
+									}
 									disabled={loading}
 									onChange={level.onChange}
 									value={level.value}
@@ -83,27 +106,23 @@ const ProjectDetail: FC<ProjectDetailProps> = ({ changePriority, loading, leader
 				</div>
 
 				<div className="bg-white my-4 p-4 rounded-md shadow-lg w-full md:w-[45%] lg:w-full">
-					<div className="flex items-center justify-between w-full">
-						<h3 className="cursor-pointer font-bold text-lg text-gray-800 tracking-wide md:text-xl">
-							Assigned Leader{leaders && leaders.length > 1 ? "s" : ""}
-						</h3>
-						<div>
-							<Button 
-								bold="normal"
-								caps
-								padding="px-2 py-1"
-								title="add"
-								IconRight={FaUserPlus}
-							/>
-						</div>
-					</div>
+					<h3 className="cursor-pointer font-bold text-lg text-gray-800 tracking-wide md:text-xl">
+						Assigned Leader{leaders && leaders.length > 1 ? "s" : ""}
+					</h3>
 					{leaders && leaders.length > 0 ? (
 						<ul className="pb-1 pt-3">
 							{leaders.map((leader, index) => (
-								<li key={index} className="flex items-start rounded-md px-1 py-2 odd:bg-gray-100">
+								<li
+									key={index}
+									className="flex items-start rounded-md px-1 py-2 odd:bg-gray-100"
+								>
 									<div className="w-[15%]">
 										<div className="h-[30px] mx-1 w-[30px] rounded-full">
-											<img className="h-full w-full" src={leader.image || DEFAULT_IMAGE} alt="" />
+											<img
+												className="h-full w-full"
+												src={leader.image || DEFAULT_IMAGE}
+												alt=""
+											/>
 										</div>
 									</div>
 									<div className="px-2 w-[85%]">
@@ -126,28 +145,24 @@ const ProjectDetail: FC<ProjectDetailProps> = ({ changePriority, loading, leader
 			</div>
 
 			<div className="bg-white my-4 p-4 rounded-md shadow-lg w-full">
-				<div className="flex items-center justify-between w-full">
-					<h3 className="cursor-pointer font-bold text-lg text-gray-800 tracking-wide md:text-xl">
-						Assigned Team
-					</h3>
-					<div>
-						<Button 
-							bold="normal"
-							caps
-							padding="px-2 py-1"
-							title="add"
-							IconRight={FaUserPlus}
-						/>
-					</div>
-				</div>
+				<h3 className="cursor-pointer font-bold text-lg text-gray-800 tracking-wide md:text-xl">
+					Assigned Team
+				</h3>
 				<ul className="grid grid-cols-1 pb-1 pt-3 sm:grid-cols-2 lg:grid-cols-1">
 					{team && team.length > 0 ? (
 						<ul className="pb-1 pt-3">
 							{team.map((member, index) => (
-								<li key={index} className="flex items-start rounded-md px-1 py-2 odd:bg-gray-100">
+								<li
+									key={index}
+									className="flex items-start rounded-md px-1 py-2 odd:bg-gray-100"
+								>
 									<div className="w-[15%]">
 										<div className="h-[30px] mx-1 w-[30px] rounded-full">
-											<img className="h-full w-full" src={member.image || DEFAULT_IMAGE} alt="" />
+											<img
+												className="h-full w-full"
+												src={member.image || DEFAULT_IMAGE}
+												alt=""
+											/>
 										</div>
 									</div>
 									<div className="px-2 w-[85%]">
@@ -162,9 +177,7 @@ const ProjectDetail: FC<ProjectDetailProps> = ({ changePriority, loading, leader
 							))}
 						</ul>
 					) : (
-						<p className="text-sm text-gray-700">
-							There is no team
-						</p>
+						<p className="text-sm text-gray-700">There is no team</p>
 					)}
 				</ul>
 			</div>

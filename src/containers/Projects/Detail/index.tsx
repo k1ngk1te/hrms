@@ -160,16 +160,9 @@ const Detail = () => {
 						component={
 							<Form
 								initState={{
-									name: data.name,
-									description: data.description,
-									priority: data.priority,
-									leaders: data.leaders.map((leader) => leader.id),
-									team: data.team.map((member) => member.id),
-									start_date: data.start_date,
-									end_date: data.end_date,
-									client: data.client.id,
-									initial_cost: data.initial_cost,
-									rate: data.rate,
+									...createProject(data), 
+									leaders: data.leaders.map(leader => leader.id),
+									team: data.team.map(member => member.id)
 								}}
 								editMode
 								errors={
