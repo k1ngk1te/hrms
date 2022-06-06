@@ -174,7 +174,7 @@ const Detail = () => {
 								files={
 									data?.files && data?.files.length > 0
 										? data.files.filter(
-												(file) => file.split("/")[0] === "image" && file
+												(file) => file.file_type.split("/")[0] === "image" && file
 										  )
 										: []
 								}
@@ -184,7 +184,7 @@ const Detail = () => {
 								files={
 									data?.files && data?.files.length > 0
 										? data.files.filter(
-												(file) => file.split("/")[0] !== "image" && file
+												(file) => file.file_type.split("/")[0] !== "image" && file
 										  )
 										: []
 								}
