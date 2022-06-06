@@ -1,7 +1,9 @@
 import { FC, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { FaTimes, FaFileUpload } from "react-icons/fa";
+import { EMPLOYEE_PAGE_URL } from "../../../config";
 import { ProjectFileType } from "../../../types";
+import { getTime, downloadFile } from "../../../utils"
 import { Button } from "../../controls";
 import Form from "./AddProjectFileForm";
 
@@ -50,21 +52,49 @@ const ProjectImages: FC<ProjectImagesProps> = ({ files }) => {
 			)}
 			{files && files.length > 0 ? (
 				<div className="gap-4 grid grid-cols-2 p-3 md:gap-5 md:grid-cols-3 lg:gap-6">
-					{files.map((file, index) => (
-						<div key={index}>
-							<div className="bg-gray-500 h-[120px] rounded-md w-full md:h-[150px] lg:h-[120px]">
-								<img
-									className="h-full rounded-md w-full"
-									src={file.file}
-									alt=""
-								/>
+					{files.map((file, index) => {
+						const date = new Date(file.date)
+						const time = getTime(`${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}`)
+						const size = String(file.size / (1024 * 1024))
+						const part1 = size.split(".")[0]
+						const part2 = size.split(".")[1] ? size.split(".")[1].slice(0, 2) : ""
+						const sizeString = part1 + "." + part2
+
+						return (
+							<div key={index}>
+								<div className="bg-gray-500 h-[120px] rounded-md w-full md:h-[150px] lg:h-[120px]">
+									<img
+										className="h-full rounded-md w-full"
+										src={file.file}
+										alt=""
+									/>
+								</div>
+								<p 
+									onClick={() => downloadFile(file.file, file.name)}
+									className="cursor-pointer mt-1 text-left text-sm text-gray-700 hover:text-blue-600 hover:underline"
+								>
+									{file.name.split(0, 40)}
+									{file.name.length > 40 ? "..." : ""}
+								</p>
+								{file.uploaded_by && (
+									<Link 
+										to={file.uploaded_by.id ? EMPLOYEE_PAGE_URL(file.uploaded_by.id) : "#"} 
+										className="capitalize cursor-pointer text-red-600 text-sm hover:text-red-500 hover:underline"
+									>
+										{file.uploaded_by.name}
+									</Link>
+								)}
+								<p className="text-gray-700 text-sm">
+									{date.toDateString()}{" "}{time}
+								</p>
+								<p className="capitalize text-gray-700 text-sm">
+									Size: <span className="font-medium mx-1 uppercase">
+										{sizeString}MB
+									</span>
+								</p>
 							</div>
-							<p className="my-1 text-left text-sm text-gray-700 md:text-base">
-								{file.name.split(0, 40)}
-								{file.name.length > 40 ? "..." : ""}
-							</p>
-						</div>
-					))}
+						)
+					})}
 				</div>
 			) : (
 				<p className="text-sm text-gray-700">

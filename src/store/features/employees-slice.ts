@@ -14,7 +14,6 @@ import {
 import { PaginationType } from "../../types/common";
 import {
 	AttendanceListType,
-	AttendanceType,
 	GetEmployeesDataType,
 	ClientType,
 	ClientCreateType,

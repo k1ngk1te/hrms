@@ -1,8 +1,9 @@
 import { FC, useState } from "react";
 import { FaTimes, FaFileUpload, FaRegFilePdf } from "react-icons/fa";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { EMPLOYEE_PAGE_URL } from "../../../config";
 import { ProjectFileType } from "../../../types";
-import { getTime } from "../../../utils"
+import { getTime, downloadFile } from "../../../utils"
 import { Button } from "../../controls";
 import Form from "./AddProjectFileForm";
 
@@ -54,6 +55,8 @@ const ProjectFiles: FC<ProjectFilesProps> = ({ files }) => {
 					{files.map((file, index) => {
 						const date = new Date(file.date)
 						const time = getTime(`${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}`)
+						const size = String(file.size / (1024 * 1024))
+						const sizeString = size.split(".")[0] + "." + size.split(".")[1].slice(0, 2)
 						return (
 							<li key={index} className="flex items-start py-2">
 								<div className="flex items-center justify-center py-4 w-[15%]">
@@ -62,20 +65,28 @@ const ProjectFiles: FC<ProjectFilesProps> = ({ files }) => {
 									</span>
 								</div>
 								<div className="w-[85%]">
-									<h5 className="cursor-pointer text-blue-600 text-base hover:text-blue-500 hover:underline">
+									<h5 
+										onClick={() => downloadFile(file.file, file.name)}
+										className="cursor-pointer text-blue-600 text-base hover:text-blue-500 hover:underline"
+									>
 										{file.name}
 									</h5>
 									<span>
-										<span className="capitalize cursor-pointer text-red-600 text-sm hover:text-red-500 hover:underline">
-											{file.uploaded_by.name}
-										</span>
+										{file.uploaded_by && (
+											<Link 
+												to={file.uploaded_by.id ? EMPLOYEE_PAGE_URL(file.uploaded_by.id) : "#"} 
+												className="capitalize cursor-pointer text-red-600 text-sm hover:text-red-500 hover:underline"
+											>
+												{file.uploaded_by.name}
+											</Link>
+										)}
 										<span className="mx-1 text-gray-700 text-sm">
 											{date.toDateString()}{" "}{time}
 										</span>
 									</span>
 									<p className="capitalize text-gray-700 text-sm">
 										Size: <span className="font-medium mx-1 uppercase">
-											{file.size}
+											{sizeString}MB
 										</span>
 									</p>
 								</div>
