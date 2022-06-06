@@ -35,7 +35,7 @@ const ProjectImages: FC<ProjectImagesProps> = ({ files }) => (
 							/>
 						</div>
 						<p className="my-1 text-left text-sm text-gray-700 md:text-base">
-							{file.name.split(0, 20)}
+							{file.name.split(0, 40)}{file.name.length > 40 ? "..." : ""}
 						</p>
 					</div>
 				))}
