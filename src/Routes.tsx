@@ -26,6 +26,10 @@ import LeavesPage from "./pages/leaves";
 import LeavesDetailPage from "./pages/leaves/detail";
 import LeavesAdminPage from "./pages/admin/leaves";
 import LeavesAdminDetailPage from "./pages/admin/leaves/detail";
+import OvertimePage from "./pages/overtime";
+import OvertimeDetailPage from "./pages/overtime/detail";
+import OvertimeAdminPage from "./pages/admin/overtime";
+import OvertimeAdminDetailPage from "./pages/admin/overtime/detail";
 import ProjectsPage from "./pages/projects";
 import ProjectPage from "./pages/projects/detail";
 import ProjectTasksPage from "./pages/projects/detail/tasks";
@@ -67,6 +71,14 @@ const AppRoutes = () => (
 					<Route path={routes.ADMIN_LEAVES_PAGE_URL}>
 						<Route path="" element={<LeavesAdminPage />} />
 						<Route path=":id" element={<LeavesAdminDetailPage />} />
+					</Route>
+					<Route path={routes.OVERTIME_PAGE_URL}>
+						<Route path="" element={<OvertimePage />} />
+						<Route path=":id" element={<OvertimeDetailPage />} />
+					</Route>
+					<Route path={routes.ADMIN_OVERTIME_PAGE_URL}>
+						<Route path="" element={<OvertimeAdminPage />} />
+						<Route path=":id" element={<OvertimeAdminDetailPage />} />
 					</Route>
 					<Route path={routes.HOLIDAYS_PAGE_URL} element={<HolidaysPage />} />
 					<Route path={routes.PROJECTS_PAGE_URL}>

@@ -175,7 +175,7 @@ class LeaveAdminView(ListCreateRetrieveView):
 
 class LeaveExportDataView(APIView):
 	permission_classes = (permissions.IsAdminUser, )
-
+	
 	def get(self, request, *args, **kwargs):
 		file_type = kwargs["file_type"]
 		if file_type == "csv":
@@ -406,4 +406,95 @@ class OvertimeAdminView(ListCreateRetrieveView):
 		except User.employee.RelatedObjectDoesNotExist:
 			pass
 		return Overtime.objects.none()
-	
+
+
+class OvertimeExportDataView(APIView):
+	permission_classes = (permissions.IsAdminUser, )
+
+	def get(self, request, *args, **kwargs):
+		file_type = kwargs["file_type"]
+		if file_type == "csv":
+			response = self.export_csv_data()
+			return response
+		elif file_type == "excel":
+			response = self.export_excel_data()
+			return response
+		return Response(
+			{"error": "invalid content type. can only export csv and excel file format."},
+			status=status.HTTP_400_BAD_REQUEST)
+
+	def export_csv_data(self):
+		response = HttpResponse(content_type='text/csv',
+			headers={'Content-Disposition': 'attachment; filename="overtime.csv"'})
+		writer = csv.writer(response)
+		writer.writerow(self.get_overtime_headers())
+		
+		overtime = self.get_queryset()
+		for ov in overtime:
+			writer.writerow(self.get_overtime_data(ov))
+		return response
+
+	def export_excel_data(self):
+		response = HttpResponse(content_type='application/ms-excel',
+			headers={'Content-Disposition': 'attachment; filename="overtime.xls"'})
+		wb = xlwt.Workbook(encoding='utf-8')
+		ws = wb.add_sheet('Overtime')
+		row_num = 0
+		font_style = xlwt.XFStyle()
+		font_style.font.bold = True
+
+		columns = self.get_overtime_headers()
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+		font_style = xlwt.XFStyle()
+
+		overtime = self.get_queryset()
+		for ov in overtime:
+			row_num += 1
+			data = self.get_leave_data(ov)
+
+			for col_num in range(len(data)):
+				ws.write(row_num, col_num, str(data[col_num]), font_style)
+		wb.save(response)
+		return response
+
+	def get_overtime_headers(self):
+		return ['First Name', 'Last Name', 'E-mail', 'Overtime Type', 'Date', 'Hours', 
+			'Reason', 'Created By', 'Status', 'Date Requested']
+
+	def get_overtime_data(self, overtime):
+		try:
+			return [
+				overtime.employee.user.first_name, overtime.employee.user.last_name, 
+				overtime.employee.user.email, overtime.overtime_type_name, str(overtime.date),
+				str(overtime.hours), overtime.reason, overtime.created_by.user.get_full_name(), 
+				overtime.get_admin_status(self.request.user.employee, True), overtime.date_requested
+			]
+		except:
+			pass
+		return []
+
+	def get_queryset(self):
+		try:
+			queryset = Overtime.admin_objects.leaves(
+				self.request.user.employee).order_by('-date_requested')
+			_from = self.request.query_params.get("from")
+			if _from is not None and _from != "":
+				queryset = Overtime.admin_objects.filter_by_date(self.request.user.employee, 
+					_from).order_by('-date_requested')
+			name = self.request.query_params.get("name")
+			if name is not None and name != "":
+				queryset = queryset.filter(
+					Q(employee__user__first_name__icontains=name) |
+					Q(employee__user__last_name__icontains=name) |
+					Q(employee__user__email__icontains=name)
+				)
+			status = self.request.query_params.get('status', None)
+			if status:
+				queryset = [x for x in queryset if x.get_admin_status(
+					self.request.user.employee, True) == status.lower()]
+			return queryset
+		except User.employee.RelatedObjectDoesNotExist:
+			pass
+		return Overtime.objects.none()
+

@@ -4,6 +4,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.timezone import now
 
+from common.utils import get_overtime_type
 from employees.models import Employee
 from .managers import (
 	LeaveManager, 
@@ -246,6 +247,10 @@ class Overtime(models.Model):
 		else:
 			return "not needed"
 
+	@property
+	def overtime_type_name(self):
+		return get_overtime_type(self.overtime_type)
+		
 	def get_admin_status(self, employee, full_name=False):
 		if employee.is_md:
 			if full_name:

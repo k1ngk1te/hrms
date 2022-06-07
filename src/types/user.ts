@@ -19,7 +19,7 @@ export interface ProfileType extends ProfileDataType {
     end_date: string;
   };
   date: string;
-};
+}
 
 export interface ProfileFormType
   extends Omit<
@@ -52,7 +52,7 @@ export interface UserInfoType extends UserType {
 leaves_remaining?: number;
 punched_in?: boolean;
 punched_out?: boolean;
-};
+}
 
 export type ChangePasswordType = {
   email?: string;
