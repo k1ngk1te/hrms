@@ -1,5 +1,5 @@
 import { DataListType } from "./common";
-import { UserInfoType } from "./user";
+import { EmployeeUserType } from "./employees";
 
 type StatusType = "approved" | "denied" | "expired" | "not needed" | "pending";
 
@@ -13,8 +13,8 @@ export type FormType = {
 };
 
 export type LeaveType = {
-  id: string | number;
-  user: UserInfoType;
+  id: string;
+  user: EmployeeUserType;
   leave_type: {
     name: string;
     value: string;
@@ -42,3 +42,40 @@ export interface GetLeavesDataType extends DataListType {
   pending_count: number;
   results: LeaveType[];
 } 
+
+export type OvertimeType = {
+  id: string;
+  user: EmployeeUserType;
+  overtime_type: {
+    name: string;
+    value: string;
+  };
+  status: StatusType;
+  date: string;
+  hours: number;
+  reason: string;
+  authorized: {
+    supervisor: StatusType;
+    hod: StatusType;
+    hr: StatusType;
+    md: StatusType;
+  };
+  date_updated: string;
+  date_requested: string;
+}
+
+export interface OvertimeListType extends DataListType {
+  approved_count: number;
+  denied_count: number;
+  pending_count: number;
+  results: OvertimeType[];
+} 
+
+export type OvertimeCreateType = {
+  employee?: string;
+  overtime_type: string;
+  date: string;
+  hours: number;
+  reason: string;
+}
+

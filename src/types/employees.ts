@@ -55,6 +55,10 @@ export type EmployeeType = {
   active: boolean;
 };
 
+export interface EmployeeUserType extends UserType {
+  empId: string;
+}
+
 export type ErrorFormType =
   | {
       image?: string;

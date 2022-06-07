@@ -26,6 +26,7 @@ export const baseApi = createApi({
 		"Job",
 		"Leave",
 		"Notification",
+		"Overtime",
 		"Profile",
 		"Project",
 		"Task",
