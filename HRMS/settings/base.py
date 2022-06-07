@@ -1,7 +1,17 @@
+import environ
 from datetime import timedelta
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+env = environ.Env()
+
+SECRET_KEY = env('SECRET_KEY')
+
+# CONTACT_SUPPORT_EMAIL = ""
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
+LEAVE_EMAIL = env('LEAVE_EMAIL') if env('LEAVE_EMAIL') else DEFAULT_FROM_EMAIL
+OVERTIME_EMAIL = env('OVERTIME_EMAIL') if env('OVERTIME_EMAIL') else DEFAULT_FROM_EMAIL
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -170,6 +180,7 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 REST_USE_JWT = False
 REST_AUTH_TOKEN_MODEL = None
 REST_SESSION_LOGIN = True
+
 
 # JWT_AUTH_COOKIE = 'access_custom_token'
 # JWT_AUTH_REFRESH_COOKIE = 'refresh_custom_token'

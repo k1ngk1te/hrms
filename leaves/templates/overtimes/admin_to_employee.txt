@@ -1,0 +1,17 @@
+Dear {{name_prefix|safe}} {{last_name|safe}}:
+	This is to inform you that a {{overtime_type|safe}} overtime was requested on your behalf by {{admin_prefix|safe}} {{admin_name|safe}}. 
+	 
+	Information about Overtime:
+
+	Type Of Overtime: {{overtime_type|safe}},
+	Date: {{date|safe}},
+	Hours: {{Hours|safe}},
+
+	Reason for Overtime:
+	
+	{{reason|safe}}
+
+	Sincerely,
+
+	{{admin_name|safe}},
+	{{admin_job|safe}}

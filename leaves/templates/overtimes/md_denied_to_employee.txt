@@ -1,0 +1,13 @@
+Dear {{name_prefix|safe}} {{last_name|safe}}:
+	This is to inform you that {{person|safe}} request for a {{overtime_type|safe}} overtime was denied.
+
+	Overtime Request Information:
+	Date: {{date|safe}}, 
+	Hours: {{hours|safe}},
+
+	Please consult the required official as to why {{person|safe}} request for overtime was Denied.
+	
+	Sincerely,
+
+	{{admin_name|safe}},
+	{{admin_job|safe}}.

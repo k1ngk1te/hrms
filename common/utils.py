@@ -118,6 +118,14 @@ def get_leave_type(leave_type):
 	else:
 		return "Casual"
 
+def get_overtime_type(overtime_type):
+	if overtime_type == "C":
+		return "compulsory"
+	elif overtime_type == "H":
+		return "holiday"
+	else:
+		return "voluntary"
+
 def get_name_prefix(user):
 	if user.profile.gender == "F":
 		return "Ms."

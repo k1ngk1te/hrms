@@ -1,11 +1,11 @@
 from django.conf import settings
 from django.template.loader import render_to_string
 
-from common.utils import get_name_prefix, get_leave_type
+from common.utils import get_name_prefix, get_leave_type, get_overtime_type
 from leaves.tasks import send_email_task
 from notifications.models import Notification
 
-def send_email(decision, emp, leave, recipient, position):
+def send_leave_email(decision, emp, leave, recipient, position):
 	if decision == "A":
 		if emp.is_md:
 			message = f'{emp.user.get_full_name()} {position} approved your request for a leave.'
@@ -100,3 +100,98 @@ def send_email(decision, emp, leave, recipient, position):
 				context.update({"admin_job": emp.job.name})
 			email_body = render_to_string('leaves/md_denied_to_employee.txt', context)
 			send_email_task(message, email_body, settings.LEAVE_EMAIL, [leave.created_by.user.email])
+
+
+
+def send_overtime_email(decision, emp, overtime, recipient, position):
+	if decision == "A":
+		if emp.is_md:
+			message = f'{emp.user.get_full_name()} {position} approved your request for overtime.'
+			Notification.objects.create(_type="O", sender=emp, recipient=overtime.employee,
+				message_id=overtime.id, message=message)
+			context = {	
+				"name_prefix": get_name_prefix(overtime.employee.user),
+				"last_name": overtime.employee.user.last_name,
+				"overtime_type": get_overtime_type(overtime.overtime_type),
+				"date": overtime.date.strftime("%A, %d %B %Y"),
+				"hours": overtime.hours,
+				"admin_name": emp.user.get_full_name(),
+				"admin_job": ""
+			}
+			if emp.job:
+				context.update({"admin_job": emp.job.name})
+			email_body = render_to_string('overtimes/md_approved_to_employee.txt', context)
+			send_email_task(message, email_body, settings.OVERTIME_EMAIL, [overtime.employee.user.email])
+			if overtime.created_by != overtime.employee and overtime.created_by.user.is_staff and overtime.created_by.is_md is False:
+				message = f'{emp.user.get_full_name()} {position} approved the request for overtime.'
+				Notification.objects.create(_type="O", sender=emp, recipient=overtime.created_by,
+					message_id=overtime.id, message=message)
+				context = {	
+					"name_prefix": get_name_prefix(overtime.created_by.user),
+					"last_name": overtime.created_by.user.last_name,
+					"emp_name": overtime.employee.user.get_full_name().capitalize(),
+					"overtime_type": get_overtime_type(overtime.overtime_type),
+					"date": overtime.date.strftime("%A, %d %B %Y"),
+					"hours": overtime.hours,
+					"admin_name": emp.user.get_full_name(),
+					"admin_job": ""
+				}
+				if emp.job:
+					context.update({"admin_job": emp.job.name})
+				email_body = render_to_string('overtimes/md_approved_to_admin.txt', context)
+				send_email_task(message, email_body, settings.OVERTIME_EMAIL, [overtime.created_by.user.email])
+		else:
+			message=f"{overtime.employee.user.get_full_name().upper()} sent a request for overtime."
+			Notification.objects.create(_type="O", sender=overtime.employee, recipient=recipient,
+				message=message, message_id=overtime.id)
+			context = {	
+				"name_prefix": get_name_prefix(recipient.user),
+				"last_name": recipient.user.last_name,
+				"overtime_type": get_overtime_type(overtime.overtime_type),
+				"date": overtime.date.strftime("%A, %d %B %Y"),
+				"hours": overtime.hours,
+				"employee_name": overtime.employee.user.get_full_name(),
+				"reason": overtime.reason
+			}
+			email_body = render_to_string('overtimes/employee_to_admin.txt', context)
+			send_email_task(message, email_body, settings.OVERTIME_EMAIL, [recipient.user.email])
+	elif decision == "D":
+		message = f'{emp.user.get_full_name()} {position} denied your request for overtime.'
+		Notification.objects.create(_type="O", sender=emp, recipient=overtime.employee,
+			message_id=overtime.id, message=message)
+		context = {	
+			"name_prefix": get_name_prefix(overtime.employee.user),
+			"last_name": overtime.employee.user.last_name,
+			"overtime_type": get_overtime_type(overtime.overtime_type),
+			"date": overtime.date.strftime("%A, %d %B %Y"),
+			"hours": overtime.hours,
+			"person": "your",
+			"admin_name": emp.user.get_full_name(),
+			"admin_job": ""
+		}
+
+		if emp.job:
+			context.update({"admin_job": emp.job.name})
+		email_body = render_to_string('overtimes/md_denied_to_employee.txt', context)
+		send_email_task(message, email_body, settings.OVERTIME_EMAIL, [overtime.employee.user.email])
+		if overtime.created_by != overtime.employee and overtime.created_by.is_staff:
+			message = f'{emp.user.get_full_name()} {position} denied the request for overtime.'
+			Notification.objects.create(_type="O", sender=emp, recipient=overtime.created_by,
+				message_id=overtime.id, message=message)
+			context = {	
+				"name_prefix": get_name_prefix(overtime.created_by.user),
+				"last_name": overtime.created_by.user.last_name,
+				"emp_name": overtime.employee.user.get_full_name().capitalize(),
+				"overtime_type": get_overtime_type(overtime.overtime_type),
+				"date": overtime.date.strftime("%A, %d %B %Y"),
+				"hours": overtime.hours,
+				"person": "the",
+				"admin_name": emp.user.get_full_name(),
+				"admin_job": ""
+			}
+			if emp.job:
+				context.update({"admin_job": emp.job.name})
+			email_body = render_to_string('overtimes/md_denied_to_employee.txt', context)
+			send_email_task(message, email_body, settings.OVERTIME_EMAIL, [overtime.created_by.user.email])
+
+

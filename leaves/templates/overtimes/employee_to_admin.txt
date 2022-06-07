@@ -1,0 +1,11 @@
+Dear {{name_prefix|safe}} {{last_name|safe}}:
+	This is a formal request for a {{overtime_type|safe}} overtime. I would like to request 
+	a {{overtime_type|safe}} overtime on {{date|safe}}, for {{hours|safe}} hour(s). 
+
+	Reason for Overtime:
+	
+	{{reason|safe}}
+
+	Sincerely,
+
+	{{employee_name|safe}}.

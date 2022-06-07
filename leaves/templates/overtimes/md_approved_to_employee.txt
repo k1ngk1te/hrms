@@ -1,0 +1,8 @@
+Dear {{name_prefix|safe}} {{last_name|safe}}:
+	This is to inform you that your request for a {{overtime_type|safe}} overtime was approved. 
+	The Overtime session with commence on {{date|safe}}, for {{hours|safe}} hour(s).
+	
+	Sincerely,
+
+	{{admin_name|safe}},
+	{{admin_job|safe}}.

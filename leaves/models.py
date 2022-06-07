@@ -5,7 +5,12 @@ from django.urls import reverse
 from django.utils.timezone import now
 
 from employees.models import Employee
-from .managers import LeaveManager, LeaveAdminManager
+from .managers import (
+	LeaveManager, 
+	LeaveAdminManager, 
+	OvertimeManager, 
+	OvertimeAdminManager
+)
 
 
 LEAVE_CHOICES = (
@@ -18,14 +23,22 @@ LEAVE_CHOICES = (
 	('S','Sick'),
 )
 
-LEAVE_DECISIONS = (
+DECISIONS = (
 	('A', 'Approved'),
 	('D', 'Denied'),
 	('N', 'Not Needed'),
 	('P', 'Pending'),
 )
 
+OVERTIME_CHOICES = (
+	('C', 'Compulsory'),
+	('H', 'Holiday'),
+	('V', 'Voluntary'),
+)
+
+
 ID_LENGTH = settings.LEAVE_ID_MAX_LENGTH
+
 
 class Leave(models.Model):
 	leave_id = models.BigAutoField(primary_key=True)
@@ -37,19 +50,19 @@ class Leave(models.Model):
 	reason = models.TextField()
 	created_by = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True)
 	a_s = models.CharField(
-		max_length=1, choices=LEAVE_DECISIONS, default='P',
+		max_length=1, choices=DECISIONS, default='P',
 		verbose_name="Approved by Supervisor"
 	)
 	a_hod = models.CharField(
-		max_length=1, choices=LEAVE_DECISIONS, default='P',
+		max_length=1, choices=DECISIONS, default='P',
 		verbose_name="Approved by HOD"
 	)
 	a_hr = models.CharField(
-		max_length=1, choices=LEAVE_DECISIONS, default='P',
+		max_length=1, choices=DECISIONS, default='P',
 		verbose_name="Approved by HR"
 	)
 	a_md = models.CharField(
-		max_length=1, choices=LEAVE_DECISIONS, default='P',
+		max_length=1, choices=DECISIONS, default='P',
 		verbose_name="Approved by MD"
 	)
 	date_updated = models.DateTimeField(auto_now=True)
@@ -161,3 +174,103 @@ class Leave(models.Model):
 		elif self.a_md == "P":
 			return True
 		return False
+
+
+class Overtime(models.Model):
+	overtime_id = models.BigAutoField(primary_key=True)
+	id = models.CharField(max_length=ID_LENGTH, unique=True, editable=False)
+	employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="overtime")
+	overtime_type = models.CharField(max_length=3, choices=OVERTIME_CHOICES, verbose_name="type")
+	date = models.DateField()
+	hours = models.IntegerField()
+	reason = models.TextField()
+	created_by = models.ForeignKey(Employee, related_name="created_overtime", on_delete=models.SET_NULL, null=True)
+	a_s = models.CharField(
+		max_length=1, choices=DECISIONS, default='P',
+		verbose_name="Approved by Supervisor"
+	)
+	a_hod = models.CharField(
+		max_length=1, choices=DECISIONS, default='P',
+		verbose_name="Approved by HOD"
+	)
+	a_hr = models.CharField(
+		max_length=1, choices=DECISIONS, default='P',
+		verbose_name="Approved by HR"
+	)
+	a_md = models.CharField(
+		max_length=1, choices=DECISIONS, default='P',
+		verbose_name="Approved by MD"
+	)
+	date_updated = models.DateTimeField(auto_now=True)
+	date_requested = models.DateTimeField(auto_now_add=True)
+
+	objects = OvertimeManager()
+	admin_objects = OvertimeAdminManager()
+
+	def __str__(self):
+		return f"{self.employee.user.email.capitalize()} on {self.date}"
+
+	def save(self, *args, **kwargs):
+		if self.created_by is None:
+			self.created_by = self.employee
+		elif self.created_by is not None and (
+			self.created_by.user.is_staff is False) and self.created_by != self.employee:
+			raise ValueError("Created by must be a staff or the employee himself")
+		return super().save(*args,**kwargs)
+
+	def get_absolute_url(self):
+		return reverse('overtime-detail', kwargs={"id": self.id})
+
+	def get_admin_absolute_url(self):
+		return reverse('overtime-admin-detail', kwargs={"id": self.id})
+
+	@property
+	def status(self):
+		if self.a_md == "A":
+			return "A"
+		elif self.a_s == "D" or self.a_hod == "D" or self.a_hr == "D" or self.a_md == "D":
+			return "D"
+		elif self.date < now().date():
+			return "E"
+		return "P"
+
+	def get_status_name(self, status):
+		if status == "A":
+			return "approved"
+		elif status == "D":
+			return "denied"
+		elif status == "P":
+			return "pending"
+		elif status == "E":
+			return "expired"
+		else:
+			return "not needed"
+
+	def get_admin_status(self, employee, full_name=False):
+		if employee.is_md:
+			if full_name:
+				return self.get_status_name(self.a_md)
+			return self.a_md
+		elif employee.is_hr:
+			if full_name:
+				return self.get_status_name(self.a_hr)
+			return self.a_hr
+		elif employee.is_hod:
+			if full_name:
+				return self.get_status_name(self.a_hod)
+			return self.a_hod
+		elif employee.is_supervisor:
+			if full_name:
+				return self.get_status_name(self.a_s)
+			return self.a_s
+		if full_name:
+			return self.get_status_name("N")
+		return "N"
+
+	def check_pending(self):
+		if self.a_s == "D" or self.a_hod == "D" or self.a_hr == "D" or self.a_md == "D":
+			return False
+		elif self.a_md == "P":
+			return True
+		return False
+

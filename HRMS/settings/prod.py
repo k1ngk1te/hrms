@@ -13,8 +13,6 @@ CORS_ALLOW_ALL_ORIGINS = False
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
-SECRET_KEY = env('SECRET_KEY')
-
 DATABASES = {
 	'default': env.db(),
 }
@@ -37,20 +35,6 @@ EMAIL_PORT = 587
 ANYMAIL = {
     "SENDGRID_API_KEY": env('SENDGRID_API_KEY'),
 }
-
-# CONTACT_SUPPORT_EMAIL = ""
-default_email = env('DEFAULT_FROM_EMAIL')
-leave_email = env('LEAVE_EMAIL')
-
-if default_email is not None:
-	DEFAULT_FROM_EMAIL = default_email
-else:
-	DEFAULT_FROM_EMAIL = 'kitewebdevelopers@gmail.com'
-
-if leave_email is not None:
-	LEAVE_EMAIL = leave_email
-else:
-	LEAVE_EMAIL = DEFAULT_FROM_EMAIL
 
 
 # Cors Header Settings

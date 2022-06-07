@@ -26,14 +26,9 @@ const Login: FC<LoginProps> = ({
             <h3 className="capitalize font-bal font-semibold my-6 text-left text-primary-500 text-xl tracking-wide md:text-2xl">
               sign in
             </h3>
-            {error?.detail && (
+            {error && !error.password && !error.email && (
               <p className="italice max-w-xs mx-auto my-3 text-center text-red-500 text-sm">
-                Error: {error.detail}
-              </p>
-            )}
-            {error?.error && (
-              <p className="italice max-w-xs mx-auto my-3 text-center text-red-500 text-sm">
-                Error: {error.error}
+                Error: {String(error?.detail || error?.error || "A server error occurred!")}
               </p>
             )}
             <form onSubmit={onSubmit}>

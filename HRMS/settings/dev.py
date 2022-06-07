@@ -1,22 +1,12 @@
 import os
-import environ
 
 from HRMS.settings.base import *
 from HRMS.settings.base import INSTALLED_APPS
-
-env = environ.Env(
-    USE_REST_FRAMEWORK_SWAGGER=(bool, False)
-)
 
 ALLOWED_HOSTS = ['localhost', 'testserver']
 
 DEBUG = True
 
-SECRET_KEY = env('SECRET_KEY')
-
-# USE_REST_FRAMEWORK_SWAGGER = env('USE_REST_FRAMEWORK_SWAGGER')
-# if USE_REST_FRAMEWORK_SWAGGER is True:
-# 	INSTALLED_APPS += ['drf_yasg']
 
 DATABASES = {
     'default': {
@@ -29,14 +19,6 @@ INTERNAL_IPS = ['127.0.0.1', 'localhost']
 
 # Email Settings
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-
-# CONTACT_SUPPORT_EMAIL = ""
-LEAVE_EMAIL = env('LEAVE_EMAIL')
-DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
-
-ANYMAIL = {
-    "SENDGRID_API_KEY": os.environ.get("SENDGRID_API_KEY"),
-}
 
 JWT_AUTH_SECURE = False
 
