@@ -40,10 +40,10 @@ export const LEAVE_ADMIN_DETAIL_URL = (id: string) =>
 export const LEAVE_ADMIN_EXPORT_URL = (_type: string) =>
   `${ROOT_URL}/leaves/admin/export/${_type}/`;
 
-export const OVERTIMES_URL = `${ROOT_URL}/overtime/`;
-export const OVERTIME_DETAIL_URL = (id: string) => `${OVERTIMES_URL}${id}/`;
+export const OVERTIME_URL = `${ROOT_URL}/overtime/`;
+export const OVERTIME_DETAIL_URL = (id: string) => `${OVERTIME_URL}${id}/`;
 
-export const OVERTIMES_ADMIN_URL = `${ROOT_URL}/overtime/admin/`;
+export const OVERTIME_ADMIN_URL = `${ROOT_URL}/overtime/admin/`;
 export const OVERTIME_ADMIN_DETAIL_URL = (id: string) =>
   `${ROOT_URL}/overtime/admin/${id}/`;
 

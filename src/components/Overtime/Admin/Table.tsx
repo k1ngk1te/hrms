@@ -1,42 +1,48 @@
 import { useEffect, useState } from "react";
 import { FaEye } from "react-icons/fa";
-import { OVERTIME_DETAIL_PAGE_URL } from "../../config/routes";
-import { OvertimeType } from "../../types/leaves";
-import { getDate } from "../../utils";
-import Table, { HeadType, RowType } from "../controls/Table";
-
-type Overtime = Omit<OvertimeType, "user">;
+import { ADMIN_OVERTIME_DETAIL_PAGE_URL } from "../../../config/routes";
+import { OvertimeType } from "../../../types/leaves";
+import { getDate } from "../../../utils";
+import Table, { HeadType, RowType } from "../../controls/Table";
 
 const heads: HeadType = [
+  { value: "employee name" },
+  { value: "email" },
   { value: "type" },
   { value: "date" },
   { value: "hours" },
   { value: "status" },
   { value: "date requested" },
-  { type: "actions", value: "view" },
+  { type: "actions", value: "options" },
 ];
 
-const getRows = (data: Overtime[]): RowType[] =>
-  data.map((ovt) => [
-    { value: ovt.overtime_type.name || "---" },
-    { value: ovt.date || "---" },
-    { value: ovt.hours || "---" },
+const getRows = (data: OvertimeType[]): RowType[] =>
+  data.map((overtime) => [
+    {
+      value: overtime.user
+        ? `${overtime.user.first_name} ${overtime.user.last_name}`
+        : "---",
+    },
+    { value: overtime.user ? `${overtime.user.email}` : "---" },
+    { value: overtime.overtime_type.name || "---" },
+    { value: overtime.date || "---" },
+    { value: overtime.hours || "---" },
     {
       options: {
         bg:
-          ovt.status === "approved"
+          overtime.admin_status === "approved"
             ? "success"
-            : ovt.status === "denied"
+            : overtime.admin_status === "denied"
             ? "error"
-						: ovt.status === "expired"
-						? "info"
-            : "warning",
+            : overtime.admin_status === "pending"
+            ? "warning"
+            : "info",
       },
       type: "badge",
-      value: ovt.status,
+      value: overtime.admin_status || "not needed",
     },
     {
-      value: ovt.date_requested ? getDate(ovt.date_requested, true) : "---",
+      value: overtime.date_requested ? getDate(overtime.date_requested, true) : "---",
     },
     {
       type: "actions",
@@ -44,18 +50,19 @@ const getRows = (data: Overtime[]): RowType[] =>
         {
           color: "primary",
           Icon: FaEye,
-          link: OVERTIME_DETAIL_PAGE_URL(ovt.id),
+          link: ADMIN_OVERTIME_DETAIL_PAGE_URL(overtime.id),
         },
       ],
     },
   ]);
 
 type TableType = {
-  overtime: Overtime[];
   loading: boolean;
+  overtime: OvertimeType[];
+  setStatus: (e: "" | "approved" | "denied" | "pending") => void;
 };
 
-const OvertimeTable = ({ overtime, loading }: TableType) => {
+const OvertimeTable = ({ overtime, loading, setStatus }: TableType) => {
   const [rows, setRows] = useState<RowType[]>([]);
   const [activeRow, setActiveRow] = useState<
     "all" | "approved" | "denied" | "pending"
@@ -64,11 +71,11 @@ const OvertimeTable = ({ overtime, loading }: TableType) => {
   useEffect(() => {
     let finalList;
     if (activeRow === "denied") {
-      finalList = overtime.filter((ovt) => ovt.status === "denied");
+      finalList = overtime.filter((ovt) => ovt.admin_status === "denied");
     } else if (activeRow === "approved") {
-      finalList = overtime.filter((ovt) => ovt.status === "approved");
+      finalList = overtime.filter((ovt) => ovt.admin_status === "approved");
     } else if (activeRow === "pending") {
-      finalList = overtime.filter((ovt) => ovt.status === "pending");
+      finalList = overtime.filter((ovt) => ovt.admin_status === "pending");
     } else {
       finalList = overtime;
     }
@@ -88,6 +95,7 @@ const OvertimeTable = ({ overtime, loading }: TableType) => {
               onClick: () => {
                 setRows(getRows(overtime));
                 setActiveRow("all");
+                setStatus("");
               },
               title: "all",
             },
@@ -96,10 +104,11 @@ const OvertimeTable = ({ overtime, loading }: TableType) => {
               onClick: () => {
                 setRows(
                   getRows(overtime).filter(
-                    (row: RowType) => row[3].value === "approved" && row
+                    (row: RowType) => row[5].value === "approved" && row
                   )
                 );
                 setActiveRow("approved");
+                setStatus("approved");
               },
               title: "approved",
             },
@@ -108,10 +117,11 @@ const OvertimeTable = ({ overtime, loading }: TableType) => {
               onClick: () => {
                 setRows(
                   getRows(overtime).filter(
-                    (row: RowType) => row[3].value === "denied" && row
+                    (row: RowType) => row[5].value === "denied" && row
                   )
                 );
                 setActiveRow("denied");
+                setStatus("denied");
               },
               title: "denied",
             },
@@ -120,10 +130,11 @@ const OvertimeTable = ({ overtime, loading }: TableType) => {
               onClick: () => {
                 setRows(
                   getRows(overtime).filter(
-                    (row: RowType) => row[3].value === "pending" && row
+                    (row: RowType) => row[5].value === "pending" && row
                   )
                 );
                 setActiveRow("pending");
+                setStatus("pending");
               },
               title: "pending",
             },

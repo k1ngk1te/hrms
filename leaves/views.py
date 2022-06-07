@@ -43,7 +43,7 @@ class LeaveView(ListCreateRetrieveView):
 			return self.list(request, *args, **kwargs)
 		leave = get_instance(Leave, {"id": leave_id})
 		if leave is None:
-			return Response("Leave with specified ID was not found!", 
+			return Response({"detail": "Leave with specified ID was not found!"}, 
 				status=status.HTTP_404_NOT_FOUND)
 		authorized = Leave.objects.can_view_leave(leave, request.user.employee)
 		if authorized is True:
@@ -58,7 +58,7 @@ class LeaveView(ListCreateRetrieveView):
 			except:
 				pass
 			return Response(serializer.data, status=status.HTTP_200_OK)
-		raise PermissionDenied("You are not authorized to view this information")
+		raise PermissionDenied({"detail": "You are not authorized to view this information"})
 
 	def get_queryset(self):
 		try:
@@ -89,23 +89,23 @@ class LeaveAdminView(ListCreateRetrieveView):
 			raise ValidationError({"detail": "Leave ID is required!"})
 		leave = get_instance(Leave, {"id": leave_id})
 		if leave is None:
-			return Response("Leave with specified ID was not found!", 
+			return Response({"detail": "Leave with specified ID was not found!"}, 
 				status=status.HTTP_404_NOT_FOUND)
 		authorized = Leave.objects.can_view_leave(leave, request.user.employee)
 		if authorized is False:
-			raise PermissionDenied("you are not authorized to make this request")
+			raise PermissionDenied({"detail": "you are not authorized to make this request"})
 		approval = self._validate_approval(request.data.get("approval", None))
 		[can_amend, reason] = Leave.admin_objects.can_amend_leave(request.user.employee, leave)
 		if can_amend:
 			serializer = self._perform_action(approval, leave)
 			if approval == "A":
 				self._send_leave_email(leave, "A")
-				return Response("Leave request is Approved", status=status.HTTP_200_OK)
+				return Response({"detail": "Leave request is Approved"}, status=status.HTTP_200_OK)
 			elif approval == "D":
 				self._send_leave_email(leave, "D")
-				return Response("Leave request is Denied", status=status.HTTP_200_OK)
-			return Response("something went wrong", status=status.HTTP_400_BAD_REQUEST)
-		return Response(reason, status=status.HTTP_400_BAD_REQUEST)
+				return Response({"detail": "Leave request is Denied"}, status=status.HTTP_200_OK)
+			return Response({"detail": "something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
+		return Response({"detail": reason}, status=status.HTTP_400_BAD_REQUEST)
 
 	def _perform_action(self, approval, leave):
 		employee = self.request.user.employee
@@ -125,9 +125,9 @@ class LeaveAdminView(ListCreateRetrieveView):
 
 	def _validate_approval(self, approval):
 		if approval is None:
-			raise ValidationError("approval is required")
+			raise ValidationError({"detail": "approval is required"})
 		if approval != "approved" and approval != "denied":
-			raise ValidationError("approval is invalid!")
+			raise ValidationError({"detail": "approval is invalid! Specify 'approved' or 'denied' "})
 		if approval == "approved":
 			return "A"
 		elif approval == "denied":
@@ -185,7 +185,7 @@ class LeaveExportDataView(APIView):
 			response = self.export_excel_data()
 			return response
 		return Response(
-			{"error": "invalid content type. can only export csv and excel file format."},
+			{"detail": "invalid content type. can only export csv and excel file format."},
 			status=status.HTTP_400_BAD_REQUEST)
 
 	def export_csv_data(self):
@@ -279,7 +279,7 @@ class OvertimeView(ListCreateRetrieveView):
 			return self.list(request, *args, **kwargs)
 		overtime = get_instance(Overtime, {"id": overtime_id})
 		if overtime is None:
-			return Response("Overtime with specified ID was not found!", 
+			return Response({"detail": "Overtime with specified ID was not found!"}, 
 				status=status.HTTP_404_NOT_FOUND)
 		authorized = Overtime.objects.can_view_overtime(overtime, request.user.employee)
 		if authorized is True:
@@ -294,7 +294,7 @@ class OvertimeView(ListCreateRetrieveView):
 			except:
 				pass
 			return Response(serializer.data, status=status.HTTP_200_OK)
-		raise PermissionDenied("You are not authorized to view this information")
+		raise PermissionDenied({"detail": "You are not authorized to view this information"})
 
 	def get_queryset(self):
 		try:
@@ -325,23 +325,23 @@ class OvertimeAdminView(ListCreateRetrieveView):
 			raise ValidationError({"detail": "Overtime ID is required!"})
 		overtime = get_instance(Overtime, {"id": overtime_id})
 		if overtime is None:
-			return Response("Overtime with specified ID was not found!", 
+			return Response({"detail": "Overtime with specified ID was not found!"}, 
 				status=status.HTTP_404_NOT_FOUND)
 		authorized = Overtime.objects.can_view_overtime(overtime, request.user.employee)
 		if authorized is False:
-			raise PermissionDenied("you are not authorized to make this request")
+			raise PermissionDenied({"detail": "You are not authorized to make this request"})
 		approval = self._validate_approval(request.data.get("approval", None))
 		[can_amend, reason] = Overtime.admin_objects.can_amend_overtime(request.user.employee, overtime)
 		if can_amend:
 			serializer = self._perform_action(approval, overtime)
 			if approval == "A":
 				self._send_overtime_email(overtime, "A")
-				return Response("Overtime request is Approved", status=status.HTTP_200_OK)
+				return Response({"detail": "Overtime request is Approved"}, status=status.HTTP_200_OK)
 			elif approval == "D":
 				self._send_overtime_email(overtime, "D")
-				return Response("Overtime request is Denied", status=status.HTTP_200_OK)
-			return Response("something went wrong", status=status.HTTP_400_BAD_REQUEST)
-		return Response(reason, status=status.HTTP_400_BAD_REQUEST)
+				return Response({"detail": "Overtime request is Denied"}, status=status.HTTP_200_OK)
+			return Response({"detail": "something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
+		return Response({"detail": reason}, status=status.HTTP_400_BAD_REQUEST)
 
 	def _perform_action(self, approval, overtime):
 		employee = self.request.user.employee
@@ -361,9 +361,9 @@ class OvertimeAdminView(ListCreateRetrieveView):
 
 	def _validate_approval(self, approval):
 		if approval is None:
-			raise ValidationError("approval is required")
+			raise ValidationError({"detail": "approval is required"})
 		if approval != "approved" and approval != "denied":
-			raise ValidationError("approval is invalid!")
+			raise ValidationError({"detail": "approval is invalid! Specify 'approved' or 'denied' "})
 		if approval == "approved":
 			return "A"
 		elif approval == "denied":
@@ -420,7 +420,7 @@ class OvertimeExportDataView(APIView):
 			response = self.export_excel_data()
 			return response
 		return Response(
-			{"error": "invalid content type. can only export csv and excel file format."},
+			{"detail": "invalid content type. can only export csv and excel file format."},
 			status=status.HTTP_400_BAD_REQUEST)
 
 	def export_csv_data(self):

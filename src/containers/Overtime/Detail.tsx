@@ -4,19 +4,19 @@ import { isErrorWithData } from "../../store";
 import { logout } from "../../store/features/auth-slice";
 import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
 import {
-	useGetLeaveQuery,
-	useApproveLeaveMutation,
+	useGetOvertimeDataQuery,
+	useApproveOvertimeMutation,
 } from "../../store/features/leaves-slice";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { getDate } from "../../utils";
+import { toCapitalize, getDate } from "../../utils";
 import { Container, InfoComp, InfoTopBar } from "../../components/common";
 
 const Detail = ({ admin }: { admin?: boolean }) => {
 	const { id } = useParams();
-	const leave = useGetLeaveQuery(id || "", {
+	const overtime = useGetOvertimeDataQuery(id || "", {
 		skip: typeof id === undefined,
 	});
-	const [approveLeave, approve] = useApproveLeaveMutation();
+	const [approveOvertime, approve] = useApproveOvertimeMutation();
 
 	const dispatch = useAppDispatch();
 	const data = useAppSelector((state) => state.auth.data);
@@ -25,11 +25,11 @@ const Detail = ({ admin }: { admin?: boolean }) => {
 	const [action, setAction] = useState<"approved" | "denied">("approved");
 
 	useEffect(() => {
-		if (leave.data || leave.error) setLoading(false);
+		if (overtime.data || overtime.error) setLoading(false);
 		const err =
-			leave.error && "status" in leave.error && leave.error?.status === 401;
+			overtime.error && "status" in overtime.error && overtime.error?.status === 401;
 		if (err === true) dispatch(logout());
-	}, [dispatch, leave.data, leave.error]);
+	}, [dispatch, overtime.data, overtime.error]);
 
 	useEffect(() => {
 		if (approve.status === "fulfilled" || approve.status === "rejected") {
@@ -70,27 +70,27 @@ const Detail = ({ admin }: { admin?: boolean }) => {
 
 	return (
 		<Container
-			heading={admin ? "Leave Information (Admin)" : "Leave Information"}
+			heading={admin ? "Overtime Information (Admin)" : "Overtime Information"}
 			icon
-			title={leave.data?.id}
+			title={overtime.data?.id}
 			error={
-				isErrorWithData(leave.error)
+				isErrorWithData(overtime.error)
 					? {
-							statusCode: leave.error.status,
-							title: String(leave.error.data.error || leave.error.data.detail || ""),
+							statusCode: overtime.error.status,
+							title: String(overtime.error.data.error || overtime.error.data.detail || ""),
 					  }
 					: undefined
 			}
 			refresh={{
-				loading: leave?.isFetching,
-				onClick: () => leave?.refetch(),
+				loading: overtime?.isFetching,
+				onClick: () => overtime?.refetch(),
 			}}
 			loading={loading}
 		>
 			<InfoTopBar
-				email={leave.data?.user?.email}
-				full_name={`${leave.data?.user?.first_name} ${leave.data?.user?.last_name}`}
-				image={leave.data?.user?.image}
+				email={overtime.data?.user?.email}
+				full_name={`${overtime.data?.user?.first_name} ${overtime.data?.user?.last_name}`}
+				image={overtime.data?.user?.image}
 				actions={
 					admin && data?.is_admin
 						? [
@@ -100,11 +100,11 @@ const Detail = ({ admin }: { admin?: boolean }) => {
 									loading: action === "approved" && approve.isLoading,
 									onClick: () => {
 										if (id) {
-											approveLeave({ id, approval: "approved" });
+											approveOvertime({ id, approval: "approved" });
 											setAction("approved");
 										}
 									},
-									title: "Approve Leave",
+									title: "Approve Overtime",
 								},
 								{
 									bg: "bg-red-600 hover:bg-red-500",
@@ -112,11 +112,11 @@ const Detail = ({ admin }: { admin?: boolean }) => {
 									loading: action === "denied" && approve.isLoading,
 									onClick: () => {
 										if (id) {
-											approveLeave({ id, approval: "denied" });
+											approveOvertime({ id, approval: "denied" });
 											setAction("denied");
 										}
 									},
-									title: "Deny Leave",
+									title: "Deny Overtime",
 								},
 						  ]
 						: undefined
@@ -126,10 +126,11 @@ const Detail = ({ admin }: { admin?: boolean }) => {
 			<div className="mt-4">
 				<InfoComp
 					infos={[
-						{ title: "First Name", value: leave.data?.user?.first_name || "" },
-						{ title: "Last Name", value: leave.data?.user?.last_name || "" },
-						{ title: "E-mail", value: leave.data?.user?.email || "" },
-						{ title: "Occupation", value: leave.data?.user?.job || "" },
+						{ title: "First Name", value: overtime.data?.user?.first_name || "" },
+						{ title: "Last Name", value: overtime.data?.user?.last_name || "" },
+						{ title: "E-mail", value: overtime.data?.user?.email || "" },
+						{ title: "Occupation", value: overtime.data?.user?.job ? 
+							toCapitalize(overtime.data?.user?.job) : "" },
 					]}
 					title="employee information"
 				/>
@@ -137,62 +138,51 @@ const Detail = ({ admin }: { admin?: boolean }) => {
 				<InfoComp
 					infos={[
 						{
-							title: "Type of Leave",
-							value: leave.data?.leave_type?.name || "Not Specified",
+							title: "Type of Overtime",
+							value: overtime.data?.overtime_type?.name ? 
+								toCapitalize(overtime.data?.overtime_type?.name) : "Not Specified",
 						},
 						{
 							options: {
-								bg: leave.data?.status
-									? leave.data?.status === "approved"
+								bg: overtime.data?.status
+									? overtime.data?.status === "approved"
 										? "success"
-										: leave.data.status === "denied"
+										: overtime.data.status === "denied"
 										? "error"
-										: leave.data.status === "pending"
+										: overtime.data.status === "pending"
 										? "warning"
 										: "info"
 									: "info",
 							},
 							title: "Status",
-							value: leave.data?.status || "Pending",
+							value: overtime.data?.status || "Pending",
 							type: "badge",
 						},
 						{
-							title: "Start Date",
-							value: leave.data?.start_date
-								? (getDate(leave.data.start_date, true) as string)
+							title: "Date",
+							value: overtime.data?.date
+								? (getDate(overtime.data.date, true) as string)
 								: "",
 						},
 						{
-							title: "End Date",
-							value: leave.data?.end_date
-								? (getDate(leave.data.end_date, true) as string)
-								: "",
+							title: "Hours",
+							value: overtime.data?.hours || "",
 						},
-						{
-							title: "Resumption Date",
-							value: leave.data?.resume_date
-								? (getDate(leave.data.resume_date, true) as string)
-								: "",
-						},
-						{
-							title: "Number Of Days",
-							value: String(leave.data?.no_of_days),
-						},
-						{ title: "Reason For Leave", value: leave.data?.reason || "" },
+						{ title: "Reason For Overtime", value: overtime.data?.reason || "" },
 						{
 							title: "Date Requested",
-							value: leave.data?.date_requested
-								? (getDate(leave.data.date_requested, true) as string)
+							value: overtime.data?.date_requested
+								? (getDate(overtime.data.date_requested, true) as string)
 								: "",
 						},
 						{
 							title: "Last Update",
-							value: leave.data?.date_updated
-								? (getDate(leave.data.date_updated, true) as string)
+							value: overtime.data?.date_updated
+								? (getDate(overtime.data.date_updated, true) as string)
 								: "",
 						},
 					]}
-					title="leave information"
+					title="overtime information"
 					titleWidth="w-[200px]"
 				/>
 
@@ -200,70 +190,70 @@ const Detail = ({ admin }: { admin?: boolean }) => {
 					infos={[
 						{
 							options: {
-								bg: leave.data?.authorized?.supervisor
-									? leave.data?.authorized?.supervisor === "approved"
+								bg: overtime.data?.authorized?.supervisor
+									? overtime.data?.authorized?.supervisor === "approved"
 										? "success"
-										: leave.data?.authorized?.supervisor === "denied"
+										: overtime.data?.authorized?.supervisor === "denied"
 										? "error"
-										: leave.data?.authorized?.supervisor === "pending"
+										: overtime.data?.authorized?.supervisor === "pending"
 										? "warning"
 										: "info"
 									: "info",
 							},
 							title: "Supervisor",
-							value: leave.data?.authorized?.supervisor || "Not Needed",
+							value: overtime.data?.authorized?.supervisor || "Not Needed",
 							type: "badge",
 						},
 						{
 							options: {
-								bg: leave.data?.authorized?.hod
-									? leave.data?.authorized?.hod === "approved"
+								bg: overtime.data?.authorized?.hod
+									? overtime.data?.authorized?.hod === "approved"
 										? "success"
-										: leave.data?.authorized?.hod === "denied"
+										: overtime.data?.authorized?.hod === "denied"
 										? "error"
-										: leave.data?.authorized?.hod === "pending"
+										: overtime.data?.authorized?.hod === "pending"
 										? "warning"
 										: "info"
 									: "info",
 							},
 							title: "Head of Department",
-							value: leave.data?.authorized?.hod || "Not Needed",
+							value: overtime.data?.authorized?.hod || "Not Needed",
 							type: "badge",
 						},
 						{
 							options: {
-								bg: leave.data?.authorized?.hr
-									? leave.data?.authorized?.hr === "approved"
+								bg: overtime.data?.authorized?.hr
+									? overtime.data?.authorized?.hr === "approved"
 										? "success"
-										: leave.data?.authorized?.hr === "denied"
+										: overtime.data?.authorized?.hr === "denied"
 										? "error"
-										: leave.data?.authorized?.hr === "pending"
+										: overtime.data?.authorized?.hr === "pending"
 										? "warning"
 										: "info"
 									: "info",
 							},
 							title: "Human Resoure Manager",
-							value: leave.data?.authorized?.hr || "Not Needed",
+							value: overtime.data?.authorized?.hr || "Not Needed",
 							type: "badge",
 						},
 						{
 							options: {
-								bg: leave.data?.authorized?.md
-									? leave.data?.authorized?.md === "approved"
+								bg: overtime.data?.authorized?.md
+									? overtime.data?.authorized?.md === "approved"
 										? "success"
-										: leave.data?.authorized?.md === "denied"
+										: overtime.data?.authorized?.md === "denied"
 										? "error"
-										: leave.data?.authorized?.md === "pending"
+										: overtime.data?.authorized?.md === "pending"
 										? "warning"
 										: "info"
 									: "info",
 							},
 							title: "Managing Director",
-							value: leave.data?.authorized?.md || "Not Needed",
+							value: overtime.data?.authorized?.md || "Not Needed",
 							type: "badge",
 						},
 					]}
-					title="Leave Status"
+					title="Overtime Status"
 					titleWidth="w-[210px]"
 				/>
 			</div>

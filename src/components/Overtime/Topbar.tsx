@@ -104,7 +104,7 @@ const Topbar: FC<TopbarProps> = ({
         onClick={openModal}
         padding="px-3 py-2 md:px-6"
         rounded="rounded-xl"
-        title={adminView ? "Add Leave" : "Request Leave"}
+        title={adminView ? "Add Overtime" : "Request Overtime"}
       />
     </div>
   </div>

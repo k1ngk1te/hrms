@@ -83,6 +83,18 @@ const Sidebar = forwardRef<HTMLDivElement, PropsType>(
 						title: "holidays",
 						href: routes.HOLIDAYS_PAGE_URL,
 					},
+					{
+						admin: false,
+						Icon: FaSuitcase,
+						title: "overtime",
+						href: routes.OVERTIME_PAGE_URL,
+					},
+					{
+						admin: true,
+						Icon: FaPlaneDeparture,
+						title: "overtime (admin)",
+						href: routes.ADMIN_OVERTIME_PAGE_URL,
+					},
 				]
 			},
 			{
