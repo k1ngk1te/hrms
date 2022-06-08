@@ -190,7 +190,7 @@ def send_overtime_email_signal(sender, instance, created, **kwargs):
 				recipient = get_instance(Employee, {"is_md": True})
 				admin = instance.created_by
 				if admin.is_md:
-					return send_leave_email("A", admin, instance,instance.employee,"the Managing Director")
+					return send_overtime_email("A", admin, instance,instance.employee,"the Managing Director")
 				elif admin.is_hr:
 					recipient = get_instance(Employee, {"is_md": True})
 				elif admin.is_hod:

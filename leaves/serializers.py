@@ -74,8 +74,7 @@ class LeaveSerializer(serializers.ModelSerializer):
 
 class LeaveAdminSerializer(LeaveSerializer):
 	admin_status = serializers.SerializerMethodField('get_admin_status')
-	employee = serializers.PrimaryKeyRelatedField(
-		queryset=Employee.objects.all(), required=True, allow_null=False)
+	employee = serializers.CharField()
 
 	class Meta:
 		model = LeaveSerializer.Meta.model
@@ -101,6 +100,16 @@ class LeaveAdminSerializer(LeaveSerializer):
 		raise PermissionDenied({
 			"error": "You are not allowed to perform this request for this employee."
 			})
+
+	def validate_employee(self, value):
+		if not value:
+			raise ValidationError("Employee ID is required!")
+		if isinstance(value, str) is False:
+			raise ValidationError("Employee ID must be a string!")
+		employee = get_instance(Employee, {"id": value})
+		if not employee:
+			raise ValidationError(f"Employee with specified ID {value} does not exist!")
+		return employee
 
 	def get_admin_status(self, obj):
 		user = self.context.get("request").user
@@ -171,8 +180,7 @@ class OvertimeSerializer(serializers.ModelSerializer):
 
 class OvertimeAdminSerializer(OvertimeSerializer):
 	admin_status = serializers.SerializerMethodField('get_admin_status')
-	employee = serializers.PrimaryKeyRelatedField(
-		queryset=Employee.objects.all(), required=True, allow_null=False)
+	employee = serializers.CharField()
 
 	class Meta:
 		model = OvertimeSerializer.Meta.model
@@ -198,6 +206,16 @@ class OvertimeAdminSerializer(OvertimeSerializer):
 		raise PermissionDenied({
 			"error": "You are not allowed to perform this request for this employee."
 			})
+
+	def validate_employee(self, value):
+		if not value:
+			raise ValidationError("Employee ID is required!")
+		if isinstance(value, str) is False:
+			raise ValidationError("Employee ID must be a string!")
+		employee = get_instance(Employee, {"id": value})
+		if not employee:
+			raise ValidationError(f"Employee with specified ID {value} does not exist!")
+		return employee
 
 	def get_admin_status(self, obj):
 		user = self.context.get("request").user

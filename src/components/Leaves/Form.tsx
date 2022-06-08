@@ -3,19 +3,13 @@ import { ChangeEvent, FormEvent, FC, useEffect, useState } from "react";
 import { useGetEmployeesQuery } from "../../store/features/employees-slice";
 import { useAppSelector } from "../../hooks";
 import { toCapitalize } from "../../utils";
-import { FormType } from "../../types/leaves";
+import { FormType, FormErrorType } from "../../types/leaves";
 import { Button, Input, Select, Textarea } from "../controls";
 
 type FormProps = {
   adminView?: boolean;
   data: FormType;
-  errors?: {
-  	employee?: string;
-  	leave_type?: string;
-  	start_date?: string;
-  	end_date?: string;
-  	reason?: string;
-  };
+  errors?: FormErrorType;
   formErrors?: any;
   loading: boolean;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -120,6 +114,7 @@ const Form: FC<FormProps> = ({
             error={formErrors?.no_of_days ? String(formErrors?.no_of_days) : ""}
             helpText="This will calculate the number of days from the start date and automatically set the end date. Do note that if the end date is altered, the number of days will respond to that alteration."
             label="Number Of Days (optional)"
+            min="1"
             name="no_of_days"
             onChange={onChange}
             placeholder="Enter Number of Days"

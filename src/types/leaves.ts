@@ -12,6 +12,14 @@ export type FormType = {
   reason: string;
 };
 
+export type FormErrorType = {
+  employee?: string;
+  leave_type?: string;
+  start_date?: string;
+  end_date?: string;
+  reason?: string;
+}
+
 export type LeaveType = {
   id: string;
   user: EmployeeUserType;
@@ -79,3 +87,10 @@ export type OvertimeCreateType = {
   reason: string;
 }
 
+export type OvertimeCreateErrorType = {
+  employee?: string;
+  overtime_type?: string;
+  date?: string;
+  hours?: string;
+  reason?: string;
+}

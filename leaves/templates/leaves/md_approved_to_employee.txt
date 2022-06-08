@@ -1,6 +1,6 @@
 Dear {{name_prefix|safe}} {{last_name|safe}}:
 	This is to inform you that your request for a {{leave_type|safe}} leave of absence was approved. 
-	The Leave of absence with commence on {{start_date|safe}}, through {{end_date|safe}}. 
+	The Leave of absence will commence on {{start_date|safe}}, through {{end_date|safe}}. 
 	You are expected to resume work on {{resume_date|safe}} unfailingly.
 	If the time frame of the leave of absence does not meet your requirements, you can request for
 	another leave on your resumption date.

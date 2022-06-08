@@ -46,6 +46,8 @@ export const OVERTIME_DETAIL_URL = (id: string) => `${OVERTIME_URL}${id}/`;
 export const OVERTIME_ADMIN_URL = `${ROOT_URL}/overtime/admin/`;
 export const OVERTIME_ADMIN_DETAIL_URL = (id: string) =>
   `${ROOT_URL}/overtime/admin/${id}/`;
+export const OVERTIME_ADMIN_EXPORT_URL = (_type: string) =>
+  `${ROOT_URL}/overtime/admin/export/${_type}/`;
 
 export const PROJECTS_URL = `${ROOT_URL}/projects/`;
 export const PROJECT_URL = (id: string) => `${ROOT_URL}/projects/${id}/`;

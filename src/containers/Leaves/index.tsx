@@ -19,7 +19,7 @@ import {
 } from "../../store/features/modal-slice";
 import { getDate, getNextDate, validateForm } from "../../utils";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { FormType } from "../../types/leaves";
+import { FormType, FormErrorType } from "../../types/leaves";
 import { Container, Modal } from "../../components/common";
 import { Cards, Form, Topbar, LeaveTable } from "../../components/Leaves";
 
@@ -56,18 +56,9 @@ const Leave = () => {
 	const [requestLeave, { error, status }] = useRequestLeaveMutation();
 
 	useEffect(() => {
-		if (
-			leaves.error &&
-			"status" in leaves.error &&
-			leaves.error?.status === 401
-		)
-			dispatch(logout());
-	}, [dispatch, leaves.error]);
-
-	useEffect(() => {
-		if (error !== undefined && "status" in error) {
+		if (isErrorWithData(error)) {
 			if (error?.status === 401) dispatch(logout());
-			else if (isErrorWithData(error)) {
+			else if (error.data?.error || error.data?.detail) {
 				dispatch(
 					alertModalOpen({
 						color: "danger",
@@ -80,7 +71,7 @@ const Leave = () => {
 						Icon: FaTimesCircle,
 						header: "Request Rejected",
 						message:
-							error.data.error || "Your request for a leave was rejected.",
+							error.data?.detail || error.data?.error || "Your request for a leave was rejected.",
 					})
 				);
 			}
@@ -213,6 +204,10 @@ const Leave = () => {
 	return (
 		<Container
 			heading="Leaves"
+			error={isErrorWithData(leaves.error) ? {
+				statusCode: leaves.error.status || 500,
+				title: String(leaves.error.data.detail || leaves.error.data.error || "")
+			} : undefined}
 			refresh={{
 				loading: leaves?.isFetching,
 				onClick: () => {
@@ -248,13 +243,7 @@ const Leave = () => {
 				component={
 					<Form
 						data={form}
-						errors={isFormError<{
-						  	employee?: string;
-						  	leave_type?: string;
-						  	start_date?: string;
-						  	end_date?: string;
-						  	reason?: string;
-						  }>(error) && error.data}
+						errors={isFormError<FormErrorType>(error) && error.data}
 						formErrors={errors}
 						loading={loading}
 						onChange={handleChange}

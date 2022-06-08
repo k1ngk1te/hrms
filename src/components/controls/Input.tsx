@@ -1,10 +1,10 @@
-import { ChangeEvent, useCallback, useState } from "react";
+import { ChangeEvent, InputHTMLAttributes, useCallback, useState } from "react";
 import { IconType } from "react-icons";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Badge, { BadgeProps } from "../common/Badge";
 import Button, { ButtonProps } from "./Button";
 
-export type InputProps = {
+export interface InputProps extends InputHTMLAttributes {
 	badge?: BadgeProps;
 	bg?: string;
 	bdr?: string;

@@ -129,7 +129,7 @@ class OvertimeAdminQuerySet(models.QuerySet):
 		else:
 			return self.none()
 
-	def get_overtimes_by_date(self, emp, _from, _to=None):
+	def get_overtime_by_date(self, emp, _from, _to=None):
 		try:
 			if _from is None:
 				raise ValidationError({"from": "From date is required"})
@@ -167,7 +167,7 @@ class LeaveManager(models.Manager):
 
 		[valid, reason] = self.can_request_leave(emp)
 		if valid is False:
-			raise ValidationError({"error": reason})
+			raise ValidationError({"detail": reason})
 
 		if not start_date:
 			raise ValidationError({ "start_date": "The start date must be set" })
@@ -292,13 +292,15 @@ class OvertimeManager(models.Manager):
 
 		[valid, reason] = self.can_request_overtime(emp)
 		if valid is False:
-			raise ValidationError({"error": reason})
+			raise ValidationError({"detail": reason})
 
 		
 		if not date:
 			raise ValidationError({ "date": "The start date must be set" })
-		if not hours:
-			raise ValidationError({ "hours": "Hours must be set" })
+
+		if not hours or hours < 1 or hours > 7:
+			raise ValidationError({ 
+				"hours": "Hours must be set, must not be less than 1 and greater than 7" })
 
 		current_date = now().date()
 		if (date - current_date).days < 0:
@@ -331,7 +333,7 @@ class OvertimeManager(models.Manager):
 		return OvertimeQuerySet(self.model, using=self._db)
 
 	def filter_by_date(self, emp, _from, _to):
-		return self.get_queryset().get_overtimes_by_date(emp, _from, _to)
+		return self.get_queryset().get_overtime_by_date(emp, _from, _to)
 
 	def can_request_overtime(self, emp):
 		if emp.user.is_active is False:

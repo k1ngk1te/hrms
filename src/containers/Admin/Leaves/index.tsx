@@ -25,7 +25,7 @@ import {
 	validateForm,
 } from "../../../utils";
 import { useAppDispatch, useAppSelector } from "../../../hooks";
-import { FormType } from "../../../types/leaves";
+import { FormType, FormErrorType } from "../../../types/leaves";
 import LeaveTable from "../../../components/Leaves/Admin/Table";
 import { Container, Modal } from "../../../components/common";
 import { Form, Topbar, Cards } from "../../../components/Leaves";
@@ -62,14 +62,9 @@ const Leave = () => {
 	const [createLeave, { error, status }] = useCreateLeaveMutation();
 
 	useEffect(() => {
-		if (isErrorWithData(leaves.error) && leaves.error?.status === 401)
-			dispatch(logout());
-	}, [dispatch, leaves.error]);
-
-	useEffect(() => {
 		if (isErrorWithData(error)) {
 			if (error.status === 401) dispatch(logout());
-			else if (error.data?.error) {
+			else if (error.data?.error || error.data?.detail) {
 				dispatch(
 					alertModalOpen({
 						color: "danger",
@@ -82,8 +77,8 @@ const Leave = () => {
 						Icon: FaTimesCircle,
 						header: "Leave Creation Failed",
 						message:
-							error.data.error ||
-							"Your request to create a leave was rejected.",
+							String(error.data?.error || error.data?.detail ||
+							"Your request to create a leave was rejected."),
 					})
 				);
 			}
@@ -242,6 +237,10 @@ const Leave = () => {
 	return (
 		<Container
 			heading="Employee Leaves"
+			error={isErrorWithData(leaves.error) ? {
+				status: leaves.error.status || 500,
+				title: String(leaves.error.data?.detail || leaves.error.data?.error || "")
+			} : undefined}
 			refresh={{
 				loading: leaves.isFetching,
 				onClick: () => {
@@ -281,13 +280,7 @@ const Leave = () => {
 					<Form
 						adminView
 						data={form}
-						errors={isFormError<{
-employee?: string;
-leave_type?: string;
-start_date?: string;
-end_date?: string;
-reason?: string;
-}>(error) && error.data}
+						errors={isFormError<FormErrorType>(error) && error.data}
 						formErrors={errors}
 						loading={loading}
 						onChange={handleChange}
