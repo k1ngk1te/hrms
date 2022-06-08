@@ -476,7 +476,7 @@ class OvertimeExportDataView(APIView):
 
 	def get_queryset(self):
 		try:
-			queryset = Overtime.admin_objects.leaves(
+			queryset = Overtime.admin_objects.overtimes(
 				self.request.user.employee).order_by('-date_requested')
 			_from = self.request.query_params.get("from")
 			if _from is not None and _from != "":
