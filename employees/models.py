@@ -11,6 +11,7 @@ from core.utils import get_app_model
 from jobs.models import Job
 from .managers import AttendanceManager, EmployeeManager
 
+ATTENDANCE_ID_LENGTH = settings.ATTENDANCE_ID_MAX_LENGTH
 ID_LENGTH = settings.ID_MAX_LENGTH
 
 User = get_user_model()
@@ -234,7 +235,7 @@ class Holiday(models.Model):
 
 class Attendance(models.Model):
 	attendance_id = models.BigAutoField(primary_key=True)
-	id = models.CharField(max_length=ID_LENGTH, unique=True, editable=False)
+	id = models.CharField(max_length=ATTENDANCE_ID_LENGTH, unique=True, editable=False)
 	employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="attendance")
 	date = models.DateField(default=now)
 	punch_in = models.TimeField()

@@ -20,6 +20,7 @@ def get_gender_name(gender):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+	id = serializers.CharField(read_only=True)
 	image_url = serializers.SerializerMethodField('get_image_url')
 	date = serializers.SerializerMethodField('get_date')
 	gender = CustomChoiceField(get_gender_name)

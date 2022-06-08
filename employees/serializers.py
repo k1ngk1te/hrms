@@ -1,4 +1,3 @@
-import datetime
 from django.contrib.auth import get_user_model
 from django.utils.timezone import now
 from rest_framework import serializers
@@ -27,92 +26,37 @@ User = get_user_model()
 
 
 class AttendanceSerializer(serializers.ModelSerializer):
+	id = serializers.CharField(read_only=True)
 	date = serializers.DateField(required=False)
 	punch_in = serializers.TimeField(required=False)
 	punch_out = serializers.TimeField(required=False)
 
 	class Meta:
 		model = Attendance
-		exclude = ('employee', )
+		exclude = ('employee', 'attendance_id')
 
 	def create(self, validated_data):
-		action = self.get_action()
-		if action == "in":
-			attendance = self.validate_punch_in()
-		elif action == "out":
-			attendance = self.validate_punch_out()
-		else:
-			raise server_error({"detail": "A server error occurred! Please try again later."})
-		return attendance
-
-	def get_action(self):
-		action = self.context.get("request").data.get("action", None)
-		if action is None:
-			raise ValidationError({"detail": "Invalid request. Please provide action value."})
+		action = self.context.get("action", None)
+		if not action:
+			raise ValidationError({"detail": "action is required! Input 'in' or 'out'"})
 		if action != "in" and action != "out":
-			raise ValidationError({"detail": "Invalid action. Either punch in or out."})
-		return action
+			raise ValidationError({"detail": "Invalid action! Input 'in' or 'out'"})
 
-	def get_employee(self):
-		user = self.context.get("request").user
-		try:
-			employee = Employee.objects.get(user=user)
-			return employee
-		except Employee.DoesNotExist:
-			raise ValidationError({"detail": "Employee does not exist!"})
-		return None
-
-	def get_instance(self):
-		date = now().date()
-		return get_instance(Attendance, {"employee": self.get_employee(), "date": date})
-
-	def validate_punch_in(self):
-		employee = self.get_employee()
-		date = now().date()
-
-		current_time = now().time()
-
-		open_time = datetime.time(6, 30, 0)
-
-		if current_time < open_time:
-			raise PermissionDenied({"detail": f"Unabled to complete request. It's not opening time!"})
-
-		punch_in = datetime.time(current_time.hour, current_time.minute, current_time.second)
-
-		instance = get_instance(Attendance, {"employee": employee, "date": date})
-		if instance is not None and instance.punch_in:
-			raise PermissionDenied({"detail": f"Unabled to complete request. You punched in at {instance.punch_in}"})
-		elif instance is not None and instance.punch_in is None:
-			instance.punch_in = punch_in
-			instance.save()
-			return instance
-		attendance = Attendance.objects.create(employee=employee, date=date, punch_in=punch_in)
+		employee = self.context.get("request").user.employee
+		if action == "in":
+			attendance = Attendance.objects.create(employee=employee, **validated_data)
+		elif action == "out":
+			attendance = Attendance.objects.validate_punchout(employee)
 		return attendance
-
-	def validate_punch_out(self):
-		current_time = now().time()
-		closing_time = datetime.time(17, 30, 0)
-
-		if closing_time < current_time:
-			raise PermissionDenied({"detail": f"Unabled to complete request. It's past closing time!"})
-
-		date = now().date()
-		instance = self.get_instance()
-		if instance is None or instance.punch_in is None:
-			raise PermissionDenied({"detail": "Invalid request! You are yet to punch in for the day."})
-		if instance and instance.punch_out:
-			raise PermissionDenied({"detail": f"Unabled to complete request. You punched out at {instance.punch_out}"})
-		instance.punch_out = datetime.time(current_time.hour, current_time.minute, current_time.second)
-		instance.save()
-		return instance
 
 
 class ClientSerializer(serializers.ModelSerializer):
+	id = serializers.CharField(read_only=True)
 	contact = UserProfileSerializer()
 
 	class Meta:
 		model = Client
-		fields = '__all__'
+		exclude = ('client_id', )
 
 	def create(self, validated_data):
 		contact_data = validated_data.pop("contact")
@@ -141,7 +85,7 @@ class ClientSerializer(serializers.ModelSerializer):
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
-	id = serializers.CharField(required=False)
+	id = serializers.CharField(read_only=False)
 	name = serializers.CharField(required=False)
 	hod = serializers.PrimaryKeyRelatedField(
 		queryset=Employee.objects.filter(user__is_active=True),
@@ -219,6 +163,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
+	id = serializers.CharField(read_only=True)
 	user = UserSerializer()
 	profile = ProfileSerializer(source='user.profile')
 	job = JobSerializer()
@@ -339,13 +284,15 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
 
 class HolidaySerializer(serializers.ModelSerializer):
+	id = serializers.CharField(read_only=True)
+
 	class Meta:
 		model = Holiday
-		fields = '__all__'
+		exclude = ('holiday_id',)
 
 
 class ProjectEmployeeSerializer(PersonSerializer):
-	id = serializers.CharField()
+	id = serializers.CharField(read_only=True)
 	job = serializers.SerializerMethodField('get_job')
 
 	class Meta:

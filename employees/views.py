@@ -55,24 +55,24 @@ from .serializers import (
 User = get_user_model()
 
 
-class AttendanceView(generics.ListCreateAPIView):
+class AttendanceView(generics.ListAPIView):
 	pagination_class = AttendancePagination
 	serializer_class = AttendanceSerializer
 	permission_classes = (IsEmployee, )
 
-	def get(self, request, *args, **kwargs):
-		print(request.user.employee.has_punched_out)
-		return self.list(request, *args, **kwargs)
+	def post(self, request, *args, **kwargs):
+		action = request.data.pop("action", None)
 
-	def create(self, request, *args, **kwargs):
-		serializer = AttendanceSerializer(data=request.data, context=self.get_serializer_context())
+		context = self.get_serializer_context()
+		context.update({"action": action})
+
+		serializer = AttendanceSerializer(data=request.data, context=context)
 		serializer.is_valid(raise_exception=True)
 		if serializer.errors:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+			return Response(serializer.errors)
 		serializer.save()
-		message = "Punched In"
-		if request.data.get("action") == "out":
-			message = "Punched Out"
+
+		message = "Punched In" if action == "in" else "Punched Out"
 		return Response({"detail": message}, status=status.HTTP_200_OK)
 
 	def get_queryset(self):
@@ -82,7 +82,7 @@ class AttendanceView(generics.ListCreateAPIView):
 		return {
 			'request': self.request,
 			'format': self.format_kwarg,
-			'view': self
+			'view': self,
 		}
 
 

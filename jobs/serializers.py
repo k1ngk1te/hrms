@@ -6,7 +6,7 @@ from .models import Job
 
 
 class JobSerializer(serializers.ModelSerializer):
-	id = serializers.CharField(required=False)
+	id = serializers.CharField(read_only=True)
 	name = serializers.CharField(required=False)
 
 	class Meta:

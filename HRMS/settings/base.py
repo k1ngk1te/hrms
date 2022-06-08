@@ -18,6 +18,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ID_MAX_LENGTH = 7
 ID_Z_FILL = 4
 
+ATTENDANCE_ID_MAX_LENGTH = 20
 LEAVE_ID_MAX_LENGTH = 10
 
 # Custom User Settings
@@ -125,7 +126,12 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+"""
+When USE_TZ is False, this is the time zone in which Django will store all datetimes. 
+When USE_TZ is True, this is the default time zone that Django will use to display 
+datetimes in templates and to interpret datetimes entered in forms.
+"""
+USE_TZ = False
 
 
 # Vite App Dir: point it to the folder your vite app is in.

@@ -20,6 +20,7 @@ def get_status(status):
 		return "not needed"
 
 class LeaveSerializer(serializers.ModelSerializer):
+	id = serializers.CharField(read_only=True)
 	leave_type = CustomChoiceField(get_leave_type)
 	user = serializers.SerializerMethodField('get_user')
 	status = serializers.SerializerMethodField('get_status')
@@ -138,6 +139,7 @@ class LeaveAdminSerializer(LeaveSerializer):
 
 
 class OvertimeSerializer(serializers.ModelSerializer):
+	id = serializers.CharField(read_only=True)
 	overtime_type = CustomChoiceField(get_overtime_type)
 	user = serializers.SerializerMethodField('get_user')
 	status = serializers.SerializerMethodField('get_status')
