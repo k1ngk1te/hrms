@@ -1,17 +1,40 @@
 import datetime
+from collections import OrderedDict
 from django.db import models
 from django.db.models import Q
 from django.utils.timezone import now
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
-# date.strftime('%A')
-# Wednesday
-
-# date.strftime('%p')
-# AM or PM
-
-# >>> now.strftime("%m-%d-%y. %d %b %Y is a %A on the %d day of %B.")
-# '12-02-03. 02 Dec 2003 is a Tuesday on the 02 day of December.'
+weekdays = OrderedDict({
+	"mon": OrderedDict({
+		"index": 0,
+		"name": "Monday", 
+	}),
+	"tue": OrderedDict({
+		"index": 1,
+		"name": "Tuesday", 
+	}),
+	"wed": OrderedDict({
+		"index": 2,
+		"name": "Wednesday",
+	}),
+	"thu": OrderedDict({
+		"index": 3,
+		"name": "Thursday", 
+	}),
+	"fri": OrderedDict({
+		"index": 4,
+		"name": "Friday", 
+	}),
+	"sat": OrderedDict({
+		"index": 5,
+		"name": "Saturday",
+	}),
+	"sun": OrderedDict({
+		"index": 6,
+		"name": "Sunday",
+	})
+})
 
 # Querysets
 
@@ -49,7 +72,7 @@ class AttendanceManager(models.Manager):
 		current_time = now().time()
 
 		open_time = datetime.time(6, 30, 0)
-		close_time = datetime.time(6, 30, 0)
+		close_time = datetime.time(17, 30, 0)
 
 		if not emp:
 			raise ValidationError({"detail": "Employee is required!"})
@@ -88,38 +111,15 @@ class AttendanceManager(models.Manager):
 		closing_time = datetime.time(17, 30, 0)
 
 		# Check if the employee is doing overtime and the hours to closing time
-		overtime = instance.employee.overtime.filter(date=date, a_md='A')
-		final_closing_time = datetime.time(closing_time.hour + overtime.first().hours, 
-			closing_time.minute, closing_time.second) if overtime.exists() else closing_time
+		overtime = instance.employee.has_overtime(date)
+		final_closing_time = datetime.time(closing_time.hour + overtime.hours, 
+			closing_time.minute, closing_time.second) if overtime else closing_time
 
 		if final_closing_time < current_time:
 			raise PermissionDenied({"detail": "Unabled to complete request. It's past closing time!"})
 		instance.punch_out = datetime.time(current_time.hour, current_time.minute, current_time.second)
 		instance.save()
 		return instance
-
-	def get_hours(self, instance):
-		if not instance.punch_in:
-			return 0
-		if instance.punch_in and instance.punch_out:
-			return self.get_diff_hours(instance.date, instance.punch_in, instance.punch_out)
-
-		current_date = now().date()
-		if instance.punch_in and not instance.punch_out and instance.date == current_date:
-			current_time = now().time()
-			closing_time = datetime.time(17, 30, 0)
-
-			# Check if the employee is doing overtime and the hours to closing time
-			overtime = instance.employee.overtime.filter(date=current_date, a_md='A')
-			final_closing_time = datetime.time(closing_time.hour + overtime.first().hours, 
-				closing_time.minute, closing_time.second) if overtime.exists() else closing_time
-
-			if final_closing_time < current_time:
-				return 0
-			return self.get_diff_hours(instance.date, instance.punch_in, current_time)
-
-		# Also wanna check if that day is a working day
-		return 0
 
 	def get_diff_hours(self, date, start_time, end_time):
 		# Combine the instance date with their respective time
@@ -130,6 +130,96 @@ class AttendanceManager(models.Manager):
 		diff_hours = (end - start).total_seconds() / (60 * 60)
 		return diff_hours
 
+	def get_instance_info(self, instance=None, hours=0):
+		if not instance:
+			return None
+		return OrderedDict({
+			"id": instance.id,
+			"date": instance.date,
+			"punch_in": instance.punch_in,
+			"punch_out": instance.punch_out,
+			"hours": hours
+		})
+
+	def get_hours(self, instance):
+		if not instance:
+			return None
+		if not instance.punch_in:
+			return None
+		if instance.punch_in and instance.punch_out:
+			hours = self.get_diff_hours(instance.date, instance.punch_in, instance.punch_out)
+			return self.get_instance_info(instance, hours)
+
+		current_date = now().date()
+		if instance.punch_in and not instance.punch_out and instance.date == current_date:
+			current_time = now().time()
+			closing_time = datetime.time(17, 30, 0)
+
+			# Check if the employee is doing overtime and the hours to closing time
+			overtime = instance.employee.has_overtime(current_date)
+			final_closing_time = datetime.time(closing_time.hour + overtime.hours, 
+				closing_time.minute, closing_time.second) if overtime else closing_time
+
+			if final_closing_time < current_time:
+				return self.get_instance_info(instance, 0)
+			hours = self.get_diff_hours(instance.date, instance.punch_in, current_time)
+			return self.get_instance_info(instance, hours)
+
+		# Also wanna check if that day is a working day on the side
+		return self.get_instance_info(instance, 0)
+
+	def get_week_hours(self, **kwargs):
+		attendance = kwargs.get("attendance", None) # Get an attendance instance else None
+		employee = kwargs.get("employee", None) # Get an employee instance else None
+		# Get a datetime.date instance else use current date. To be used along side the employee instance
+		date = kwargs.get("date", now().date())
+
+		# Make sure an attendance or employee instance is passed
+		assert employee is not None or attendance is not None, ( 
+            'Provide an instance of the Employee Model Class with a instance of datetime.date or ',
+            'Provide an instance of the Attendance Model Class')
+
+		week_hours = self.get_default_hours() # Get OrderedDict of week hours with values set to 0
+
+		# Get the last date of the week
+		if employee: # If an employee instance was passed, use date
+			last_date_of_the_week = self.get_last_date_of_week(date)
+		else: # An attendance instance was passed
+			employee = attendance.employee # Get the employee on that instance and the date below
+			last_date_of_the_week = self.get_last_date_of_week(attendance.date)
+
+		last_day = weekdays.get(last_date_of_the_week.strftime('%a').lower()) # Should return Sunday
+
+		day_index = last_day.get("index") # Get the week day by the index. Should return 6
+
+		week_hours["mon"] = self.get_hours(self.get_attendance_instance(employee, last_date_of_the_week - datetime.timedelta(days=6)))
+		week_hours["tue"] = self.get_hours(self.get_attendance_instance(employee, last_date_of_the_week - datetime.timedelta(days=5)))
+		week_hours["wed"] = self.get_hours(self.get_attendance_instance(employee, last_date_of_the_week - datetime.timedelta(days=4)))
+		week_hours["thu"] = self.get_hours(self.get_attendance_instance(employee, last_date_of_the_week - datetime.timedelta(days=3)))
+		week_hours["fri"] = self.get_hours(self.get_attendance_instance(employee, last_date_of_the_week - datetime.timedelta(days=2)))
+		return week_hours
+
+	def get_attendance_instance(self, emp, date):
+		instance = self.filter(employee=emp, date=date).first()
+		return instance if instance else None
+
+	# A Function to return last day of week(sunday) depending on the datetime instance passed
+	def get_last_date_of_week(self, date=now().date()):
+		current_day = weekdays.get(date.strftime('%a').lower())
+		day_index = current_day.get("index")
+
+		sunday_date = date + datetime.timedelta(days=6-day_index)
+		return sunday_date
+
+	def get_default_hours(self):
+		return OrderedDict({
+			"mon": None,
+			"tue": None,
+			"wed": None,
+			"thu": None,
+			"fri": None,
+		})
+
 
 class EmployeeManager(models.Manager):
 
@@ -138,3 +228,89 @@ class EmployeeManager(models.Manager):
 
 	def employees(self, emp):
 		return self.get_queryset().get_employees(emp)
+
+
+"""
+# The Above return week hours for all days and 
+# below return all week hours before and on given date
+
+
+# date.strftime('%A')
+# Wednesday
+
+# date.strftime('%p')
+# AM or PM
+
+# >>> now.strftime("%m-%d-%y. %d %b %Y is a %A on the %d day of %B.")
+# '12-02-03. 02 Dec 2003 is a Tuesday on the 02 day of December.'
+
+class AttendanceManager(models.Manager):
+	def get_week_hours(self, **kwargs):
+		instance = None # initialize the instance to be None
+
+		employee = kwargs.get("employee", None)
+		attendance = kwargs.get("attendance", None)
+		date = kwargs.get("date", None)
+
+		assert (employee is not None and date is not None) or attendance is not None, ( # Make sure an attendance or employee instance is passed
+            'Provide an instance of the Employee Model Class with a instance of datetime.date or ',
+            'Provide an instance of the Attendance Model Class')
+
+		week_hours = self.get_default_hours() # Get the default week hours with days set to 0
+
+		if employee and date: # Check if an employee instance was passed
+			instance = self.get_any_employee_attendance_for_week(employee, date)
+		else:
+			instance = attendance
+
+		if instance is None:
+			return week_hours
+
+		instance_day = weekdays.get(instance.date.strftime('%a').lower()) # Get the name and index of the date
+
+		day_index = instance_day.get("index") # Get the week day by the index
+
+		if day_index == 0: # Check if it's monday
+			week_hours["mon"] = self.get_hours(instance) #  Return the number of hours on that instance
+		elif day_index == 1:
+			week_hours["mon"] = self.get_hours(self.get_attendance_instance(instance.employee, instance.date - datetime.timedelta(days=1))) # yesterday instance
+			week_hours["tue"] = self.get_hours(instance)
+		elif day_index == 2:
+			week_hours["mon"] = self.get_hours(self.get_attendance_instance(instance.employee, instance.date - datetime.timedelta(days=2))) # the day before yesterday instance
+			week_hours["tue"] = self.get_hours(self.get_attendance_instance(instance.employee, instance.date - datetime.timedelta(days=1))) # yesterday instance
+			week_hours["wed"] = self.get_hours(instance) #  Return the number of hours on that instance
+		elif day_index == 3:
+			week_hours["mon"] = self.get_hours(self.get_attendance_instance(instance.employee, instance.date - datetime.timedelta(days=3)))
+			week_hours["tue"] = self.get_hours(self.get_attendance_instance(instance.employee, instance.date - datetime.timedelta(days=2)))
+			week_hours["wed"] = self.get_hours(self.get_attendance_instance(instance.employee, instance.date - datetime.timedelta(days=1)))
+			week_hours["thu"] = self.get_hours(instance) #  Return the number of hours on that instance
+		elif day_index == 4 or day_index == 5 or day_index == 6:
+			week_hours["mon"] = self.get_hours(self.get_attendance_instance(instance.employee, instance.date - datetime.timedelta(days=4)))
+			week_hours["tue"] = self.get_hours(self.get_attendance_instance(instance.employee, instance.date - datetime.timedelta(days=3)))
+			week_hours["wed"] = self.get_hours(self.get_attendance_instance(instance.employee, instance.date - datetime.timedelta(days=2)))
+			week_hours["thu"] = self.get_hours(self.get_attendance_instance(instance.employee, instance.date - datetime.timedelta(days=1)))
+			week_hours["fri"] = self.get_hours(instance)
+		return week_hours
+
+	def get_any_employee_attendance_for_week(self, employee, date=now().date()):
+		instances = self.filter(employee=employee, date=date)
+
+		if instances.exists() is True:
+			return instances.first()
+
+		# Keep looking
+		current_day = weekdays.get(date.strftime('%a').lower())
+		day_index = current_day.get("index")
+
+		if day_index == 0: # i.e Monday
+			return None
+		start_index = day_index
+		while start_index != 0: # Loop until you find an attendance for that week
+			prev_date = self.get_attendance_instance(employee, date - datetime.timedelta(days=start_index))
+			if prev_date:
+				return prev_date
+			else:
+				start_index -= 1
+
+"""
+
