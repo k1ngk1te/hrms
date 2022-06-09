@@ -163,30 +163,12 @@ class Employee(models.Model):
 			return self.job.name
 		return None
 
-	@property
-	def has_punched_in(self):
+	def has_attendance(self, date=now().date()):
 		try:
-			date = now().date()
 			EmployeeModel = get_app_model("employees.Employee")
 			emp = EmployeeModel.objects.get(user=self.user)
 			attendance = emp.attendance.get(date=date)
-			if attendance and attendance.punch_in:
-				return attendance.punch_in
-			return None
-		except:
-			pass
-		return None
-
-	@property
-	def has_punched_out(self):
-		try:
-			date = now().date()
-			EmployeeModel = get_app_model("employees.Employee")
-			emp = EmployeeModel.objects.get(user=self.user)
-			attendance = emp.attendance.get(date=date)
-			if attendance and attendance.punch_out:
-				return attendance.punch_out
-			return None
+			return attendance
 		except:
 			pass
 		return None

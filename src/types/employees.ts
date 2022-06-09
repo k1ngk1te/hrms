@@ -2,21 +2,37 @@ import { DataListType, PaginationType } from "./common";
 import { DepartmentType } from "./departments";
 import { ProfileType, ProfileDataType, UserInfoType, UserType } from "./user";
 
+export type AttendanceDayType = {
+  id: string;
+  date: string;
+  punch_in: string;
+  punch_out?: string;
+  hours?: number;
+} | null;
+
+export type AttendanceWeekType = {
+  mon: AttendanceDayType;
+  tue: AttendanceDayType;
+  wed: AttendanceDayType;
+  thu: AttendanceDayType;
+  fri: AttendanceDayType;
+}
+
 export interface AttendanceListType extends DataListType {
-	punched_in?: string;
-	punched_out?: string;
-	results: AttendanceType[]
+  hours_spent_today?: AttendanceDayType;
+  results: AttendanceType[];
+  week_hours?: AttendanceWeekType;
 }
 
 export type AttendanceType = {
-	id: string;
-	date: string;
-	punch_in: string;
-	punch_out?: string;
-	production?: string;
-	break?: number;
-	overtime?: number
-}
+  id: string;
+  date: string;
+  punch_in: string;
+  punch_out?: string;
+  production?: string;
+  break?: number;
+  overtime?: number;
+};
 
 export interface GetEmployeesDataType extends DataListType {
   active: number;
@@ -26,14 +42,14 @@ export interface GetEmployeesDataType extends DataListType {
 }
 
 export type ProfileErrorType = {
-	image: string;
-    gender: string;
-    phone: string;
-    address: string;
-    state: string;
-    city: string;
-    date_of_birth: string;
-}
+  image: string;
+  gender: string;
+  phone: string;
+  address: string;
+  state: string;
+  city: string;
+  date_of_birth: string;
+};
 
 export type EmployeeType = {
   id: string;
@@ -128,177 +144,178 @@ export type ErrorsKeyType =
   | "phone"
   | "address";
 
-export interface ContactInfoType extends Omit<UserType, "full_name" | "active"> {
-	full_name?: string;
-	active?: boolean;
-	profile: ProfileDataType
+export interface ContactInfoType
+  extends Omit<UserType, "full_name" | "active"> {
+  full_name?: string;
+  active?: boolean;
+  profile: ProfileDataType;
 }
 
 export type ClientType = {
-    id: string;
-    company: string;
-    position: string;
-    contact: ContactInfoType
-}
+  id: string;
+  company: string;
+  position: string;
+  contact: ContactInfoType;
+};
 
-export interface ContactCreateInfoType extends Omit<UserType, "full_name" | "active"> {
-	profile: ProfileErrorType
+export interface ContactCreateInfoType
+  extends Omit<UserType, "full_name" | "active"> {
+  profile: ProfileErrorType;
 }
 
 export interface ClientCreateType extends Omit<ClientType, "id" | "contact"> {
-	contact: ContactCreateInfoType
+  contact: ContactCreateInfoType;
 }
 
 export interface ClientListType extends DataListType {
-	active: number;
-  	inactive: number;
-  	total: number;
-	results: ClientType[]
+  active: number;
+  inactive: number;
+  total: number;
+  results: ClientType[];
 }
 
 export interface ClientPaginationType extends PaginationType {
-	active?: boolean;
+  active?: boolean;
 }
 
 export type ClientFormErrorType = {
-	contact?: {
-		email?: string;
-		first_name?: string;
-		last_name?: string;
-	};
-	profile?: ProfileErrorType;
-	company?: string;
-	position?: string;
-}
+  contact?: {
+    email?: string;
+    first_name?: string;
+    last_name?: string;
+  };
+  profile?: ProfileErrorType;
+  company?: string;
+  position?: string;
+};
 
 export type HolidayType = {
-	id: string | number;
-	name: string;
-	date: string;
-}
+  id: string | number;
+  name: string;
+  date: string;
+};
 
 export interface HolidayListType extends DataListType {
-	results: HolidayType[]
+  results: HolidayType[];
 }
 
-export type HolidayCreateType = Omit<HolidayType, "id">
+export type HolidayCreateType = Omit<HolidayType, "id">;
 
 export type HolidayErrorType = {
-	name?: string;
-	date?: string;
-}
+  name?: string;
+  date?: string;
+};
 
 export interface ProjectEmployeeType extends UserType {
-	id: string;
-	job: string;
+  id: string;
+  job: string;
 }
 
 export type ProjectType = {
-    id: string | number;
-    client: ClientType;
-    leaders: ProjectEmployeeType[];
-    team: ProjectEmployeeType[];
-    created_by: ProjectEmployeeType;
-    name: string;
-    start_date: string;
-    end_date: string;
-    initial_cost: number;
-    rate: number;
-    priority: "H" | "M" | "L";
-    description: string;
-    completed: boolean;
-    verified: boolean;
-    is_active: boolean;
-    tasks: {
-      id: string;
-      name: string;
-      completed: string;
-    }[];
-    files: ProjectFileType[]
-}
-
-export type ProjectCreateType = {
-	client: string | number;
-	leaders: {id:string}[];
-	team: {id:string}[];
-	name: string;
-	start_date: string;
-	end_date: string;
-	initial_cost: number;
+  id: string | number;
+  client: ClientType;
+  leaders: ProjectEmployeeType[];
+  team: ProjectEmployeeType[];
+  created_by: ProjectEmployeeType;
+  name: string;
+  start_date: string;
+  end_date: string;
+  initial_cost: number;
   rate: number;
   priority: "H" | "M" | "L";
   description: string;
-}
+  completed: boolean;
+  verified: boolean;
+  is_active: boolean;
+  tasks: {
+    id: string;
+    name: string;
+    completed: string;
+  }[];
+  files: ProjectFileType[];
+};
+
+export type ProjectCreateType = {
+  client: string | number;
+  leaders: { id: string }[];
+  team: { id: string }[];
+  name: string;
+  start_date: string;
+  end_date: string;
+  initial_cost: number;
+  rate: number;
+  priority: "H" | "M" | "L";
+  description: string;
+};
 
 export type ProjectCreateErrorType = {
-	client: string
-	leaders: string;
-	team: string;
-	name: string;
-	start_date: string;
-	end_date: string;
-	initial_cost: string;
-    rate: string;
-    priority: string;
-    description: string;
-}
+  client: string;
+  leaders: string;
+  team: string;
+  name: string;
+  start_date: string;
+  end_date: string;
+  initial_cost: string;
+  rate: string;
+  priority: string;
+  description: string;
+};
 
 export interface ProjectListType extends DataListType {
-	results: ProjectType[]
+  results: ProjectType[];
 }
-
 
 export type TaskType = {
-	id: string;
-	project: {
-		id: string;
-		name: string;
-	}
-	completed: boolean;
-	verified: boolean;
-	name: string;
-	description: string;
-	priority: "L" | "M" | "H";
-	followers: ProjectEmployeeType[];
-	leaders: ProjectEmployeeType[];
-	created_by: ProjectEmployeeType;
-	create_date: string;
-	due_date: string;
-}
+  id: string;
+  project: {
+    id: string;
+    name: string;
+  };
+  completed: boolean;
+  verified: boolean;
+  name: string;
+  description: string;
+  priority: "L" | "M" | "H";
+  followers: ProjectEmployeeType[];
+  leaders: ProjectEmployeeType[];
+  created_by: ProjectEmployeeType;
+  create_date: string;
+  due_date: string;
+};
 
 export interface TaskListType extends DataListType {
-	 project: {
-        name: string;
-        id: string;
-    },
-    total: number;
-    completed: number;
-    verified: number;
-    count: number;
-    ongoing: number;
-	results: TaskType[]
+  project: {
+    name: string;
+    id: string;
+  };
+  total: number;
+  completed: number;
+  verified: number;
+  count: number;
+  ongoing: number;
+  results: TaskType[];
 }
 
 export type TaskCreateType = {
-	leaders: {id:string}[];
-	followers: {id:string}[];
-	name: string;
-	due_date: string;
+  leaders: { id: string }[];
+  followers: { id: string }[];
+  name: string;
+  due_date: string;
   priority: "H" | "M" | "L";
   description: string;
-}
+};
 
 export type TaskCreateErrorType = {
-	leaders: string;
-	followers: string;
-	name: string;
-	due_date: string;
+  leaders: string;
+  followers: string;
+  name: string;
+  due_date: string;
   priority: string;
   description: string;
-}
+};
 
 export type ProfileFileType = {
-  id: number,
+  id: number;
   project: {
     id: string;
     name: string;
@@ -311,16 +328,16 @@ export type ProfileFileType = {
   uploaded_by: {
     name: string;
     id: string;
-  }
-}
+  };
+};
 
 export type ProjectFileCreateType = {
   id: number;
   name: string;
   file: any;
-}
+};
 
 export type ProjectFileCreateErrorType = {
   name: string;
   file: string;
-}
+};

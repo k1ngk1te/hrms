@@ -3,8 +3,7 @@ from collections import OrderedDict
 from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
 
-from users.models import User
-from .models import Client, Employee, Project, Task
+from .models import Attendance, Client, Employee, Project, Task
 
 
 class AttendancePagination(LimitOffsetPagination):
@@ -14,11 +13,13 @@ class AttendancePagination(LimitOffsetPagination):
 				('count', self.count),
 				('next', self.get_next_link()),
 				('previous', self.get_previous_link()),
-				('punched_in', self.request.user.employee.has_punched_in),
-				('punched_out', self.request.user.employee.has_punched_out),
+				('hours_spent_today', Attendance.objects.get_hours(
+					self.request.user.employee.has_attendance())),
+				('week_hours', Attendance.objects.get_week_hours(
+					employee=self.request.user.employee)),
 				('results', data),
 			]))
-		except User.employee.RelatedObjectDoesNotExist:
+		except:
 			return Response(OrderedDict([
 				('count', self.count),
 				('next', self.get_next_link()),
@@ -26,7 +27,7 @@ class AttendancePagination(LimitOffsetPagination):
 				('results', data),
 			]))
 		return None
-		
+
 
 class ClientPagination(LimitOffsetPagination):
 	def get_paginated_response(self, data):
@@ -61,7 +62,7 @@ class EmployeePagination(LimitOffsetPagination):
 				('previous', self.get_previous_link()),
 				('results', data),
 			]))
-		except User.employee.RelatedObjectDoesNotExist:
+		except:
 			return Response(OrderedDict([
 				('count', self.count),
 				('next', self.get_next_link()),

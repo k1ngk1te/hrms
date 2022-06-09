@@ -1,3 +1,6 @@
+import { getTime } from "../../utils";
+import { AttendanceDayType, AttendanceWeekType } from "../../types/employees";
+
 export const TimeCard = ({
 	border,
 	color,
@@ -22,59 +25,43 @@ export const TimeCard = ({
 					{day}
 				</span>
 				<span className="capitalize font-semibold text-gray-500 text-xs">
-					{time || "-------"}
+					{time ? getTime(time) : "-------"}
 				</span>
 			</div>
 		</div>
 	</div>
 );
 
-const Activity = () => {
+const prepDayObject = (day?: AttendanceDayType) => ({
+	pit: day?.punch_in,
+	pot: day?.punch_out,
+	pic: day?.punch_in ? "bg-green-600" : "bg-red-600",
+	bic: day?.punch_in ? "border-green-600" : "border-red-600",
+	poc: day?.punch_out ? "bg-green-600" : "bg-red-600",
+	boc: day?.punch_out ? "border-green-600" : "border-red-600",
+})
+
+const Activity = ({ week_hours }: { week_hours?: AttendanceWeekType }) => {
 	const week = [
 		{
 			day: "monday",
-			pit: "8:00AM",
-			pot: "5:00PM",
-			pic: "bg-green-600",
-			bic: "border-green-600",
-			poc: "bg-green-600",
-			boc: "border-green-600",
+			...prepDayObject(week_hours?.mon)
 		},
 		{
 			day: "tuesday",
-			pit: "8:00AM",
-			pot: "5:00PM",
-			pic: "bg-gray-600",
-			bic: "border-gray-600",
-			poc: "bg-gray-600",
-			boc: "border-gray-600",
+			...prepDayObject(week_hours?.tue)
 		},
 		{
 			day: "wednesday",
-			// pit: "8:00AM",
-			// pot: "5:00PM",
-			pic: "bg-green-600",
-			bic: "border-green-600",
-			poc: "bg-yellow-600",
-			boc: "border-yellow-600",
+			...prepDayObject(week_hours?.wed)
 		},
 		{
 			day: "thursday",
-			// pit: "8:00AM",
-			// pot: "5:00PM",
-			pic: "bg-red-600",
-			bic: "border-red-600",
-			poc: "bg-red-600",
-			boc: "border-red-600",
+			...prepDayObject(week_hours?.thu)
 		},
 		{
 			day: "friday",
-			// pit: "8:00AM",
-			// pot: "5:00PM",
-			pic: "bg-gray-400",
-			bic: "border-gray-400",
-			poc: "bg-gray-400",
-			boc: "border-gray-400",
+			...prepDayObject(week_hours?.fri)
 		},
 	];
 	return (

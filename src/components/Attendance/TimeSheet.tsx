@@ -9,11 +9,12 @@ import { getTime } from "../../utils";
 
 export type TimeSheetProps = {
 	loading: boolean;
+	hours_spent?: number;
 	punchedIn?: string;
 	punchedOut?: string;
 };
 
-const TimeSheet: FC<TimeSheetProps> = ({ loading, punchedIn, punchedOut }) => {
+const TimeSheet: FC<TimeSheetProps> = ({ loading, hours_spent, punchedIn, punchedOut }) => {
 	const dispatch = useAppDispatch();
 
 	const [punchAction, { data, error, status, isLoading }] = usePunchActionMutation();
@@ -40,6 +41,8 @@ const TimeSheet: FC<TimeSheetProps> = ({ loading, punchedIn, punchedOut }) => {
 	}, [dispatch, punchAction]);
 
 	const able = typeof punchedIn  === "string" && typeof punchedOut === "string" ? false : true
+	const split_time = String(hours_spent).split(".");
+	const time_spent = hours_spent ? `${split_time[0]}.${split_time[1].slice(0, 2)}` : 0
 
 	useEffect(() => {
 		if (status === "fulfilled" && data)
@@ -74,7 +77,7 @@ const TimeSheet: FC<TimeSheetProps> = ({ loading, punchedIn, punchedOut }) => {
 				<div className="border-4 border-gray-300 flex h-28 items-center justify-center rounded-full w-28">
 					{(loading || isLoading) ? <Loader type="dotted" color="primary" size={4} /> : (
 						<span className="font-semibold text-center text-gray-800 text-2xl md:text-3xl lg:text-2xl">
-							{punchedIn ? punchedIn : 0} hrs
+							{time_spent} hrs
 						</span>
 					)}
 				</div>

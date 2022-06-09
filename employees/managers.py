@@ -229,3 +229,17 @@ class EmployeeManager(models.Manager):
 	def employees(self, emp):
 		return self.get_queryset().get_employees(emp)
 
+
+"""
+
+# date.strftime('%A')
+# Wednesday
+
+# date.strftime('%p')
+# AM or PM
+
+# >>> now.strftime("%m-%d-%y. %d %b %Y is a %A on the %d day of %B.")
+# '12-02-03. 02 Dec 2003 is a Tuesday on the 02 day of December.'
+
+"""
+

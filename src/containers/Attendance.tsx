@@ -47,19 +47,24 @@ const Attendance = () => {
 					: undefined
 			}
 		>
-			<div className="gap-4 grid grid-cols-1 w-full md:gap-5 md:grid-cols-2 lg:grid-cols-3">
-				<TimeSheet
-					loading={isFetching || false}
-					punchedIn={data ? data.punched_in : undefined}
-					punchedOut={data ? data.punched_out : undefined}
-				/>
-				<Statistics />
-				<Activity />
-			</div>
-			<AttendanceTable
-				attendance={data ? data.results : []}
-				loading={isFetching}
-			/>
+			{data && (
+				<>
+					<div className="gap-4 grid grid-cols-1 w-full md:gap-5 md:grid-cols-2 lg:grid-cols-3">
+						<TimeSheet
+							loading={isFetching || false}
+							hours_spent={data && data.hours_spent_today ? data.hours_spent_today.hours : undefined}
+							punchedIn={data && data.hours_spent_today ? data.hours_spent_today.punch_in : undefined}
+							punchedOut={data && data.hours_spent_today ? data.hours_spent_today.punch_out : undefined}
+						/>
+						<Statistics />
+						<Activity week_hours={data ? data.week_hours : undefined} />
+					</div>
+					<AttendanceTable
+						attendance={data ? data.results : []}
+						loading={isFetching}
+					/>
+				</>
+			)}
 		</Container>
 	);
 };
