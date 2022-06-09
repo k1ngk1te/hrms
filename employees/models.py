@@ -191,10 +191,6 @@ class Employee(models.Model):
 			pass
 		return None
 
-	def get_hours_spent(self):
-		# date = now()
-		pass
-
 	def get_supervisor(self, attr):
 		if self.supervisor is not None:
 			if attr == "name":
@@ -218,6 +214,13 @@ class Employee(models.Model):
 		self.is_hr = False
 		self.is_md = False
 		return self.save()
+
+	def has_overtime(self, date=now().date()):
+		EmployeeModel = get_app_model("employees.Employee")
+		emp = EmployeeModel.objects.get(user=self.user)
+
+		overtime = emp.overtime.filter(date=date, a_md='A')
+		return overtime.first() if overtime.exists() is True else Nones
 
 
 class Holiday(models.Model):
@@ -248,29 +251,6 @@ class Attendance(models.Model):
 
 	def __str__(self):
 		return '%s - %s ' % (self.employee, self.date)
-
-	@property
-	def hours_spent(self):
-		if not self.punch_in:
-			return 0
-		current_date = now().date()
-		if self.date != current_date and not self.punch_out:
-			return 0
-		current_time = now().time()
-		if self.date == current_date and not self.punch_out:
-			if current_time.hour > 17 and current_time.minute > 30:
-				return 0
-			if current_time > 17:
-				return 8
-			else:
-				hour = current_time.hour - self.punch_in.hour
-				minute = 59 - self.punch_in.minute
-				return float('%s.%s' % (hour, minute))
-		if self.punch_in and self.punch_out:
-			hour = self.punch_out.hour - self.punch_in.hour
-			minute = self.punch_out.minute - self.punch_in.minute
-			return float('%s.%s' % (hour, minute))
-		return 0
 
 
 class Project(models.Model):
