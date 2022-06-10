@@ -155,7 +155,7 @@ class AttendanceManager(models.Manager):
 			# Check if the employee is doing overtime and the hours to closing time
 			current_time = now().time()
 		
-			emp_times = emp.get_open_and_close_time()
+			emp_times = instance.employee.get_open_and_close_time()
 			closing_time = emp_times.get('close')
 
 			if closing_time < current_time:
