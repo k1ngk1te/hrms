@@ -71,8 +71,9 @@ class AttendanceManager(models.Manager):
 		date = now().date()
 		current_time = now().time()
 
-		open_time = datetime.time(5, 30, 0)
-		close_time = datetime.time(19, 30, 0)
+		emp_times = emp.get_open_and_close_time()
+		open_time = emp_times.get('open')
+		close_time = emp_times.get('close')
 
 		if not emp:
 			raise ValidationError({"detail": "Employee is required!"})
@@ -108,14 +109,11 @@ class AttendanceManager(models.Manager):
 				f"Invalid request! You punched out at {instance.punch_out}"})
 
 		current_time = now().time()
-		closing_time = datetime.time(19, 30, 0)
 
-		# Check if the employee is doing overtime and the hours to closing time
-		overtime = instance.employee.has_overtime(date)
-		final_closing_time = datetime.time(closing_time.hour + overtime.hours, 
-			closing_time.minute, closing_time.second) if overtime else closing_time
+		emp_times = emp.get_open_and_close_time()
+		closing_time = emp_times.get('close')
 
-		if final_closing_time < current_time:
+		if closing_time < current_time:
 			raise PermissionDenied({"detail": "Unabled to complete request. It's past closing time!"})
 		instance.punch_out = datetime.time(current_time.hour, current_time.minute, current_time.second)
 		instance.save()
@@ -153,14 +151,14 @@ class AttendanceManager(models.Manager):
 		current_date = now().date()
 		if instance.punch_in and not instance.punch_out and instance.date == current_date:
 			current_time = now().time()
-			closing_time = datetime.time(19, 30, 0)
 
 			# Check if the employee is doing overtime and the hours to closing time
-			overtime = instance.employee.has_overtime(current_date)
-			final_closing_time = datetime.time(closing_time.hour + overtime.hours, 
-				closing_time.minute, closing_time.second) if overtime else closing_time
+			current_time = now().time()
+		
+			emp_times = emp.get_open_and_close_time()
+			closing_time = emp_times.get('close')
 
-			if final_closing_time < current_time:
+			if closing_time < current_time:
 				return self.get_instance_info(instance, 0)
 			hours = self.get_diff_hours(instance.date, instance.punch_in, current_time)
 			return self.get_instance_info(instance, hours)
