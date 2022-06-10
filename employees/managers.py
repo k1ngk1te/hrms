@@ -140,6 +140,7 @@ class AttendanceManager(models.Manager):
 		})
 
 	def get_hours(self, instance):
+		# instance should be an Attendance model instance
 		if not instance:
 			return None
 		if not instance.punch_in:

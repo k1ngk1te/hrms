@@ -20,6 +20,7 @@ class AttendancePagination(LimitOffsetPagination):
 				('week_hours', Attendance.objects.get_week_hours(
 					employee=self.request.user.employee)),
 				('overtime_hours', self.get_overtime_hours()),
+				('statistics', self.get_statistics()),
 				('results', data),
 			]))
 		except:
@@ -34,6 +35,14 @@ class AttendancePagination(LimitOffsetPagination):
 	def get_overtime_hours(self):
 		overtime = self.request.user.employee.has_overtime()
 		return overtime.hours if overtime else None
+
+	def get_statistics(self):
+		total_expected_hours = self.request.user.employee.total_hours_for_the_day()
+		total_hours_spent = self.request.user.employee.total_hours_spent_for_the_day()
+
+		statistics = OrderedDict({})
+		statistics["today"] = total_hours_spent / total_expected_hours
+		return statistics
 
 
 class ClientPagination(LimitOffsetPagination):

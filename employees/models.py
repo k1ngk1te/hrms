@@ -165,6 +165,28 @@ class Employee(models.Model):
 			return self.job.name
 		return None
 
+	def total_hours_for_the_day(self, date=now().date()):
+		# A method that returns the total hours an employee should or
+		# is expected to spend for the day
+		times = self.get_open_and_close_time(date)
+		open_time = times.get('open')
+		close_time = times.get('close')
+		opening_time = datetime.timedelta(
+			hours=open_time.hour,minutes=open_time.minute,seconds=open_time.second)
+		closing_time = datetime.timedelta(
+			hours=close_time.hour,minutes=close_time.minute,seconds=close_time.second)
+		diff_time = closing_time - opening_time
+		return diff_time.total_seconds() / (60 * 60)
+
+	def total_hours_spent_for_the_day(self, date=now().date()):
+		# A method that returns the total hours an employee
+		# spent for the day
+		attendance = self.has_attendance(date)
+		if not attendance:
+			return 0
+		AttendanceModel = get_app_model("employees.Attendance")
+		return AttendanceModel.objects.get_hours(attendance).get('hours')
+
 	def has_attendance(self, date=now().date()):
 		try:
 			EmployeeModel = get_app_model("employees.Employee")

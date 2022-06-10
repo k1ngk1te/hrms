@@ -18,11 +18,20 @@ export type AttendanceWeekType = {
   fri: AttendanceDayType;
 }
 
+export type AttendanceStatisticsType = {
+  today?: number;
+  week?: number;
+  month?: number;
+  remaining?: number;
+  overtime?: number;
+}
+
 export interface AttendanceListType extends DataListType {
   hours_spent_today?: AttendanceDayType;
   overtime_hours?: number;
   results: AttendanceType[];
   week_hours?: AttendanceWeekType;
+  statistics?: AttendanceStatisticsType
 }
 
 export type AttendanceType = {

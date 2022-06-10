@@ -52,12 +52,14 @@ const Attendance = () => {
 					<div className="gap-4 grid grid-cols-1 w-full md:gap-5 md:grid-cols-2 lg:grid-cols-3">
 						<TimeSheet
 							loading={isFetching || false}
-							overtime_hours={data ? data.overtime_hours : 0}
-							hours_spent={data && data.hours_spent_today ? data.hours_spent_today.hours : undefined}
-							punchedIn={data && data.hours_spent_today ? data.hours_spent_today.punch_in : undefined}
-							punchedOut={data && data.hours_spent_today ? data.hours_spent_today.punch_out : undefined}
+							overtime_hours={data.overtime_hours || 0}
+							hours_spent={data.hours_spent_today ? data.hours_spent_today.hours : undefined}
+							punchedIn={data.hours_spent_today ? data.hours_spent_today.punch_in : undefined}
+							punchedOut={data.hours_spent_today ? data.hours_spent_today.punch_out : undefined}
 						/>
-						<Statistics />
+						<Statistics 
+							today={data.statistics ? data.statistics.today : 0}
+						/>
 						<Activity week_hours={data ? data.week_hours : undefined} />
 					</div>
 					<AttendanceTable
