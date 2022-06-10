@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AttendanceType } from "../../types/employees";
 import Table, { HeadType, RowType } from "../controls/Table";
+import { getTime } from "../../utils";
 
 const heads: HeadType = [
   { value: "date" },
@@ -8,14 +9,14 @@ const heads: HeadType = [
   { value: "punch out" },
   { value: "production" },
   { value: "break" },
-  { value: "overtime" }
+  { value: "overtime (hours)" }
 ];
 
 const getRows = (data: AttendanceType[]): RowType[] =>
   data.map((attendance) => [
     { value: attendance.date ? new Date(attendance.date).toDateString() : "---" },
-    { value: attendance.punch_in || "---" },
-    { value: attendance.punch_out || "---" },
+    { value: attendance.punch_in ? getTime(attendance.punch_in) : "---" },
+    { value: attendance.punch_out ? getTime(attendance.punch_out) : "---" },
     { value: attendance.production || "---" },
     { value: attendance.break || "---" },
     { value: attendance.overtime || "---" }

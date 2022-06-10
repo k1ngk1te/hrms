@@ -10,11 +10,12 @@ import { getTime } from "../../utils";
 export type TimeSheetProps = {
 	loading: boolean;
 	hours_spent?: number;
+	overtime_hours?:number;
 	punchedIn?: string;
 	punchedOut?: string;
 };
 
-const TimeSheet: FC<TimeSheetProps> = ({ loading, hours_spent, punchedIn, punchedOut }) => {
+const TimeSheet: FC<TimeSheetProps> = ({ loading, hours_spent, overtime_hours, punchedIn, punchedOut }) => {
 	const dispatch = useAppDispatch();
 
 	const [punchAction, { data, error, status, isLoading }] = usePunchActionMutation();
@@ -41,8 +42,16 @@ const TimeSheet: FC<TimeSheetProps> = ({ loading, hours_spent, punchedIn, punche
 	}, [dispatch, punchAction]);
 
 	const able = typeof punchedIn  === "string" && typeof punchedOut === "string" ? false : true
-	const split_time = String(hours_spent).split(".");
-	const time_spent = hours_spent ? `${split_time[0]}.${split_time[1].slice(0, 2)}` : 0
+	const split_time = String(hours_spent).split("."); // Get the hours as 0th index of an array and mins as 1th index
+	const hour = parseInt(split_time[0]) // Convert the hours to integer
+	const minute = split_time[1] ? parseInt(split_time[1].slice(0, 2)) : 0 // Check if there a value in the 1th index, slice the length to 2 and convert to integer
+
+	const suffix = hour < 1 ? minute === 1 ? "min" : "mins" : hour === 1 && minute < 1 ? "hr" : "hrs"
+
+	const minutes = Math.floor(minute * 60 / 100)
+	const hours = hour >= 1 ? `${hour}.${minute}` : 0
+	
+	const time = hours_spent >= 1 ? hours : minutes
 
 	useEffect(() => {
 		if (status === "fulfilled" && data)
@@ -77,7 +86,7 @@ const TimeSheet: FC<TimeSheetProps> = ({ loading, hours_spent, punchedIn, punche
 				<div className="border-4 border-gray-300 flex h-28 items-center justify-center rounded-full w-28">
 					{(loading || isLoading) ? <Loader type="dotted" color="primary" size={4} /> : (
 						<span className="font-semibold text-center text-gray-800 text-2xl md:text-3xl lg:text-2xl">
-							{time_spent} hrs
+							{time} {suffix}
 						</span>
 					)}
 				</div>
@@ -103,16 +112,16 @@ const TimeSheet: FC<TimeSheetProps> = ({ loading, hours_spent, punchedIn, punche
 					<span className="font-semibold my-1 inline-block text-gray-900 text-sm">
 						Break
 					</span>
-					<p className="capitalize text-gray-500 tracking-wide text-base">
-						1.21 hrs
+					<p className="text-gray-500 tracking-wide text-sm uppercase">
+						coming soon
 					</p>
 				</div>
 				<div className="bg-gray-100 border border-gray-300 px-3 py-2 rounded-lg text-center w-full">
 					<span className="font-semibold my-1 inline-block text-gray-900 text-sm">
 						Overtime
 					</span>
-					<p className="capitalize text-gray-500 tracking-wide text-base">
-						3 hrs
+					<p className="text-gray-500 tracking-wide text-base">
+						{overtime_hours || 0} {overtime_hours && overtime_hours > 1 ? "hrs" : "hr"}
 					</p>
 				</div>
 			</div>

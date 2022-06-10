@@ -71,8 +71,8 @@ class AttendanceManager(models.Manager):
 		date = now().date()
 		current_time = now().time()
 
-		open_time = datetime.time(6, 30, 0)
-		close_time = datetime.time(17, 30, 0)
+		open_time = datetime.time(5, 30, 0)
+		close_time = datetime.time(19, 30, 0)
 
 		if not emp:
 			raise ValidationError({"detail": "Employee is required!"})
@@ -108,7 +108,7 @@ class AttendanceManager(models.Manager):
 				f"Invalid request! You punched out at {instance.punch_out}"})
 
 		current_time = now().time()
-		closing_time = datetime.time(17, 30, 0)
+		closing_time = datetime.time(19, 30, 0)
 
 		# Check if the employee is doing overtime and the hours to closing time
 		overtime = instance.employee.has_overtime(date)
@@ -153,7 +153,7 @@ class AttendanceManager(models.Manager):
 		current_date = now().date()
 		if instance.punch_in and not instance.punch_out and instance.date == current_date:
 			current_time = now().time()
-			closing_time = datetime.time(17, 30, 0)
+			closing_time = datetime.time(19, 30, 0)
 
 			# Check if the employee is doing overtime and the hours to closing time
 			overtime = instance.employee.has_overtime(current_date)

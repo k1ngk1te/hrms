@@ -30,6 +30,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
 	date = serializers.DateField(required=False)
 	punch_in = serializers.TimeField(required=False)
 	punch_out = serializers.TimeField(required=False)
+	overtime = serializers.SerializerMethodField('get_overtime_hours')
 
 	class Meta:
 		model = Attendance
@@ -48,6 +49,10 @@ class AttendanceSerializer(serializers.ModelSerializer):
 		elif action == "out":
 			attendance = Attendance.objects.validate_punchout(employee)
 		return attendance
+
+	def get_overtime_hours(self, obj):
+		overtime = obj.employee.has_overtime(obj.date)
+		return overtime.hours if overtime else None
 
 
 class ClientSerializer(serializers.ModelSerializer):

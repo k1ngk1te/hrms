@@ -1,3 +1,5 @@
+import datetime
+from collections import OrderedDict
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -173,6 +175,15 @@ class Employee(models.Model):
 			pass
 		return None
 
+	def get_open_and_close_time(self, date=now().date()):
+		open_time = datetime.time(5, 30, 0)
+		closing_time = datetime.time(18, 30, 0)
+
+		overtime = self.has_overtime(date)
+		close_time = datetime.time(closing_time.hour + overtime.hours, 
+			closing_time.minute, closing_time.second) if overtime else closing_time
+		return OrderedDict({"open": open_time, "close": close_time})
+
 	def get_supervisor(self, attr):
 		if self.supervisor is not None:
 			if attr == "name":
@@ -202,7 +213,7 @@ class Employee(models.Model):
 		emp = EmployeeModel.objects.get(user=self.user)
 
 		overtime = emp.overtime.filter(date=date, a_md='A')
-		return overtime.first() if overtime.exists() is True else Nones
+		return overtime.first() if overtime.exists() is True else None
 
 
 class Holiday(models.Model):

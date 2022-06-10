@@ -208,6 +208,9 @@ class Overtime(models.Model):
 	objects = OvertimeManager()
 	admin_objects = OvertimeAdminManager()
 
+	class Meta:
+		unique_together = ['employee', 'date']
+
 	def __str__(self):
 		return f"{self.employee.user.email.capitalize()} on {self.date}"
 
@@ -229,10 +232,9 @@ class Overtime(models.Model):
 	def status(self):
 		if self.a_md == "A":
 			return "A"
-		elif self.a_s == "D" or self.a_hod == "D" or self.a_hr == "D" or self.a_md == "D":
+		elif self.a_s == "D" or self.a_hod == "D" or self.a_hr == "D" or self.a_md == "D" or (
+			self.date < now().date()):
 			return "D"
-		elif self.date < now().date():
-			return "E"
 		return "P"
 
 	def get_status_name(self, status):

@@ -316,6 +316,11 @@ class OvertimeManager(models.Manager):
 			raise ValidationError({"date": 
 				"You have a pending overtime request specified for this date"})
 
+		close_time = emp.get_open_and_close_time(date).get('close')
+		if close_time.hour + hours > 23:
+			raise ValidationError({ "hours": 
+				f"You can only request overtime for no more than {23 - close_time.hour} hours." })
+
 		if do_check:
 			if emp.supervisor is None:
 				overtime_data.update({ "a_s": "N", "a_hod": "P", "a_hr": "P", "a_md": "P" })

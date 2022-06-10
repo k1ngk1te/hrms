@@ -20,6 +20,7 @@ export type AttendanceWeekType = {
 
 export interface AttendanceListType extends DataListType {
   hours_spent_today?: AttendanceDayType;
+  overtime_hours?: number;
   results: AttendanceType[];
   week_hours?: AttendanceWeekType;
 }

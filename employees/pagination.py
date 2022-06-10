@@ -1,8 +1,10 @@
-from django.db.models import Q
 from collections import OrderedDict
+from django.db.models import Q
+from django.utils.timezone import now
 from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
 
+from leaves.models import Overtime
 from .models import Attendance, Client, Employee, Project, Task
 
 
@@ -17,6 +19,7 @@ class AttendancePagination(LimitOffsetPagination):
 					self.request.user.employee.has_attendance())),
 				('week_hours', Attendance.objects.get_week_hours(
 					employee=self.request.user.employee)),
+				('overtime_hours', self.get_overtime_hours()),
 				('results', data),
 			]))
 		except:
@@ -27,6 +30,10 @@ class AttendancePagination(LimitOffsetPagination):
 				('results', data),
 			]))
 		return None
+
+	def get_overtime_hours(self):
+		overtime = self.request.user.employee.has_overtime()
+		return overtime.hours if overtime else None
 
 
 class ClientPagination(LimitOffsetPagination):
