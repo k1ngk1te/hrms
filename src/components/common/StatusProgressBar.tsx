@@ -39,7 +39,7 @@ const StatusProgressBar = ({
 				<div
 					ref={ref}
 					className={`${background} duration-1000 h-full transform transition-all`}
-					style={{ width: `${width}%` }}
+					style={{ width: `${width < 0 ? 0 : width > 100 ? 100 : width}%` }}
 				/>
 			</div>
 		</div>

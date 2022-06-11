@@ -1,10 +1,8 @@
 from collections import OrderedDict
 from django.db.models import Q
-from django.utils.timezone import now
 from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
 
-from leaves.models import Overtime
 from .models import Attendance, Client, Employee, Project, Task
 
 
@@ -37,11 +35,15 @@ class AttendancePagination(LimitOffsetPagination):
 		return overtime.hours if overtime else None
 
 	def get_statistics(self):
-		total_expected_hours = self.request.user.employee.total_hours_for_the_day()
-		total_hours_spent = self.request.user.employee.total_hours_spent_for_the_day()
+		today_total_expected_hours = self.request.user.employee.total_hours_for_the_day()
+		today_total_hours_spent = self.request.user.employee.total_hours_spent_for_the_day()
+
+		week_total_expected_hours = self.request.user.employee.total_hours_for_the_week()
+		week_total_hours_spent = self.request.user.employee.total_hours_spent_for_the_week()
 
 		statistics = OrderedDict({})
-		statistics["today"] = total_hours_spent / total_expected_hours
+		statistics["today"] = today_total_hours_spent / today_total_expected_hours
+		statistics["week"] = week_total_hours_spent / week_total_expected_hours
 		return statistics
 
 

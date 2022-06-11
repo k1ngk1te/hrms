@@ -59,6 +59,7 @@ const Attendance = () => {
 						/>
 						<Statistics 
 							today={data.statistics ? data.statistics.today : 0}
+							week={data.statistics ? data.statistics.week : 0}
 						/>
 						<Activity week_hours={data ? data.week_hours : undefined} />
 					</div>

@@ -2,9 +2,7 @@ import { StatusProgressBar } from "../common";
 import { AttendanceStatisticsType } from "../../types";
 
 
-const Statistics = ({
-	today
-}: AttendanceStatisticsType) => (
+const Statistics = ({ today, week }: AttendanceStatisticsType) => (
 	<div className="bg-white px-4 py-2 rounded-lg shadow-lg">
 		<h3 className="capitalize font-black my-2 text-gray-700 text-lg tracking-wider md:text-xl lg:text-lg">
 			statistics
@@ -19,7 +17,12 @@ const Statistics = ({
 			/>
 		</div>
 			<div className="my-3">
-			<StatusProgressBar background="bg-yellow-600" title="This Week" result={28 / 40} value={`${(28 / 40) * 100}%`} />
+			<StatusProgressBar 
+				background="bg-yellow-600" 
+				title="This Week" 
+				result={week || 0} 
+				value={`${week ? Math.floor(week * 100) : 0}%`} 
+			/>
 		</div>
 			<div className="my-3">
 			<StatusProgressBar background="bg-green-600" title="This Month" result={52 / 160} value={`${(52 / 160) * 100}%`} />

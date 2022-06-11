@@ -82,21 +82,13 @@ class Employee(models.Model):
 	def get_absolute_url(self):
 		return reverse('employee-detail', kwargs={"id": self.id})
 
-	@staticmethod
-	def check_is_supervisor(user):
-		try:
-			count = Employee.objects.filter(supervisor__user=user).count()
-			if count > 0:
-				return True
-			return False
-		except:
-			return False
+	@property
+	def employee_model(self):
+		return get_app_model("employees.Employee")
 
-	@staticmethod
-	def get_supervised_emps(user):
-		if user is None:
-			raise ValueError("user is required")
-		return Employee.objects.filter(supervisor__user=user)
+	@property
+	def attendance_model(self):
+		return get_app_model("employees.Attendance")
 
 	@property
 	def is_supervisor(self):
@@ -184,12 +176,42 @@ class Employee(models.Model):
 		attendance = self.has_attendance(date)
 		if not attendance:
 			return 0
-		AttendanceModel = get_app_model("employees.Attendance")
+		AttendanceModel = self.attendance_model
 		return AttendanceModel.objects.get_hours(attendance).get('hours')
+
+	def total_hours_for_the_week(self, date=now().date()):
+		# A method that returns the total hours an employee should or
+		# is expected to spend for the day
+
+		AttendanceModel = self.attendance_model
+		last_date_of_the_week = AttendanceModel.objects.get_last_date_of_week(date)
+		mon = self.total_hours_for_the_day(last_date_of_the_week - datetime.timedelta(days=6))
+		tue = self.total_hours_for_the_day(last_date_of_the_week - datetime.timedelta(days=5))
+		wed = self.total_hours_for_the_day(last_date_of_the_week - datetime.timedelta(days=4))
+		thu = self.total_hours_for_the_day(last_date_of_the_week - datetime.timedelta(days=3))
+		fri = self.total_hours_for_the_day(last_date_of_the_week - datetime.timedelta(days=2))
+
+		return mon + tue + wed + thu + fri
+
+	def total_hours_spent_for_the_week(self, date=now().date()):
+		AttendanceModel = self.attendance_model
+		hours_spent = Attendance.objects.get_week_hours(
+			employee=self.user.employee, date=date)
+
+		mon = hours_spent.get('mon'); tue = hours_spent.get('tue'); wed = hours_spent.get('wed');
+		thu = hours_spent.get('thu'); fri = hours_spent.get('fri')
+
+		mon_hours = mon.get('hours') if mon else 0
+		tue_hours = tue.get('hours') if tue else 0
+		wed_hours = wed.get('hours') if wed else 0
+		thu_hours = thu.get('hours') if thu else 0
+		fri_hours = fri.get('hours') if fri else 0
+
+		return mon_hours + tue_hours + wed_hours + thu_hours + fri_hours		
 
 	def has_attendance(self, date=now().date()):
 		try:
-			EmployeeModel = get_app_model("employees.Employee")
+			EmployeeModel = self.employee_model
 			emp = EmployeeModel.objects.get(user=self.user)
 			attendance = emp.attendance.get(date=date)
 			return attendance
@@ -205,6 +227,22 @@ class Employee(models.Model):
 		close_time = datetime.time(closing_time.hour + overtime.hours, 
 			closing_time.minute, closing_time.second) if overtime else closing_time
 		return OrderedDict({"open": open_time, "close": close_time})
+
+	def check_is_supervisor(user):
+		try:
+			EmployeeModel = self.employee_model
+			count = EmployeeModel.objects.filter(supervisor__user=user).count()
+			if count > 0:
+				return True
+			return False
+		except:
+			return False
+
+	def get_supervised_emps(user):
+		EmployeeModel = self.employee_model
+		if user is None:
+			raise ValueError("user is required")
+		return EmployeeModel.objects.filter(supervisor__user=user)
 
 	def get_supervisor(self, attr):
 		if self.supervisor is not None:
@@ -231,7 +269,7 @@ class Employee(models.Model):
 		return self.save()
 
 	def has_overtime(self, date=now().date()):
-		EmployeeModel = get_app_model("employees.Employee")
+		EmployeeModel = self.employee_model
 		emp = EmployeeModel.objects.get(user=self.user)
 
 		overtime = emp.overtime.filter(date=date, a_md='A')

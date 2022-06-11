@@ -78,17 +78,22 @@ class AttendanceManager(models.Manager):
 		if not emp:
 			raise ValidationError({"detail": "Employee is required!"})
 
+		current_day_index = weekdays.get(date.strftime('%a').lower()).get("index")
+
+		if current_day_index > 4:
+			raise PermissionDenied({"detail": "Unable to complete request. Not a working day!"})
+
 		if current_time < open_time:
-			raise PermissionDenied({"detail": "Unabled to complete request. It's not opening time!"})
+			raise PermissionDenied({"detail": "Unable to complete request. It's not opening time!"})
 
 		if current_time > close_time:
-			raise PermissionDenied({"detail": "Unabled to complete request. It's past closing time!"})			
+			raise PermissionDenied({"detail": "Unable to complete request. It's past closing time!"})			
 
 		punch_in = datetime.time(current_time.hour, current_time.minute, current_time.second)
 
 		instance = self.filter(employee=emp, date=date).first()
 		if instance and instance.punch_in:
-			raise PermissionDenied({"detail": f"Unabled to complete request. You punched in at {instance.punch_in}"})
+			raise PermissionDenied({"detail": f"Unable to complete request. You punched in at {instance.punch_in}"})
 		elif instance and instance.punch_in is None:
 			instance.punch_in = punch_in
 			instance.save()
@@ -114,7 +119,7 @@ class AttendanceManager(models.Manager):
 		closing_time = emp_times.get('close')
 
 		if closing_time < current_time:
-			raise PermissionDenied({"detail": "Unabled to complete request. It's past closing time!"})
+			raise PermissionDenied({"detail": "Unable to complete request. It's past closing time!"})
 		instance.punch_out = datetime.time(current_time.hour, current_time.minute, current_time.second)
 		instance.save()
 		return instance
