@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.utils.timezone import now
 
 from common.utils import get_instance
-from core.utils import get_app_model, get_last_date_of_week
+from core.utils import weekdays, get_app_model, get_last_date_of_week, get_last_date_of_month
 
 LEAVE_TOTAL = settings.LEAVE_TOTAL
 
@@ -145,7 +145,21 @@ class EmployeeModelMixin:
 		return mon_hours + tue_hours + wed_hours + thu_hours + fri_hours		
 
 	def total_hours_for_the_month(self, date=now().date()):
-		pass
+		# A method that returns the total hours an employee should or
+		# is expected to spend for the month
+		assert isinstance(date, datetime.date), ('Date should be an instance of datetime.date')
+
+		start_date = datetime.date(date.year, date.month, 1)
+		end_date = get_last_date_of_month(date)
+		hours = 0
+		while start_date <= end_date:
+			day_index = weekdays.get(start_date.strftime('%a').lower()).get("index")
+			if day_index > 4:
+				hours += 0
+			else:
+				hours += self.total_hours_for_the_day(start_date)
+			start_date += datetime.timedelta(days=1)
+		return hours
 
 	def total_hours_spent_for_the_month(self, date=now().date()):
 		# A method that returns the total hours an employee

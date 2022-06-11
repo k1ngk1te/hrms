@@ -107,7 +107,7 @@ def get_last_date_of_week(date=now().date()):
 # A Function to return last day of month depending on the datetime instance passed
 def get_last_date_of_month(date=now().date()):
 	month = 1 if date.month >= 12 else date.month + 1
-	return datetime.datetime(date.year, month, 1) - datetime.timedelta(days=1)
+	return datetime.date(date.year, month, 1) - datetime.timedelta(days=1)
 
 def get_default_hours():
 	return OrderedDict({
