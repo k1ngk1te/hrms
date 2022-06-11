@@ -5,36 +5,12 @@ from django.db.models import Q
 from django.utils.timezone import now
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
-weekdays = OrderedDict({
-	"mon": OrderedDict({
-		"index": 0,
-		"name": "Monday", 
-	}),
-	"tue": OrderedDict({
-		"index": 1,
-		"name": "Tuesday", 
-	}),
-	"wed": OrderedDict({
-		"index": 2,
-		"name": "Wednesday",
-	}),
-	"thu": OrderedDict({
-		"index": 3,
-		"name": "Thursday", 
-	}),
-	"fri": OrderedDict({
-		"index": 4,
-		"name": "Friday", 
-	}),
-	"sat": OrderedDict({
-		"index": 5,
-		"name": "Saturday",
-	}),
-	"sun": OrderedDict({
-		"index": 6,
-		"name": "Sunday",
-	})
-})
+from core.utils import (
+	weekdays, 
+	get_last_date_of_week, 
+	get_last_date_of_month,
+	get_default_hours
+)
 
 # Querysets
 
@@ -149,7 +125,7 @@ class AttendanceManager(models.Manager):
 		if not instance:
 			return None
 		if not instance.punch_in:
-			return None
+			return self.get_instance_info(instance, 0)
 		if instance.punch_in and instance.punch_out:
 			hours = self.get_diff_hours(instance.date, instance.punch_in, instance.punch_out)
 			return self.get_instance_info(instance, hours)
@@ -183,14 +159,14 @@ class AttendanceManager(models.Manager):
             'Provide an instance of the Employee Model Class with a instance of datetime.date or ',
             'Provide an instance of the Attendance Model Class')
 
-		week_hours = self.get_default_hours() # Get OrderedDict of week hours with values set to 0
+		week_hours = get_default_hours() # Get OrderedDict of week hours with values set to 0
 
 		# Get the last date of the week
 		if employee: # If an employee instance was passed, use date
-			last_date_of_the_week = self.get_last_date_of_week(date)
+			last_date_of_the_week = get_last_date_of_week(date)
 		else: # An attendance instance was passed
 			employee = attendance.employee # Get the employee on that instance and the date below
-			last_date_of_the_week = self.get_last_date_of_week(attendance.date)
+			last_date_of_the_week = get_last_date_of_week(attendance.date)
 
 		last_day = weekdays.get(last_date_of_the_week.strftime('%a').lower()) # Should return Sunday
 
@@ -203,26 +179,22 @@ class AttendanceManager(models.Manager):
 		week_hours["fri"] = self.get_hours(self.get_attendance_instance(employee, last_date_of_the_week - datetime.timedelta(days=2)))
 		return week_hours
 
+	def get_month_hours(self, emp=None, date=now().date()):
+		assert emp is not None, ('Provide an Employee instance')
+
+		start_date = datetime.date(date.year, date.month, 1) # Get Start Date of the month
+		end_date = get_last_date_of_month(date) # Get End Date of the month
+
+		atds = self.filter( # Get All Attendance between start and end date inclusive
+			Q(employee=emp, date__gte=start_date) & 
+			Q(employee=emp, date__lte=end_date))
+
+		hours = [self.get_hours(atd) for atd in atds]
+		return hours
+
 	def get_attendance_instance(self, emp, date):
 		instance = self.filter(employee=emp, date=date).first()
 		return instance if instance else None
-
-	# A Function to return last day of week(sunday) depending on the datetime instance passed
-	def get_last_date_of_week(self, date=now().date()):
-		current_day = weekdays.get(date.strftime('%a').lower())
-		day_index = current_day.get("index")
-
-		sunday_date = date + datetime.timedelta(days=6-day_index)
-		return sunday_date
-
-	def get_default_hours(self):
-		return OrderedDict({
-			"mon": None,
-			"tue": None,
-			"wed": None,
-			"thu": None,
-			"fri": None,
-		})
 
 
 class EmployeeManager(models.Manager):

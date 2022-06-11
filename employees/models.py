@@ -1,24 +1,18 @@
-import datetime
-from collections import OrderedDict
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Q
 from django.urls import reverse
 from django.utils.timezone import now
 
 from common.utils import get_instance
-from core.utils import get_app_model
 from jobs.models import Job
 from .managers import AttendanceManager, EmployeeManager
+from .mixins import EmployeeModelMixin
 
 ATTENDANCE_ID_LENGTH = settings.ATTENDANCE_ID_MAX_LENGTH
 ID_LENGTH = settings.ID_MAX_LENGTH
 
 User = get_user_model()
-
-LEAVE_TOTAL = 12
 
 PRIORITY_CHOICES = (
 	('H', 'High'),
@@ -62,7 +56,7 @@ class Department(models.Model):
 		return reverse('department-detail', kwargs={"id": self.id})
 
 
-class Employee(models.Model):
+class Employee(models.Model, EmployeeModelMixin):
 	employee_id = models.BigAutoField(primary_key=True)
 	id = models.CharField(max_length=ID_LENGTH, unique=True, editable=False)
 	user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="employee")
@@ -82,199 +76,6 @@ class Employee(models.Model):
 	def get_absolute_url(self):
 		return reverse('employee-detail', kwargs={"id": self.id})
 
-	@property
-	def employee_model(self):
-		return get_app_model("employees.Employee")
-
-	@property
-	def attendance_model(self):
-		return get_app_model("employees.Attendance")
-
-	@property
-	def is_supervisor(self):
-		return self.check_is_supervisor(self.user)
-
-	@property
-	def is_on_leave(self):
-		emp = self.user.employee
-		approved_leave = emp.leaves.filter(a_md="A").order_by('date_requested').last()
-		if approved_leave:
-			current_date = now().date()
-			diff = (approved_leave.end_date - current_date).days
-			if (diff > 0):
-				return True
-		return False
-
-	@property
-	def status(self):
-		if self.user.is_active:
-			if self.is_on_leave is False:
-				return "Active"
-			return "On Leave"
-		return "Inactive"
-
-	@property
-	def is_hod(self):
-		try:
-			dep = get_instance(Department, {"hod__user": self.user})
-			if dep:
-				return True
-			return False
-		except:
-			pass
-		return False
-
-	@property
-	def leaves_taken(self):
-		emp = self.user.employee
-		current_year = now().date().year
-		leaves = emp.leaves.filter(a_md="A", start_date__year=current_year)
-		return leaves.count()
-
-	@property
-	def leaves_remaining(self):
-		return LEAVE_TOTAL - self.leaves_taken
-
-	@property
-	def has_pending_leave(self):
-		emp = self.user.employee
-		leaves = emp.leaves.exclude(Q(a_md="A") | Q(a_md="D")
-			| Q(a_hr="D") | Q(a_hod="D") | Q(a_s="D"))
-		for leave in leaves:
-			if leave.status == "P":
-				return True
-		return False
-
-	@property
-	def department_name(self):
-		if self.department is not None:
-			return self.department.name
-		return None
-
-	@property
-	def job_name(self):
-		if self.job is not None:
-			return self.job.name
-		return None
-
-	def total_hours_for_the_day(self, date=now().date()):
-		# A method that returns the total hours an employee should or
-		# is expected to spend for the day
-		times = self.get_open_and_close_time(date)
-		open_time = times.get('open')
-		close_time = times.get('close')
-		opening_time = datetime.timedelta(
-			hours=open_time.hour,minutes=open_time.minute,seconds=open_time.second)
-		closing_time = datetime.timedelta(
-			hours=close_time.hour,minutes=close_time.minute,seconds=close_time.second)
-		diff_time = closing_time - opening_time
-		return diff_time.total_seconds() / (60 * 60)
-
-	def total_hours_spent_for_the_day(self, date=now().date()):
-		# A method that returns the total hours an employee
-		# spent for the day
-		attendance = self.has_attendance(date)
-		if not attendance:
-			return 0
-		AttendanceModel = self.attendance_model
-		return AttendanceModel.objects.get_hours(attendance).get('hours')
-
-	def total_hours_for_the_week(self, date=now().date()):
-		# A method that returns the total hours an employee should or
-		# is expected to spend for the day
-
-		AttendanceModel = self.attendance_model
-		last_date_of_the_week = AttendanceModel.objects.get_last_date_of_week(date)
-		mon = self.total_hours_for_the_day(last_date_of_the_week - datetime.timedelta(days=6))
-		tue = self.total_hours_for_the_day(last_date_of_the_week - datetime.timedelta(days=5))
-		wed = self.total_hours_for_the_day(last_date_of_the_week - datetime.timedelta(days=4))
-		thu = self.total_hours_for_the_day(last_date_of_the_week - datetime.timedelta(days=3))
-		fri = self.total_hours_for_the_day(last_date_of_the_week - datetime.timedelta(days=2))
-
-		return mon + tue + wed + thu + fri
-
-	def total_hours_spent_for_the_week(self, date=now().date()):
-		AttendanceModel = self.attendance_model
-		hours_spent = Attendance.objects.get_week_hours(
-			employee=self.user.employee, date=date)
-
-		mon = hours_spent.get('mon'); tue = hours_spent.get('tue'); wed = hours_spent.get('wed');
-		thu = hours_spent.get('thu'); fri = hours_spent.get('fri')
-
-		mon_hours = mon.get('hours') if mon else 0
-		tue_hours = tue.get('hours') if tue else 0
-		wed_hours = wed.get('hours') if wed else 0
-		thu_hours = thu.get('hours') if thu else 0
-		fri_hours = fri.get('hours') if fri else 0
-
-		return mon_hours + tue_hours + wed_hours + thu_hours + fri_hours		
-
-	def has_attendance(self, date=now().date()):
-		try:
-			EmployeeModel = self.employee_model
-			emp = EmployeeModel.objects.get(user=self.user)
-			attendance = emp.attendance.get(date=date)
-			return attendance
-		except:
-			pass
-		return None
-
-	def get_open_and_close_time(self, date=now().date()):
-		open_time = datetime.time(5, 30, 0)
-		closing_time = datetime.time(18, 30, 0)
-
-		overtime = self.has_overtime(date)
-		close_time = datetime.time(closing_time.hour + overtime.hours, 
-			closing_time.minute, closing_time.second) if overtime else closing_time
-		return OrderedDict({"open": open_time, "close": close_time})
-
-	def check_is_supervisor(user):
-		try:
-			EmployeeModel = self.employee_model
-			count = EmployeeModel.objects.filter(supervisor__user=user).count()
-			if count > 0:
-				return True
-			return False
-		except:
-			return False
-
-	def get_supervised_emps(user):
-		EmployeeModel = self.employee_model
-		if user is None:
-			raise ValueError("user is required")
-		return EmployeeModel.objects.filter(supervisor__user=user)
-
-	def get_supervisor(self, attr):
-		if self.supervisor is not None:
-			if attr == "name":
-				return self.supervisor.user.get_full_name().capitalize()
-			elif attr == "email":
-				return self.supervisor.user.email
-		return None
-
-	def get_hod(self):
-		if self.department is not None and self.department.hod is not None:
-			return self.department.hod
-		return None
-
-	def relinquish_status(self):
-		for dep in Department.objects.filter(hod__user=self.user):
-			dep.hod = None
-			dep.save()
-		for emp in self.get_supervised_emps(self.user):
-			emp.supervisor = None
-			emp.save()
-		self.is_hr = False
-		self.is_md = False
-		return self.save()
-
-	def has_overtime(self, date=now().date()):
-		EmployeeModel = self.employee_model
-		emp = EmployeeModel.objects.get(user=self.user)
-
-		overtime = emp.overtime.filter(date=date, a_md='A')
-		return overtime.first() if overtime.exists() is True else None
-
 
 class Holiday(models.Model):
 	holiday_id = models.BigAutoField(primary_key=True)
@@ -292,15 +93,13 @@ class Holiday(models.Model):
 class Attendance(models.Model):
 	attendance_id = models.BigAutoField(primary_key=True)
 	id = models.CharField(max_length=ATTENDANCE_ID_LENGTH, unique=True, editable=False)
-	employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="attendance")
+	employee = models.ForeignKey(Employee, unique_for_date="date", 
+		on_delete=models.CASCADE, related_name="attendance")
 	date = models.DateField(default=now)
 	punch_in = models.TimeField()
 	punch_out = models.TimeField(blank=True, null=True)
 
 	objects = AttendanceManager()
-
-	class Meta:
-		unique_together = ['employee', 'date']
 
 	def __str__(self):
 		return '%s - %s ' % (self.employee, self.date)

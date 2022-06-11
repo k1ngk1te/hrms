@@ -2,11 +2,9 @@ import environ
 
 from UnifoamHr.settings.base import *
 
-env = environ.Env(
-	DEBUG=(bool, False),
-)
+env = environ.Env()
 
-DEBUG = env('DEBUG')
+DEBUG = False
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False

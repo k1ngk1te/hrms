@@ -1,3 +1,5 @@
+import datetime
+from collections import OrderedDict
 from django.apps import apps as django_apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -6,6 +8,40 @@ from django.shortcuts import (
 	get_object_or_404 as _get_object_or_404,
 	get_list_or_404 as _get_list_or_404,
 )
+from django.utils.timezone import now
+
+
+weekdays = OrderedDict({
+	"mon": OrderedDict({
+		"index": 0,
+		"name": "Monday", 
+	}),
+	"tue": OrderedDict({
+		"index": 1,
+		"name": "Tuesday", 
+	}),
+	"wed": OrderedDict({
+		"index": 2,
+		"name": "Wednesday",
+	}),
+	"thu": OrderedDict({
+		"index": 3,
+		"name": "Thursday", 
+	}),
+	"fri": OrderedDict({
+		"index": 4,
+		"name": "Friday", 
+	}),
+	"sat": OrderedDict({
+		"index": 5,
+		"name": "Saturday",
+	}),
+	"sun": OrderedDict({
+		"index": 6,
+		"name": "Sunday",
+	})
+})
+
 
 def get_object_or_404(queryset, *filter_args, **filter_kwargs):
     try:
@@ -60,3 +96,24 @@ def generate_id(prefix=None, **kwargs):
 		id = getattr(last_object, key) + 1 if last_object is not None else 1
 		return generate_id_value(prefix, id)
 	raise LookupError("Provide an id value as number or a key with a Model Class or an instance")
+
+# A Function to return last day of week(sunday) depending on the datetime instance passed
+def get_last_date_of_week(date=now().date()):
+	current_day = weekdays.get(date.strftime('%a').lower())
+	day_index = current_day.get("index")
+
+	return date + datetime.timedelta(days=6-day_index)
+
+# A Function to return last day of month depending on the datetime instance passed
+def get_last_date_of_month(date=now().date()):
+	month = 1 if date.month >= 12 else date.month + 1
+	return datetime.datetime(date.year, month, 1) - datetime.timedelta(days=1)
+
+def get_default_hours():
+	return OrderedDict({
+		"mon": None,
+		"tue": None,
+		"wed": None,
+		"thu": None,
+		"fri": None,
+	})

@@ -180,7 +180,8 @@ class Leave(models.Model):
 class Overtime(models.Model):
 	overtime_id = models.BigAutoField(primary_key=True)
 	id = models.CharField(max_length=ID_LENGTH, unique=True, editable=False)
-	employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="overtime")
+	employee = models.ForeignKey(Employee, unique_for_date='date', 
+		on_delete=models.CASCADE, related_name="overtime")
 	overtime_type = models.CharField(max_length=3, choices=OVERTIME_CHOICES, verbose_name="type")
 	date = models.DateField()
 	hours = models.IntegerField()
@@ -207,9 +208,6 @@ class Overtime(models.Model):
 
 	objects = OvertimeManager()
 	admin_objects = OvertimeAdminManager()
-
-	class Meta:
-		unique_together = ['employee', 'date']
 
 	def __str__(self):
 		return f"{self.employee.user.email.capitalize()} on {self.date}"

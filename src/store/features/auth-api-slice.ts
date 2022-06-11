@@ -46,7 +46,7 @@ const authApi = baseApi.injectEndpoints({
         method: "GET",
         credentials: "include",
       }),
-      providesTags: ["User"],
+      providesTags: (result) => result ? ["User"] : [],
     }),
     getProfile: build.query<EmployeeType, void>({
       query: () => ({
