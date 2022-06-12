@@ -58,8 +58,10 @@ const Attendance = () => {
 							punchedOut={data.hours_spent_today ? data.hours_spent_today.punch_out : undefined}
 						/>
 						<Statistics 
-							today={data.statistics ? data.statistics.today : 0}
-							week={data.statistics ? data.statistics.week : 0}
+							today={data?.statistics?.today || 0}
+							week={data?.statistics?.week || 0}
+							month={data?.statistics?.month || 0}
+							overtime={data?.statistics?.overtime || 0}
 						/>
 						<Activity week_hours={data ? data.week_hours : undefined} />
 					</div>

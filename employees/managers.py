@@ -130,14 +130,13 @@ class AttendanceManager(models.Manager):
 			hours = self.get_diff_hours(instance.date, instance.punch_in, instance.punch_out)
 			return self.get_instance_info(instance, hours)
 
-		current_date = now().date()
-		if instance.punch_in and not instance.punch_out and instance.date == current_date:
+		if instance.punch_in and not instance.punch_out and instance.date == now().date():
 			current_time = now().time()
 
 			# Check if the employee is doing overtime and the hours to closing time
 			current_time = now().time()
-		
-			emp_times = instance.employee.get_open_and_close_time()
+
+			emp_times = instance.employee.get_open_and_close_time(instance.date)
 			closing_time = emp_times.get('close')
 
 			if closing_time < current_time:

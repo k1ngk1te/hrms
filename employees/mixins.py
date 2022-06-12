@@ -9,6 +9,7 @@ from core.utils import weekdays, get_app_model, get_last_date_of_week, get_last_
 
 LEAVE_TOTAL = settings.LEAVE_TOTAL
 
+
 class EmployeeModelMixin:
 	@property
 	def employee_model(self):
@@ -90,10 +91,11 @@ class EmployeeModelMixin:
 		EmployeeModel = self.employee_model
 		return EmployeeModel.objects.filter(supervisor__user=self.user)
 
-	def total_hours_for_the_day(self, date=now().date()):
+	def total_hours_for_the_day(self, date=now().date(), **kwargs):
 		# A method that returns the total hours an employee should or
 		# is expected to spend for the day
-		times = self.get_open_and_close_time(date)
+		wo = kwargs.get('wo', False) # wo stands for 'without overtime'
+		times = self.get_open_and_close_time(date, wo=wo)
 		open_time = times.get('open')
 		close_time = times.get('close')
 		opening_time = datetime.timedelta(
@@ -179,10 +181,14 @@ class EmployeeModelMixin:
 			pass
 		return None
 
-	def get_open_and_close_time(self, date=now().date()):
+	def get_open_and_close_time(self, date=now().date(), **kwargs):
+		wo = kwargs.get('wo', False) # wo stands for 'without overtime'
+
 		open_time = datetime.time(5, 30, 0)
 		closing_time = datetime.time(18, 30, 0)
 
+		if wo:
+			return OrderedDict({"open": open_time, "close": closing_time})	
 		overtime = self.has_overtime(date)
 		close_time = datetime.time(closing_time.hour + overtime.hours, 
 			closing_time.minute, closing_time.second) if overtime else closing_time

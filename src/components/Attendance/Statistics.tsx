@@ -2,7 +2,7 @@ import { StatusProgressBar } from "../common";
 import { AttendanceStatisticsType } from "../../types";
 
 
-const Statistics = ({ today, week }: AttendanceStatisticsType) => (
+const Statistics = ({ today, month, overtime, week }: AttendanceStatisticsType) => (
 	<div className="bg-white px-4 py-2 rounded-lg shadow-lg">
 		<h3 className="capitalize font-black my-2 text-gray-700 text-lg tracking-wider md:text-xl lg:text-lg">
 			statistics
@@ -25,13 +25,28 @@ const Statistics = ({ today, week }: AttendanceStatisticsType) => (
 			/>
 		</div>
 			<div className="my-3">
-			<StatusProgressBar background="bg-green-600" title="This Month" result={52 / 160} value={`${(52 / 160) * 100}%`} />
+			<StatusProgressBar 
+				background="bg-green-600" 
+				title="This Month" 
+				result={month || 0} 
+				value={`${month ? Math.floor(month * 100) : 0}%`} 
+			/>
 		</div>
 			<div className="my-3">
-			<StatusProgressBar background="bg-purple-600" title="Remaining" result={52 / 160} value={`${(108 / 160) * 100}%`} />
+			<StatusProgressBar 
+				background="bg-purple-600" 
+				title="Remaining for month" 
+				result={month ? 1 - month : 0} 
+				value={`${month ? Math.ceil((1 - month) * 100) : 0}%`} 
+			/>
 		</div>
 			<div className="my-3">
-			<StatusProgressBar background="bg-blue-600" title="Overtime" result={28 / 160} value={`${(28 / 160) * 100}%`} />
+			<StatusProgressBar 
+				background="bg-blue-600" 
+				title="Overtime (Today)" 
+				result={overtime || 0} 
+				value={`${overtime ? Math.floor(overtime * 100) : 0}%`}  
+			/>
 		</div>
 			<div className="my-3">
 		</div>
