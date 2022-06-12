@@ -6,7 +6,7 @@ from django.urls import include, path, re_path
 from rest_framework.documentation import include_docs_urls
 from rest_framework.schemas import get_schema_view
 
-from users.views import CustomLoginView
+from users.views import CustomLoginView, CustomUserDetailsView
 
 admin.site.site_header = "Kite Human Resource Management Administration"
 admin.site.site_title = "Kite Human Resource Management Administration Portal"
@@ -15,6 +15,7 @@ admin.site.index_title = "Kite Human Resource Management Administration Portal"
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/login/', CustomLoginView.as_view(), name='rest_login'),
+    path('api/auth/user/', CustomUserDetailsView.as_view(), name='rest_user_details'),
     path('api/auth/', include('dj_rest_auth.urls')),
 
     path('', include('employees.urls')),

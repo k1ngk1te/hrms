@@ -20,7 +20,6 @@ def get_gender_name(gender):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-	id = serializers.CharField(read_only=True)
 	image_url = serializers.SerializerMethodField('get_image_url')
 	date = serializers.SerializerMethodField('get_date')
 	gender = CustomChoiceField(get_gender_name)
@@ -67,8 +66,8 @@ class UserDetailSerializer(UserDetailsSerializer):
 		fields = ('data', )
 
 	def get_user_data(self, obj):
-		request = self.context.get('request')
-		check_admin = self.context.get('check_admin', True)
+		request = self.context.get('request', None)
+		check_admin = self.context.get('check_admin', False)
 		return get_user_info(obj, request, check_admin)
 
 

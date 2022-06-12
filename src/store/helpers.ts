@@ -6,7 +6,6 @@ export const generateEmployee = (data: FormType) => {
 	form.append("user.email", data.email);
 	form.append("user.first_name", data.first_name);
 	form.append("user.last_name", data.last_name);
-	data.image && form.append("profile.image", data.image);
 	form.append("profile.gender", data.gender);
 	form.append("profile.phone", data.phone);
 	form.append("profile.address", data.address);
@@ -14,9 +13,10 @@ export const generateEmployee = (data: FormType) => {
 	form.append("profile.city", data.city);
 	form.append("profile.date_of_birth", data.date_of_birth);
 	form.append("job.id", data.job);
-	form.append("supervisor", data.supervisor);
 	form.append("department.id", data.department);
 	form.append("date_employed", data.date_employed);
+	data.image && form.append("profile.image", data.image);
+	data.supervisor && form.append("supervisor.id", data.supervisor);
 
 	return form;
 };

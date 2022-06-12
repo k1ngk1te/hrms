@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FaLock, FaUserEdit, FaUserCheck, FaUserSlash } from "react-icons/fa";
+import {DEFAULT_IMAGE} from "../../config"
 import { isErrorWithData } from "../../store";
 import { logout } from "../../store/features/auth-slice";
 import { useGetEmployeeQuery } from "../../store/features/employees-slice";
@@ -204,24 +205,28 @@ const Employee = () => {
 							titleWidth="w-[170px]"
 						/>
 
-						{data?.supervisor_info && (
+						{data?.supervisor && (
 							<InfoComp
 								image={{
-									src: "/static/images/default.png",
+									src: data.supervisor.image || DEFAULT_IMAGE,
 									alt: "profile",
 								}}
 								infos={[
 									{
 										title: "First Name",
-										value: data?.supervisor_info?.first_name || "-------",
+										value: data.supervisor?.first_name || "-------",
 									},
 									{
 										title: "Last Name",
-										value: data?.supervisor_info?.last_name || "-------",
+										value: data.supervisor?.last_name || "-------",
 									},
 									{
 										title: "Email",
-										value: data?.supervisor_info?.email || "-------",
+										value: data.supervisor?.email || "-------",
+									},
+									{
+										title: "Job",
+										value: data.supervisor?.job || "-------",
 									},
 								]}
 								title="Supervisor Information"

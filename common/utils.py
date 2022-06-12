@@ -56,10 +56,8 @@ def get_user_info(user, request=None, check_admin=False):
 
 		try:
 			if user.employee:
-				data.update({"empId": user.employee.id})
-
-				if user.employee.job:
-					data.update({ "job": user.employee.job.name })
+				data.update({"empId": user.employee.id, 
+					"job": user.employee.job_name})
 
 			if check_admin is True:
 				employee = user.employee
@@ -81,12 +79,9 @@ def get_user_info(user, request=None, check_admin=False):
 					"admin_status": admin_status,
 					"leaves_taken": employee.leaves_taken,
 					"leaves_remaining": employee.leaves_remaining,
-					"punched_in": bool(employee.has_punched_in),
-					"punched_out": bool(employee.has_punched_out),
 				})
 		except:
 			pass
-
 		return data
 	except:
 		return None

@@ -1,12 +1,11 @@
 import { DataListType } from "./common";
-import { UserInfoType } from "./user";
+import { UserEmployeeType } from "./employees";
 
 
 export type DepartmentType = {
 	name: string;
 	id: string;
-	hod?: number;
-	hod_info?: UserInfoType;
+	hod?: UserEmployeeType;
 	no_of_employees?: number;
 }
 

@@ -21,19 +21,16 @@ class EmployeeModelMixin:
 
 	@property
 	def is_supervisor(self):
-		count = self.supervised_emps.count()
-		if count > 0:
+		if self.supervised_emps.count() > 0:
 			return True
 		return False
 
 	@property
 	def is_on_leave(self):
-		emp = self.user.employee
-		approved_leave = emp.leaves.filter(a_md="A").order_by('date_requested').last()
+		approved_leave = self.user.employee.leaves.filter(a_md="A").order_by('date_requested').last()
 		if approved_leave:
-			current_date = now().date()
-			diff = (approved_leave.end_date - current_date).days
-			if (diff > 0):
+			diff = (approved_leave.end_date - now().date()).days
+			if diff > 0:
 				return True
 		return False
 

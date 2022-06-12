@@ -30,9 +30,9 @@ const EmployeeForm = ({
     first_name: data?.user.first_name || "",
     last_name: data?.user.last_name || "",
     email: data?.user.email || "",
-    department: String(data?.department?.id) || "",
-    job: String(data?.job?.id) || "",
-    supervisor: String(data?.supervisor) || "",
+    department: data?.department?.id ? String(data?.department?.id) : "",
+    job: data?.job?.id ? String(data?.job?.id) : "",
+    supervisor: data?.supervisor ? String(data?.supervisor.id) : "",
     date_employed: data?.date_employed || "",
     date_of_birth: data?.profile?.date_of_birth || "",
     gender: data?.profile?.gender.value || "M",
@@ -70,7 +70,7 @@ const EmployeeForm = ({
     async (e: FormEvent<HTMLFormElement>, form: FormType) => {
       e.preventDefault();
       setLoading(true);
-      const omitForm = omitKey(form, ["image"]);
+      const omitForm = omitKey(form, ["image","supervisor"]);
       const { valid, result } = validateForm(omitForm);
       if (valid) {
         updateEmployee({

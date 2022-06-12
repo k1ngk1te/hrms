@@ -16,8 +16,8 @@ const getRows = (
     let result: RowType = [
       { value: department.name || "---" },
       {
-        value: department?.hod_info
-          ? `${department?.hod_info?.first_name} ${department?.hod_info?.last_name}`
+        value: department?.hod
+          ? department?.hod.full_name
           : "---",
       },
       { value: department?.no_of_employees || "---" },
@@ -36,7 +36,7 @@ const getRows = (
                 updateDep({
                   id: department.id,
                   name: toCapitalize(department.name),
-                  hod: String(department.hod) || "",
+                  hod: department.hod ? String(department.hod.id) : "",
                 }),
             },
             {

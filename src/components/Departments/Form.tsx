@@ -119,7 +119,7 @@ const Form: FC<FormProps> = ({
               title: "load more",
             }}
             disabled={employees.isLoading || loading}
-            error={employeesError || errors?.hod}
+            error={employeesError || String(errors?.hod?.id || "")}
             label="Head Of Department (optional)"
             options={empOptions}
             required={false}

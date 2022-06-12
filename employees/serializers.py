@@ -25,6 +25,23 @@ from .utils import get_employees
 User = get_user_model()
 
 
+class UserEmployeeSerializer(PersonSerializer):
+	id = serializers.CharField()
+	job = serializers.SerializerMethodField('get_job')
+
+	class Meta:
+		model = Employee
+		relation_key = 'user'
+		fields = ('id', 'job',) + PersonSerializer.Meta.fields
+
+	def get_job(self, obj):
+		try:
+			return obj.job.name
+		except:
+			pass
+		return ""
+
+
 class AttendanceSerializer(serializers.ModelSerializer):
 	id = serializers.CharField(read_only=True)
 	date = serializers.DateField(required=False)
@@ -90,28 +107,25 @@ class ClientSerializer(serializers.ModelSerializer):
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
-	id = serializers.CharField(read_only=False)
+	id = serializers.CharField(required=False)
 	name = serializers.CharField(required=False)
-	hod = serializers.PrimaryKeyRelatedField(
-		queryset=Employee.objects.filter(user__is_active=True),
-		required=False, allow_null=True)
-	hod_info = serializers.SerializerMethodField('get_hod')
+	hod = UserEmployeeSerializer(required=False)
 	no_of_employees = serializers.SerializerMethodField('get_no_of_employees')
 
 	class Meta:
 		model = Department
-		fields = ('name', 'id', 'hod', 'hod_info', 'no_of_employees')
+		fields = ('name', 'id', 'hod', 'no_of_employees')
 
 	def create(self, validated_data):
-		name = self.validate_name(validated_data.get("name"))
-		hod = self.validate_hod(validated_data.get("hod"))
+		name = validated_data.get("name")
+		hod = validated_data.get("hod")
 
 		department = Department.objects.create(name=name, hod=hod)
 		return department
 
 	def update(self, instance, validated_data):
-		name = self.validate_name(validated_data.get("name"))
-		hod = self.validate_hod(validated_data.get("hod"))
+		name = validated_data.get("name")
+		hod = validated_data.get("hod")
 
 		if name is not None and instance.name != name.lower():
 			dep = get_instance(Department, {"name": name.lower()})
@@ -124,8 +138,8 @@ class DepartmentSerializer(serializers.ModelSerializer):
 		if hod and hod != instance.hod:
 			dep = get_instance(Department, {"hod": hod})
 			if dep:
-				raise ValidationError(
-					f"This employee is already the Head of Department for {dep.name}")
+				raise ValidationError({ hod: {
+					"id": f"This employee is already the Head of Department for {dep.name}"}})
 			instance.hod = hod
 		instance.save()
 		return instance
@@ -142,24 +156,22 @@ class DepartmentSerializer(serializers.ModelSerializer):
 				raise ValidationError("department with this name already exists!")
 		return name
 
-	def validate_hod(self, hod):
-		if hod:
-			if hod.user.is_active is False:
-				raise ValidationError("employee is inactive or deactivated")
-			method = get_request_method(self.context)
-			if method != 'PUT' and method != 'PATCH':
-				dep = get_instance(Department, {"hod": hod})
-				if dep:
-					raise ValidationError(
-						f"This employee is already the Head of Department for {dep.name}")
+	def validate_hod(self, value):
+		if not value:
+			return None
+		id = value.get("id")
+		hod = get_instance(Employee, {"id": id})
+		if hod is None:
+			raise ValidationError({"id": f"Employee with ID {id} does not exist!"})	
+		if hod.user.is_active is False:
+			raise ValidationError({"id": "employee is inactive or deactivated"})
+		method = get_request_method(self.context)
+		if method != 'PUT' and method != 'PATCH':
+			dep = get_instance(Department, {"hod": hod})
+			if dep:
+				raise ValidationError({"id":
+					f"This employee is already the Head of Department for {dep.name}"})
 		return hod
-
-	def get_hod(self, obj):
-		if obj.hod:
-			request = self.context.get("request")
-			data = get_user_info(obj.hod.user, request)
-			return data
-		return None
 
 	def get_no_of_employees(self, obj):
 		count = Employee.objects.filter(
@@ -173,17 +185,14 @@ class EmployeeSerializer(serializers.ModelSerializer):
 	profile = ProfileSerializer(source='user.profile')
 	job = JobSerializer()
 	department = DepartmentSerializer()
-	supervisor = serializers.PrimaryKeyRelatedField(
-		queryset=Employee.objects.filter(user__is_active=True),
-		required=False, allow_null=True)
-	supervisor_info = serializers.SerializerMethodField('get_supervisor_info')
+	supervisor = UserEmployeeSerializer(required=False)
 	status = serializers.SerializerMethodField('get_status')
 	active = serializers.SerializerMethodField('get_active')
 
 	class Meta:
 		model = Employee
 		fields = ('id', 'user', 'job', 'profile', 'department',
-		'supervisor', 'supervisor_info', 'status', 'date_employed', 'active')
+		'supervisor', 'status', 'date_employed', 'active')
 
 	def create(self, validated_data):
 		user_data = validated_data.pop('user')
@@ -207,11 +216,6 @@ class EmployeeSerializer(serializers.ModelSerializer):
 		instance.supervisor = validated_data.get("supervisor", instance.supervisor)
 		instance.save()
 		return instance
-
-	def get_supervisor_info(self, obj):
-		if obj.supervisor:
-			return get_user_info(obj.supervisor.user)
-		return None
 
 	def get_active(self, obj):
 		return obj.user.is_active
@@ -282,10 +286,20 @@ class EmployeeSerializer(serializers.ModelSerializer):
 		return department
 
 	def validate_job(self, value):
-		job = get_instance(Job, {"id": value.get("id")})
+		id = value.get("id")
+		job = get_instance(Job, {"id": id})
 		if job is None:
-			raise ValidationError("job does not exist")
+			raise ValidationError(f"Job with ID {id} does not exist!")
 		return job
+
+	def validate_supervisor(self, value):
+		if not value:
+			return None
+		id = value.get("id")
+		supervisor = get_instance(Employee, {"id": id})
+		if supervisor is None:
+			raise ValidationError({"id": f"Employee with ID {id} does not exist!"})
+		return supervisor
 
 
 class HolidaySerializer(serializers.ModelSerializer):
@@ -296,171 +310,13 @@ class HolidaySerializer(serializers.ModelSerializer):
 		exclude = ('holiday_id',)
 
 
-class ProjectEmployeeSerializer(PersonSerializer):
-	id = serializers.CharField(read_only=True)
-	job = serializers.SerializerMethodField('get_job')
-
-	class Meta:
-		model = Employee
-		relation_key = 'user'
-		fields = ('id', 'job',) + PersonSerializer.Meta.fields
-
-	def get_job(self, obj):
-		try:
-			return obj.job.name
-		except:
-			pass
-		return ""
-
-
-class TaskSerializer(serializers.ModelSerializer):
-	id = serializers.CharField(read_only=True)
-	project = serializers.SerializerMethodField('get_project_info')
-	leaders = ProjectEmployeeSerializer(many=True, required=False)
-	followers = ProjectEmployeeSerializer(many=True, required=False)
-	created_by = ProjectEmployeeSerializer(read_only=True)
-	create_date = serializers.DateField(read_only=True)
-	completed = serializers.BooleanField(read_only=True)
-	verified = serializers.BooleanField(read_only=True)
-
-	class Meta:
-		model = Task
-		exclude = ('task_id',)
-
-	def create(self, validated_data):
-		created_by = self.context.get("request").user.employee
-		create_date = now().date()
-		project = self.get_project()
-
-		followers = validated_data.pop("followers", None)
-		leaders = validated_data.pop("leaders", None)
-
-		task_leaders = get_employees("leaders", leaders) if leaders is not None else []
-		task_members = get_employees("followers", followers) if followers is not None else []
-
-		task = Task.objects.create(create_date=create_date, created_by=created_by,
-			project=project, **validated_data)
-		self.set_team(task, task_leaders, task_members)
-
-		return task
-
-	def update(self, instance, validated_data):
-		created_by = self.context.get("request").user.employee
-
-		if created_by != instance.created_by:
-			raise PermissionDenied({"detail":
-				"You do not have permission to perform this request!"})
-
-		followers = validated_data.pop("followers", None)
-		leaders = validated_data.pop("leaders", None)
-
-		task_leaders = get_employees("leaders", leaders) if leaders is not None else []
-		task_members = get_employees("followers", followers) if followers is not None else []
-
-		self.set_team(instance, task_leaders, task_members)
-
-		instance.name = validated_data.get("name", instance.name)
-		instance.description = validated_data.get("description", instance.description)
-		instance.due_date = validated_data.get("due_date", instance.due_date)
-		instance.priority = validated_data.get("priority", instance.priority)
-		instance.save()
-
-		return instance
-
-	def get_project_info(self, obj):
-		return {
-			"id": obj.project.id,
-			"name": obj.project.name
-		}
-
-	def get_project(self):
-		kwargs = self.context.get("view").kwargs
-		project_id = kwargs.get("project_id", None)
-		if project_id is None:
-			raise ValidationError({"detail": "Project ID is required!"})
-		project = get_instance(Project, {"id": project_id})
-		if not project:
-			raise NotFound({"detail": f"Project with ID {project_id} was not found!"})
-		return project
-
-	def set_team(self, task, leaders=[], followers=[]):
-		task.leaders.set(leaders)
-		total_team_members = followers + leaders
-		task.followers.set(total_team_members)
-		return task
-
-
-class ProjectFileSerializer(serializers.ModelSerializer):
-	project = serializers.SerializerMethodField('get_project_info')
-	name = serializers.CharField(required=False)
-	file_type = serializers.CharField(read_only=True)
-	uploaded_by = serializers.SerializerMethodField('get_uploaded_by')
-	size = serializers.SerializerMethodField('get_size')
-	date = serializers.DateTimeField(read_only=True)
-
-	class Meta:
-		model = ProjectFile
-		fields = '__all__'
-
-	def get_uploaded_by(self, obj):
-		return {
-			"id": obj.uploaded_by.id,
-			"name": obj.uploaded_by.user.get_full_name()
-		}
-
-	def get_size(self, obj):
-		return obj.file.size
-
-	def get_project_info(self, obj):
-		return {
-			"id": obj.project.id,
-			"name": obj.project.name
-		}
-
-	def get_project(self, project_id):
-		project = get_instance(Project, {"id": project_id})
-		if not project:
-			raise ValidationError({"detail": f"Project with ID {project_id} was not found"})
-		return project
-
-	def create(self, validated_data):
-		file = validated_data.get("file", None)
-		content_type = file.content_type.split("/")[0]
-		allowed_content_types = ["application", "image"]
-		employee = self.context.get("request").user.employee
-
-		if content_type not in allowed_content_types:
-			raise ValidationError({"file": "Invalid file. Send in an image, pdf or microsoft word file"})
-
-		project = self.get_project(self.context.get("view").kwargs.get("project_id"))
-
-		if not file:
-			raise ValidationError({"file": "File is required!"})
-
-		name = validated_data.pop("name", None)
-		if not name:
-			name = file.name[:245] + file.name.split(".")[-1] if len(file.name) > 250 else file.name
-
-		return ProjectFile.objects.create(
-			project=project, 
-			file_type=file.content_type,
-			uploaded_by=employee,
-			name=name,
-			**validated_data
-		)
-
-	def update(self, instance, validated_data):
-		# Prevent the file from being updated
-		return instance
-
-
 class ProjectSerializer(serializers.ModelSerializer):
 	id = serializers.CharField(read_only=True)
 	client = ClientRelatedField(queryset=Client.objects.filter(
 		contact__is_active=True), required=False)
-	leaders = ProjectEmployeeSerializer(many=True, required=False)
-	team = ProjectEmployeeSerializer(many=True, required=False)
-	created_by = ProjectEmployeeSerializer(read_only=True)
+	leaders = UserEmployeeSerializer(many=True, required=False)
+	team = UserEmployeeSerializer(many=True, required=False)
+	created_by = UserEmployeeSerializer(read_only=True)
 	tasks = serializers.SerializerMethodField('get_tasks')
 	files = serializers.SerializerMethodField('get_files')
 	completed = serializers.BooleanField(read_only=True)
@@ -549,5 +405,146 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 	def get_is_active(self, obj):
 		return obj.is_active
+
+
+class ProjectFileSerializer(serializers.ModelSerializer):
+	project = serializers.SerializerMethodField('get_project_info')
+	name = serializers.CharField(required=False)
+	file_type = serializers.CharField(read_only=True)
+	uploaded_by = serializers.SerializerMethodField('get_uploaded_by')
+	size = serializers.SerializerMethodField('get_size')
+	date = serializers.DateTimeField(read_only=True)
+
+	class Meta:
+		model = ProjectFile
+		fields = '__all__'
+
+	def get_uploaded_by(self, obj):
+		return {
+			"id": obj.uploaded_by.id,
+			"name": obj.uploaded_by.user.get_full_name()
+		}
+
+	def get_size(self, obj):
+		return obj.file.size
+
+	def get_project_info(self, obj):
+		return {
+			"id": obj.project.id,
+			"name": obj.project.name
+		}
+
+	def get_project(self, project_id):
+		project = get_instance(Project, {"id": project_id})
+		if not project:
+			raise ValidationError({"detail": f"Project with ID {project_id} was not found"})
+		return project
+
+	def create(self, validated_data):
+		file = validated_data.get("file", None)
+		content_type = file.content_type.split("/")[0]
+		allowed_content_types = ["application", "image"]
+		employee = self.context.get("request").user.employee
+
+		if content_type not in allowed_content_types:
+			raise ValidationError({"file": "Invalid file. Send in an image, pdf or microsoft word file"})
+
+		project = self.get_project(self.context.get("view").kwargs.get("project_id"))
+
+		if not file:
+			raise ValidationError({"file": "File is required!"})
+
+		name = validated_data.pop("name", None)
+		if not name:
+			name = file.name[:245] + file.name.split(".")[-1] if len(file.name) > 250 else file.name
+
+		return ProjectFile.objects.create(
+			project=project, 
+			file_type=file.content_type,
+			uploaded_by=employee,
+			name=name,
+			**validated_data
+		)
+
+	def update(self, instance, validated_data):
+		# Prevent the file from being updated
+		return instance
+
+
+class TaskSerializer(serializers.ModelSerializer):
+	id = serializers.CharField(read_only=True)
+	project = serializers.SerializerMethodField('get_project_info')
+	leaders = UserEmployeeSerializer(many=True, required=False)
+	followers = UserEmployeeSerializer(many=True, required=False)
+	created_by = UserEmployeeSerializer(read_only=True)
+	create_date = serializers.DateField(read_only=True)
+	completed = serializers.BooleanField(read_only=True)
+	verified = serializers.BooleanField(read_only=True)
+
+	class Meta:
+		model = Task
+		exclude = ('task_id',)
+
+	def create(self, validated_data):
+		created_by = self.context.get("request").user.employee
+		create_date = now().date()
+		project = self.get_project()
+
+		followers = validated_data.pop("followers", None)
+		leaders = validated_data.pop("leaders", None)
+
+		task_leaders = get_employees("leaders", leaders) if leaders is not None else []
+		task_members = get_employees("followers", followers) if followers is not None else []
+
+		task = Task.objects.create(create_date=create_date, created_by=created_by,
+			project=project, **validated_data)
+		self.set_team(task, task_leaders, task_members)
+
+		return task
+
+	def update(self, instance, validated_data):
+		created_by = self.context.get("request").user.employee
+
+		if created_by != instance.created_by:
+			raise PermissionDenied({"detail":
+				"You do not have permission to perform this request!"})
+
+		followers = validated_data.pop("followers", None)
+		leaders = validated_data.pop("leaders", None)
+
+		task_leaders = get_employees("leaders", leaders) if leaders is not None else []
+		task_members = get_employees("followers", followers) if followers is not None else []
+
+		self.set_team(instance, task_leaders, task_members)
+
+		instance.name = validated_data.get("name", instance.name)
+		instance.description = validated_data.get("description", instance.description)
+		instance.due_date = validated_data.get("due_date", instance.due_date)
+		instance.priority = validated_data.get("priority", instance.priority)
+		instance.save()
+
+		return instance
+
+	def get_project_info(self, obj):
+		return {
+			"id": obj.project.id,
+			"name": obj.project.name
+		}
+
+	def get_project(self):
+		kwargs = self.context.get("view").kwargs
+		project_id = kwargs.get("project_id", None)
+		if project_id is None:
+			raise ValidationError({"detail": "Project ID is required!"})
+		project = get_instance(Project, {"id": project_id})
+		if not project:
+			raise NotFound({"detail": f"Project with ID {project_id} was not found!"})
+		return project
+
+	def set_team(self, task, leaders=[], followers=[]):
+		task.leaders.set(leaders)
+		total_team_members = followers + leaders
+		task.followers.set(total_team_members)
+		return task
 
 

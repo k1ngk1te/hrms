@@ -30,7 +30,7 @@ const Form: FC<FormProps> = ({
   success,
   onSubmit,
 }) => {
-  const name = useFormInput(initState?.name);
+  const name = useFormInput(initState?.name || "");
   const reset = name.reset;  
 
   useEffect(() => {

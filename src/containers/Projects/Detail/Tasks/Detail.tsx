@@ -190,6 +190,7 @@ const Detail = () => {
 											title="Team Leader"
 											name={leader.full_name || "-----"}
 											label={leader.job || "-----"}
+											image={{src: leader.image}}
 											options={[
 												{
 													bg: "bg-white hover:bg-red-100",
@@ -245,8 +246,9 @@ const Detail = () => {
 										<PersonCard 
 											key={index}
 											title="Task follower"
-											name={member.full_name || ""}
-											job={member.job || ""}
+											name={member.full_name || "-----"}
+											label={member.job || "-----"}
+											image={{src: member.image}}
 											options={[
 												{
 													bg: "bg-white hover:bg-blue-100",

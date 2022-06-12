@@ -46,7 +46,7 @@ from .serializers import (
 	EmployeeSerializer,
 	HolidaySerializer,
 	ProjectSerializer,
-	ProjectEmployeeSerializer,
+	UserEmployeeSerializer,
 	ProjectFileSerializer,
 	TaskSerializer
 )
@@ -402,7 +402,7 @@ class ProjectCompletedView(APIView):
 
 
 class ProjectEmployeesView(generics.ListAPIView):
-	serializer_class = ProjectEmployeeSerializer
+	serializer_class = UserEmployeeSerializer
 	permission_classes = (IsHROrMDOrLeaderOrReadOnlyEmployeeAndClient, )
 
 	def get_queryset(self):

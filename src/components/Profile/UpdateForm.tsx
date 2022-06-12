@@ -27,7 +27,6 @@ type ErrorType = {
 		last_name?: string;
 	};
 	gender?: string;
-	marital_status?: string;
 	address?: string;
 	phone?: string;
 	state?: string;
@@ -48,9 +47,7 @@ const Form: FC<FormProps> = ({ initState }) => {
 	const first_name = useFormInput(initState?.user?.first_name);
 	const last_name = useFormInput(initState?.user?.last_name);
 	const gender = useFormSelect(initState?.profile?.gender.value);
-	const marital_status = useFormSelect(
-		initState?.profile?.marital_status.value
-	);
+
 	const address = useFormTextArea(initState?.profile?.address);
 	const phone = useFormInput(initState?.profile?.phone);
 	const state = useFormInput(initState?.profile?.state);
@@ -69,7 +66,6 @@ const Form: FC<FormProps> = ({ initState }) => {
 					last_name: last_name.value,
 				},
 				gender: gender.value,
-				marital_status: marital_status.value,
 				address: address.value,
 				phone: phone.value,
 				state: state.value,
@@ -96,7 +92,6 @@ const Form: FC<FormProps> = ({ initState }) => {
 			first_name.value,
 			last_name.value,
 			gender.value,
-			marital_status.value,
 			address.value,
 			phone.value,
 			state.value,
@@ -183,21 +178,6 @@ const Form: FC<FormProps> = ({ initState }) => {
 						]}
 						required
 						value={gender.value}
-					/>
-				</div>
-				<div className="w-full">
-					<Select
-						disabled={loading}
-						error={formErrors?.marital_status || errors?.marital_status || ""}
-						label="Marial Status"
-						onChange={marital_status.onChange}
-						options={[
-							{ title: "Single", value: "S" },
-							{ title: "Married", value: "M" },
-							{ title: "Divorced", value: "D" },
-						]}
-						required
-						value={marital_status.value}
 					/>
 				</div>
 				<div className="w-full">

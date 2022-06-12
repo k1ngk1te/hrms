@@ -1,4 +1,4 @@
-from dj_rest_auth.views import LoginView
+from dj_rest_auth.views import LoginView, UserDetailsView
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.response import Response
@@ -32,9 +32,20 @@ class ProfileView(APIView):
 
 class CustomLoginView(LoginView):
 	def get_response(self):
+		context = self.get_serializer_context()
+		context.update({"check_admin": True})
 		serializer = UserDetailSerializer(
 			instance=self.user,
-			context=self.get_serializer_context(),
+			context=context,
 		)
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+class CustomUserDetailsView(UserDetailsView):
+	def get_serializer_context(self):
+		return {
+			'check_admin': True,
+			'request': self.request,
+			'format': self.format_kwarg,
+			'view': self
+		}

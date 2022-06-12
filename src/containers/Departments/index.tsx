@@ -141,13 +141,14 @@ const Departments = () => {
 
 	const handleSubmit = useCallback(
 		(form: { name: string; hod?: string }) => {
-			editMode
-				? updateDepartment({
-						...form,
-						name: form.name.toLowerCase(),
+			const data = { name: form.name.toLowerCase()}
+			if (form.hod) data["hod"] = { id: form.hod }
+
+			if (editMode) updateDepartment({
+						...data,
 						id: depId,
 				  })
-				: createDepartment({ ...form, name: form.name.toLowerCase() });
+			else createDepartment(data);
 		},
 		[createDepartment, depId, editMode, updateDepartment]
 	);

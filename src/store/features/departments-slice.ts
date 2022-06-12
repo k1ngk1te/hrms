@@ -38,14 +38,10 @@ const departmentsApi = baseApi.injectEndpoints({
 			{ success: string },
 			{ id: number | string; hod?: string; name: string }
 		>({
-			query: ({ id, hod, name }) => ({
+			query: ({ id, ...data }) => ({
 				url: DEPARTMENT_URL(id),
 				method: "PUT",
-				body: {
-					id,
-					hod: hod ? parseInt(hod) : "",
-					name,
-				},
+				body: data,
 				headers: {
 					Accept: "application/json",
 					"Content-Type": "application/json",

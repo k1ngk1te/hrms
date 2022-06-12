@@ -36,7 +36,11 @@ const PersonCard: FC<PersonCardType> = ({ actions, title, label, image, name, op
 			<div className="my-1">
 				<div className="flex justify-center items-center">
 					<div className="h-[50px] my-1 rounded-full w-[50px] lg:h-[55px] lg:w-[55px]">
-						<img src={DEFAULT_IMAGE} className="w-full h-full rounded-full" alt="" />
+						<img 
+							src={image && image.src ? image.src : DEFAULT_IMAGE} 
+							className="w-full h-full rounded-full" 
+							alt={image && image.alt ? image.alt : ""}
+						/>
 					</div>
 				</div>
 				{title && (

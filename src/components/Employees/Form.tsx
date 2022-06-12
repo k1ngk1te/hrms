@@ -364,7 +364,7 @@ const Form: FC<FormProps> = ({
             error={
               employeesError ||
               formErrors?.supervisor ||
-              errors?.supervisor ||
+              String(errors?.supervisor?.id || "") ||
               ""
             }
             label="Supervisor"

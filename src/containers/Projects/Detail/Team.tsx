@@ -98,6 +98,7 @@ const Team = () => {
 										title="Project Creator"
 										name={data.created_by.full_name || "-----"}
 										label={data.created_by.job || "-----"}
+										image={{src: data.created_by?.image}}
 									/>								
 								</div>
 							) : (
@@ -118,6 +119,7 @@ const Team = () => {
 										title={data.client.company || "------"}
 										name={data.client.contact.full_name || "------"}
 										label={data.client.position || "------"}
+										image={{src: data.client.contact?.image}}
 										actions={[
 											{
 												bg: "bg-white hover:bg-green-100",
@@ -150,6 +152,7 @@ const Team = () => {
 											title="Team Leader"
 											name={leader.full_name || "-----"}
 											label={leader.job || "-----"}
+											image={{src: leader.image}}
 											options={[
 												{
 													bg: "bg-white hover:bg-red-100",
@@ -207,6 +210,7 @@ const Team = () => {
 											title="Team member"
 											name={member.full_name || "------"}
 											label={member.job || "------"}
+											image={{src: member.image}}
 											options={[
 												{
 													bg: "bg-white hover:bg-success-100",

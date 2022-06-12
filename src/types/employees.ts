@@ -74,8 +74,7 @@ export type EmployeeType = {
   };
   status: "active" | "on leave" | "inactive";
   department?: DepartmentType;
-  supervisor?: number;
-  supervisor_info?: UserInfoType;
+  supervisor?: UserEmployeeType;
   date_employed: string;
   profile: ProfileType;
   active: boolean;
@@ -216,7 +215,7 @@ export type HolidayErrorType = {
   date?: string;
 };
 
-export interface ProjectEmployeeType extends UserType {
+export interface UserEmployeeType extends UserType {
   id: string;
   job: string;
 }
@@ -224,9 +223,9 @@ export interface ProjectEmployeeType extends UserType {
 export type ProjectType = {
   id: string | number;
   client: ClientType;
-  leaders: ProjectEmployeeType[];
-  team: ProjectEmployeeType[];
-  created_by: ProjectEmployeeType;
+  leaders: UserEmployeeType[];
+  team: UserEmployeeType[];
+  created_by: UserEmployeeType;
   name: string;
   start_date: string;
   end_date: string;
@@ -286,9 +285,9 @@ export type TaskType = {
   name: string;
   description: string;
   priority: "L" | "M" | "H";
-  followers: ProjectEmployeeType[];
-  leaders: ProjectEmployeeType[];
-  created_by: ProjectEmployeeType;
+  followers: UserEmployeeType[];
+  leaders: UserEmployeeType[];
+  created_by: UserEmployeeType;
   create_date: string;
   due_date: string;
 };

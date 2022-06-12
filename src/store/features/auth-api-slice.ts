@@ -63,6 +63,9 @@ const authApi = baseApi.injectEndpoints({
       query: ({ profile }) => ({
         url: PROFILE_URL,
         method: "PUT",
+        headers: {
+          "default-content-type": "use-browser-default",
+        },
         body: generateForm(profile),
         credentials: "include"
       }),
