@@ -54,7 +54,7 @@ const Detail = ({ admin }: { admin?: boolean }) => {
 								  )
 								: "Something went wrong!"
 							: approve.data
-							? String(approve?.data)
+							? String(approve?.data.detail || "Action successful!")
 							: "Request Completed",
 				})
 			);

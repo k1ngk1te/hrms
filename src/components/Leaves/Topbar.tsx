@@ -48,6 +48,7 @@ const Form = ({
           onChange: search.onChange,
           placeholder: "Search Employee Name or E-mail.",
           rounded: "rounded-l-lg",
+          type: "search",
           value: search.value,
         }}
       />

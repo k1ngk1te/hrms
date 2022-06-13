@@ -73,10 +73,10 @@ class DepartmentListViewTests(TestSetUp):
 		self.client.post(self.login_url, {
 			"email": self.user1.email, "password": "Passing1234"})
 		response5 = self.client.post(self.departments_url, {
-			"name": "market2", "hod": self.employee1.id})
+			"name": "market2", "hod": {"id": self.employee1.id}}, format="json")
 		response6 = self.client.post(self.departments_url, {"name": "market1"})
 		response7 = self.client.post(self.departments_url, {
-			"name": "market3", "hod": self.employee1.id})
+			"name": "market3", "hod": {"id": self.employee1.id}}, format="json")
 
 		try:
 			dep2 = Department.objects.get(name="market2")
@@ -128,11 +128,9 @@ class DepartmentUpdateViewTests(TestSetUp):
 		self.client.post(self.login_url, {
 			"email": self.user1.email, "password": "Passing1234"})
 		response5 = self.client.put(department.get_absolute_url(), {
-			"name": "marketTest3", "hod": self.employee2.id})
+			"name": "marketTest3", "hod": {"id": self.employee2.id}}, format="json")
 
 		dep2 = Department.objects.filter(name="markettest2").first()
-
-		response6 = self.client.put(department.get_absolute_url(), {})
 
 		dep3 = Department.objects.filter(name="markettest3").first()
 
@@ -141,7 +139,6 @@ class DepartmentUpdateViewTests(TestSetUp):
 		self.assertEqual(response3.status_code, 403)
 		self.assertEqual(response4.status_code, 200)
 		self.assertEqual(response5.status_code, 200)
-		self.assertEqual(response6.status_code, 400)
 		self.assertIsNotNone(dep3)
 		self.assertEqual(dep3.hod, self.employee2)
 		self.assertIsNone(dep1)
@@ -165,9 +162,8 @@ class EmployeeListViewTests(TestSetUp):
 			"email": self.supervisor.user.email, "password": "Passing1234"})
 		response2 = self.client.get(self.employees_url)
 
-		hod = Employee.objects.get(user=self.hod.user)
 		self.client.post(self.login_url, {
-			"email": hod.user.email, "password": "Passing1234"})
+			"email": self.hod.user.email, "password": "Passing1234"})
 		response3 = self.client.get(self.employees_url)
 
 		self.client.post(self.login_url, {
@@ -186,7 +182,7 @@ class EmployeeListViewTests(TestSetUp):
 			"email": user.email, "password": "Passing1234"})
 		response6 = self.client.get(self.employees_url)
 
-		self.assertEqual(hod.department, self.department)
+		self.assertEqual(self.hod.department, self.department)
 		self.assertEqual(response1.status_code, 403)
 		self.assertEqual(response2.status_code, 200)
 		self.assertEqual(len(response2.data['results']), 1)
@@ -238,7 +234,9 @@ class EmployeeListViewTests(TestSetUp):
 			"job": {
 				"id": self.job.id
 			},
-			"supervisor": self.supervisor.id,
+			"supervisor": {
+				"id": self.supervisor.id
+			},
 			"date_employed": "2022-03-18"
 		}, format="json")
 
@@ -264,7 +262,9 @@ class EmployeeListViewTests(TestSetUp):
 			"job": {
 				"id": self.job.id
 			},
-			"supervisor": self.supervisor.id,
+			"supervisor": {
+				"id": self.supervisor.id
+			},
 			"date_employed": "2022-03-18"
 		}, format="json")		
 		response6 = self.client.post(self.employees_url, {
@@ -287,7 +287,9 @@ class EmployeeListViewTests(TestSetUp):
 			"job": {
 				"id": self.job.id
 			},
-			"supervisor": self.supervisor.id,
+			"supervisor": {
+				"id": self.supervisor.id
+			},
 			"date_employed": "2022-03-18"
 		},format="json")
 
@@ -314,7 +316,9 @@ class EmployeeListViewTests(TestSetUp):
 			"job": {
 				"id": self.job.id
 			},
-			"supervisor": self.supervisor.id,
+			"supervisor": {
+				"id": self.supervisor.id
+			},
 			"date_employed": "2022-03-18"
 		},format="json")
 
@@ -338,7 +342,9 @@ class EmployeeListViewTests(TestSetUp):
 			"job": {
 				"id": self.job.id
 			},
-			"supervisor": self.employee.id,
+			"supervisor": {
+				"id": self.supervisor.id
+			},
 			"date_employed": "2022-03-18"
 		}, format="json")
 
@@ -362,7 +368,9 @@ class EmployeeListViewTests(TestSetUp):
 			"job": {
 				"id": 1000
 			},
-			"supervisor": self.employee.id,
+			"supervisor": {
+				"id": self.employee.id
+			},
 			"date_employed": "2022-03-18"
 		}, format="json")
 
@@ -386,7 +394,9 @@ class EmployeeListViewTests(TestSetUp):
 			"job": {
 				"id": self.job.id
 			},
-			"supervisor": 1000,
+			"supervisor": {
+				"id": "emp1000"
+			},
 			"date_employed": "2022-03-18"
 		}, format="json")
 
@@ -410,11 +420,13 @@ class EmployeeListViewTests(TestSetUp):
 			"job": {
 				"id": self.job.id
 			},
-			"supervisor": self.employee.id,
+			"supervisor": {
+				"id": self.employee.id
+			},
 			"date_employed": "2022-03-18"
 		}, format="json")
 
-		# import pdb;pdb.set_trace();
+		import pdb;pdb.set_trace()
 
 		try:
 			Employee.objects.get(user__email="tester@test.testing")
@@ -552,7 +564,9 @@ class EmployeeDetailViewTests(TestSetUp):
 			"job": {
 				"id": self.job2.id
 			},
-			"supervisor": self.employee1.id,
+			"supervisor": {
+				"id": self.employee1.id
+			},
 			"date_employed": "2022-03-18"
 		}, format="json")
 		response6 = self.client.put(self.employee2.get_absolute_url(), {
@@ -567,7 +581,9 @@ class EmployeeDetailViewTests(TestSetUp):
 			"job": {
 				"id": self.job2.id
 			},
-			"supervisor": self.employee1.id,
+			"supervisor": {
+				"id": self.employee1.id
+			},
 			"date_employed": "2022-03-18"
 		}, format="json")
 		response7 = self.client.put(self.employee2.get_absolute_url(), {
@@ -582,7 +598,9 @@ class EmployeeDetailViewTests(TestSetUp):
 			"job": {
 				"id": self.job2.id
 			},
-			"supervisor": self.employee1.id,
+			"supervisor": {
+				"id": self.employee1.id
+			},
 			"date_employed": "2022-03-18"
 		}, format="json")
 		response8 = self.client.put(self.employee2.get_absolute_url(), {
@@ -597,7 +615,9 @@ class EmployeeDetailViewTests(TestSetUp):
 			"job": {
 				"id": 1000
 			},
-			"supervisor": self.employee1.id,
+			"supervisor": {
+				"id": self.employee1.id
+			},
 			"date_employed": "2022-03-18"
 		}, format="json")
 		response9 = self.client.put(self.employee2.get_absolute_url(), {
@@ -612,7 +632,9 @@ class EmployeeDetailViewTests(TestSetUp):
 			"job": {
 				"id": self.job2.id
 			},
-			"supervisor": 1000,
+			"supervisor": {
+				"id": "emp1000"
+			},
 			"date_employed": "2022-03-18"
 		}, format="json")
 
@@ -638,7 +660,9 @@ class EmployeeDetailViewTests(TestSetUp):
 			"job": {
 				"id": self.job2.id
 			},
-			"supervisor": self.employee1.id,
+			"supervisor": {
+				"id": self.employee1.id
+			},
 			"date_employed": "2022-03-18"
 		}, format="json")
 

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { DEFAULT_PAGINATION_SIZE } from "../config";
 import { isErrorWithData, isFormError } from "../store";
 import { open as alertModalOpen } from "../store/features/alert-modal-slice";
 import {
@@ -35,7 +36,7 @@ const Holidays = () => {
 	const modalVisible = useAppSelector((state) => state.modal.visible);
 
 	const { data, error, isLoading, isFetching, refetch } = useGetHolidaysQuery({
-		limit: 50,
+		limit: DEFAULT_PAGINATION_SIZE,
 		offset,
 		search,
 	});

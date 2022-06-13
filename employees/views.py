@@ -1,5 +1,6 @@
 import csv
 import xlwt
+from allauth.account.adapter import get_adapter
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.http import HttpResponse
@@ -86,7 +87,7 @@ class AttendanceView(generics.ListAPIView):
 		}
 
 
-class ClientView(ListCreateRetrieveUpdateView):
+class ClientView(ListCreateRetrieveUpdateDestroyView):
 	queryset = Client.objects.all().order_by('-id')
 	pagination_class = ClientPagination
 	permission_classes = (IsHROrMD, )
@@ -112,13 +113,18 @@ class DepartmentView(ListCreateRetrieveUpdateDestroyView):
 			status=status.HTTP_403_FORBIDDEN)
 
 
-class EmployeeView(ListCreateRetrieveUpdateView):
+class EmployeeView(ListCreateRetrieveUpdateDestroyView):
 	serializer_class = EmployeeSerializer
 	pagination_class = EmployeePagination
 	permission_classes = (IsHROrMDOrAdminUser, )
 	ordering_fields = ('user__first_name', 'user__last_name', 'user__email')
 	search_fields = ('user__first_name', 'user__last_name', 'user__email')
 	lookup_field = 'id'
+
+	def delete(self, request, *args, **kwargs):
+		if not request.user.employee.is_md and not request.user.employe.is_hr:
+			raise PermissionDenied({"detail": "You are not authorized to make this request!"})
+		return self.destroy(request, *args, **kwargs)
 
 	def get_queryset(self):
 		try:
@@ -257,9 +263,11 @@ class EmployeePasswordChangeView(APIView):
 				"new_password1": "passwords do not match",
 				"new_password2": "passwords do not match",
 			})
-		if len(password1) < 5:
-			raise ValidationError({"new_password1": "Password must be more than 4 characters"})
-		return password1
+		try:
+			password = get_adapter().clean_password(password1)
+			return password
+		except Exception as e:
+			raise ValidationError({"new_password1": e})
 
 
 class EmployeeDeactivateView(APIView):

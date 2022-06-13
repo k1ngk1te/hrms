@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { OVERTIME_ADMIN_EXPORT_URL } from "../../../config/django";
+import { DEFAULT_PAGINATION_SIZE, OVERTIME_ADMIN_EXPORT_URL } from "../../../config";
 import { isErrorWithData, isFormError } from "../../../store";
 import { logout } from "../../../store/features/auth-slice";
 import {
@@ -32,7 +32,7 @@ const Overtime = () => {
 	const modalVisible = useAppSelector((state) => state.modal.visible);
 
 	const overtime = useGetAdminOvertimeQuery({
-		limit: 50,
+		limit: OVERTIME_ADMIN_EXPORT_URL,
 		offset,
 		search: nameSearch,
 		from: dateQuery.from,

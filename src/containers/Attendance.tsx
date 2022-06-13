@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { DEFAULT_PAGINATION_SIZE } from "../config";
 import { isErrorWithData } from "../store";
 import { useGetAttendanceQuery } from "../store/features/employees-slice";
 import {
@@ -17,7 +18,7 @@ const Attendance = () => {
 		refetch,
 		isLoading,
 		isFetching,
-	} = useGetAttendanceQuery({ limit: 50, offset });
+	} = useGetAttendanceQuery({ limit: DEFAULT_PAGINATION_SIZE, offset });
 
 	return (
 		<Container

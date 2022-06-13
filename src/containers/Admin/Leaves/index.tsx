@@ -6,7 +6,7 @@ import {
 	useState,
 } from "react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { LEAVE_ADMIN_EXPORT_URL } from "../../../config/django";
+import { DEFAULT_PAGINATION_SIZE, LEAVE_ADMIN_EXPORT_URL } from "../../../config";
 import { isErrorWithData, isFormError } from "../../../store";
 import { logout } from "../../../store/features/auth-slice";
 import {
@@ -53,7 +53,7 @@ const Leave = () => {
 	const modalVisible = useAppSelector((state) => state.modal.visible);
 
 	const leaves = useGetAdminLeavesQuery({
-		limit: 50,
+		limit: DEFAULT_PAGINATION_SIZE,
 		offset,
 		search: nameSearch,
 		from: dateQuery.from,

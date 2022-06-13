@@ -1,6 +1,6 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { EMPLOYEE_EXPORT_URL } from "../../config/django";
+import { DEFAULT_PAGINATION_SIZE, EMPLOYEE_EXPORT_URL } from "../../config";
 import { isFormError } from "../../store";
 import {
 	close as modalClose,
@@ -67,7 +67,7 @@ const Employees = () => {
 	>("");
 
 	const employees = useGetEmployeesQuery({
-		limit: 50,
+		limit: DEFAULT_PAGINATION_SIZE,
 		offset,
 		search,
 	});

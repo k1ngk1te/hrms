@@ -1,4 +1,5 @@
 import { FC, useCallback, useEffect, useState } from "react";
+import { DEFAULT_PAGINATION_SIZE } from "../../config";
 import {
 	useGetClientsQuery,
 	useGetEmployeesQuery,
@@ -95,8 +96,8 @@ const Form: FC<FormProps> = ({
 }) => {
 	const [formErrors, setErrors] = useState<InitErrorType>(initErrorState);
 
-	const [clientLimit, setClientLimit] = useState(50);
-	const [empLimit, setEmpLimit] = useState(50);
+	const [clientLimit, setClientLimit] = useState(DEFAULT_PAGINATION_SIZE);
+	const [empLimit, setEmpLimit] = useState(DEFAULT_PAGINATION_SIZE);
 	const [clientOptions, setClientOptions] = useState<OptionsType>([]);
 	const [empOptions, setEmpOptions] = useState<OptionsType>([]);
 
@@ -283,7 +284,7 @@ const Form: FC<FormProps> = ({
 									clients.data &&
 									clients.data.count > clients.data.results.length
 								) {
-									setClientLimit((prevState) => prevState + 50);
+									setClientLimit((prevState) => prevState + DEFAULT_PAGINATION_SIZE);
 								}
 							},
 							title: "load more",
@@ -372,7 +373,7 @@ const Form: FC<FormProps> = ({
 									employees.data &&
 									employees.data.count > employees.data.results.length
 								) {
-									setEmpLimit((prevState) => prevState + 50);
+									setEmpLimit((prevState) => prevState + DEFAULT_PAGINATION_SIZE);
 								}
 							},
 							title: "load more",
@@ -401,7 +402,7 @@ const Form: FC<FormProps> = ({
 									employees.data &&
 									employees.data.count > employees.data.results.length
 								) {
-									setEmpLimit((prevState) => prevState + 50);
+									setEmpLimit((prevState) => prevState + DEFAULT_PAGINATION_SIZE);
 								}
 							},
 							title: "load more",

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { FaCheckCircle, FaSearch, FaPlus, FaTimesCircle } from "react-icons/fa";
+import { DEFAULT_PAGINATION_SIZE } from "../../config";
 import { isErrorWithData } from "../../store";
 import { logout } from "../../store/features/auth-slice";
 import {
@@ -30,7 +31,7 @@ const Departments = () => {
 	const authData = useAppSelector((state) => state.auth.data);
 	const modalVisible = useAppSelector((state) => state.modal.visible);
 	const departments = useGetDepartmentsQuery({
-		limit: 0,
+		limit: DEFAULT_PAGINATION_SIZE,
 		offset,
 		search: nameSearch,
 	});

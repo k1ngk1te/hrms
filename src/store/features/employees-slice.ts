@@ -71,7 +71,7 @@ const employeesApi = baseApi.injectEndpoints({
 				body: generateClient(data),
 				credentials: "include",
 			}),
-			invalidatesTags: ["Client"],
+			invalidatesTags: (result) => result ? ["Client"] : [],
 		}),
 		getClients: build.query<ClientListType, ClientPaginationType>({
 			query: ({ limit, offset, search, active }) => ({
@@ -83,6 +83,14 @@ const employeesApi = baseApi.injectEndpoints({
 			}),
 			keepUnusedDataFor: DATA_LIFETIME || 60,
 			providesTags: ["Client"],
+		}),
+		deleteClient: build.mutation<unknown, string>({
+			query: (id) => ({
+				url: CLIENT_URL(id),
+				method: "DELETE",
+				credentials: "include"
+			}),
+			invalidatesTags: (result, error) => !error ? ["Client"] : []
 		}),
 		getEmployees: build.query<GetEmployeesDataType, PaginationType>({
 			query: ({ limit, offset, search }) => ({
@@ -102,6 +110,14 @@ const employeesApi = baseApi.injectEndpoints({
 				credentials: "include",
 			}),
 			providesTags: ["Employee"],
+		}),
+		deleteEmployee: build.mutation<unknown, string>({
+			query: (id) => ({
+				url: EMPLOYEE_URL(id),
+				method: "DELETE",
+				credentials: "include"
+			}),
+			invalidatesTags: (result, error) => !error ? ["Employee"] : []
 		}),
 		getHolidays: build.query<HolidayListType, PaginateType>({
 			query: ({ limit, offset, search }) => ({
@@ -222,6 +238,8 @@ export const {
 	useCreateEmployeeMutation,
 	useCreateHolidayMutation,
 	useDeactivateEmployeeMutation,
+	useDeleteClientMutation,
+	useDeleteEmployeeMutation,
 	useDeleteHolidayMutation,
 	useGetAttendanceQuery,
 	useGetClientQuery,

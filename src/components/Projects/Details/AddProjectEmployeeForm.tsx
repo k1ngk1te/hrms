@@ -1,6 +1,7 @@
 // Unused. This code was not implemented. Delete if not needed
 
 import { FC, useCallback, useEffect, useState } from "react";
+import { DEFAULT_PAGINATION_SIZE } from "../../../config"
 import { useGetEmployeesQuery } from "../../../store/features/employees-slice";
 import { useAppSelector, useFormSelect } from "../../../hooks";
 import { toCapitalize } from "../../../utils";
@@ -32,7 +33,7 @@ export const AddProjectEmployeeForm: FC<FormProps> = ({
 	loading,
 	onSubmit,
 }) => {
-	const [empLimit, setEmpLimit] = useState(50);
+	const [empLimit, setEmpLimit] = useState(DEFAULT_PAGINATION_SIZE);
 	const [empOptions, setEmpOptions] = useState<OptionsType>([]);
 
 	const modalVisible = useAppSelector((state) => state.modal.visible);
@@ -98,7 +99,7 @@ export const AddProjectEmployeeForm: FC<FormProps> = ({
 									employees.data &&
 									employees.data.count > employees.data.results.length
 								) {
-									setEmpLimit((prevState) => prevState + 50);
+									setEmpLimit((prevState) => prevState + DEFAULT_PAGINATION_SIZE);
 								}
 							},
 							title: "load more",

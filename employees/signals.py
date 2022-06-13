@@ -2,6 +2,7 @@ from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from rest_framework.exceptions import ValidationError
 
+from common.utils import get_instance
 from core.utils import generate_id
 from .models import Attendance, Client, Department, Employee, Holiday, Project, Task
 
@@ -26,11 +27,13 @@ def set_department_id(sender, instance, **kwargs):
 @receiver(pre_save, sender=Department)
 def check_hod(sender, instance, **kwargs):
 	try:
-		hod = getattr(instance, "hod", None)
-		if hod is not None and (
-			hod.department is None or hod.department != instance):
-			hod.department = instance
-			hod.save()
+		if instance.hod:
+			former_department = get_instance(Department, {"hod": instance.hod})
+			if former_department:
+				former_department.hod = None
+				former_department.save()
+			if instance.hod.department != instance:
+				instance.hod.department = instance
 	except:
 		pass
 

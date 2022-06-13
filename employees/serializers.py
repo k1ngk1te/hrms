@@ -145,15 +145,14 @@ class DepartmentSerializer(serializers.ModelSerializer):
 		return instance
 
 	def validate_name(self, value):
-		if value is None:
-			raise ValidationError("name is required")
-
-		name = value.lower().strip()
+		name = value.lower().strip() if value else value
 		method = get_request_method(self.context)
 		if method != 'PUT' and method != 'PATCH':
+			if not name:
+				raise ValidationError("Departmen name is required!")
 			dep = get_instance(Department, {"name": name})
 			if dep:
-				raise ValidationError("department with this name already exists!")
+				raise ValidationError("Department with this name already exists!")
 		return name
 
 	def validate_hod(self, value):

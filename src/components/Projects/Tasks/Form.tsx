@@ -1,5 +1,6 @@
 import { FC, useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
+import { DEFAULT_PAGINATION_SIZE } from "../../../config";
 import {
 	useGetProjectEmployeesQuery
 } from "../../../store/features/projects-slice";
@@ -78,7 +79,7 @@ const Form: FC<FormProps> = ({
 	const { id } = useParams()
 	const [formErrors, setErrors] = useState<InitErrorType>(initErrorState);
 
-	const [empLimit, setEmpLimit] = useState(50);
+	const [empLimit, setEmpLimit] = useState(DEFAULT_PAGINATION_SIZE);
 	const [empOptions, setEmpOptions] = useState<OptionsType>([]);
 
 	const modalVisible = useAppSelector((state) => state.modal.visible);
@@ -244,7 +245,7 @@ const Form: FC<FormProps> = ({
 									employees.data &&
 									employees.data.count > employees.data.results.length
 								) {
-									setEmpLimit((prevState) => prevState + 50);
+									setEmpLimit((prevState) => prevState + DEFAULT_PAGINATION_SIZE);
 								}
 							},
 							title: "load more",
@@ -273,7 +274,7 @@ const Form: FC<FormProps> = ({
 									employees.data &&
 									employees.data.count > employees.data.results.length
 								) {
-									setEmpLimit((prevState) => prevState + 50);
+									setEmpLimit((prevState) => prevState + DEFAULT_PAGINATION_SIZE);
 								}
 							},
 							title: "load more",

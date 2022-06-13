@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { FaLock, FaUserEdit, FaUserCheck, FaUserSlash } from "react-icons/fa";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { FaLock, FaUserEdit, FaUserCheck, FaUserSlash, FaTrash } from "react-icons/fa";
 import {DEFAULT_IMAGE} from "../../config"
 import { isErrorWithData } from "../../store";
 import { logout } from "../../store/features/auth-slice";
-import { useGetEmployeeQuery } from "../../store/features/employees-slice";
+import { useGetEmployeeQuery, useDeleteEmployeeMutation } from "../../store/features/employees-slice";
+import { open as alertOpen } from "../../store/features/alert-slice";
 import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
 import {
 	open as modalOpen,
@@ -25,6 +26,8 @@ const Employee = () => {
 		}
 	);
 
+	const navigate = useNavigate()
+
 	const dispatch = useAppDispatch();
 	const modalVisible = useAppSelector((state) => state.modal.visible);
 	const authData = useAppSelector((state) => state.auth.data);
@@ -33,7 +36,52 @@ const Employee = () => {
 
 	const [formType, setFormType] = useState<"employee" | "password">("employee");
 
+	const [deleteEmployee, deleteData] = useDeleteEmployeeMutation()
+
 	const { deactivate, loading } = useDeactivateEmployee();
+
+	const handleDeleteEmployee = useCallback((id: string) => {
+		dispatch(alertModalOpen({
+			header: "Delete Employee?",
+			color: "warning",
+			message: "Do you want to delete employee?",
+			decisions: [
+				{
+					bg: "bg-gray-600 hover:bg-gray-500",
+					caps: true,
+					onClick: () => {},
+					title: "cancel"
+				},
+				{
+					bg: "bg-red-600 hover:bg-red-500",
+					caps: true,
+					onClick: () => deleteEmployee(id),
+					title: "proceed"
+				},
+			]
+		}))
+	}, [dispatch, deleteEmployee])
+
+	useEffect(() => {
+		const error = deleteData.error;
+		if (isErrorWithData(error)) {
+			if (error?.status) dispatch(logout())
+			else {
+				dispatch(alertModalOpen({
+					header: "Failed to Delete",
+					color: "danger",
+					message: String(error.data?.detail || error.data?.error || "A server error occurred!")
+				}))
+			}
+		}
+	}, [dispatch, deleteData.error])
+
+	useEffect(() => {
+		if (deleteData.isSuccess === true) {
+			dispatch(alertOpen({ type: "success", message: "Employee was deleted successfully!" }));
+			navigate(-1)
+		}
+	}, [dispatch, deleteData.isSuccess, navigate])
 
 	useEffect(() => {
 		if (isErrorWithData(error) && error?.status === 401) dispatch(logout());
@@ -56,6 +104,7 @@ const Employee = () => {
 					  }
 					: undefined
 			}
+			title={data && data.user?.full_name ? data.user.full_name : undefined}
 		>
 			{data && (
 				<>
@@ -64,7 +113,7 @@ const Employee = () => {
 						full_name={toCapitalize(
 							`${data?.user?.first_name} ${data?.user?.last_name}`
 						)}
-						image={data?.profile?.image || "/static/images/default.png"}
+						image={data?.profile?.image || DEFAULT_IMAGE}
 						actions={
 							admin_status === "hr" || admin_status === "md"
 								? [
@@ -73,12 +122,14 @@ const Employee = () => {
 												formType !== "employee" && setFormType("employee");
 												dispatch(modalOpen());
 											},
+											disabled: loading || deleteData.isLoading,
 											IconLeft: FaUserEdit,
 											title: "Edit Employee",
 										},
 										{
-											bg: "bg-gray-600 hover:bg-gray-500",
+											bg: "bg-yellow-600 hover:bg-yellow-500",
 											IconLeft: FaLock,
+											disabled: loading || deleteData.isLoading,
 											onClick: () => {
 												formType !== "password" && setFormType("password");
 												dispatch(modalOpen());
@@ -87,9 +138,9 @@ const Employee = () => {
 										},
 										{
 											bg: userActive
-												? "bg-red-500 hover:bg-red-600"
+												? "bg-gray-500 hover:bg-gray-600"
 												: "bg-green-500 hover:bg-green-600",
-											disabled: loading,
+											disabled: loading || deleteData.isLoading,
 											loading: loading,
 											loader: true,
 											onClick: () =>
@@ -100,6 +151,15 @@ const Employee = () => {
 											title: userActive
 												? "Deactivate Employee"
 												: "Activate Employee",
+										},
+										{
+											bg: "bg-red-600 hover:bg-red-500",
+											IconLeft: FaTrash,
+											disabled: loading || deleteData.isLoading,
+											loading: deleteData.isLoading,
+											loader: true,
+											onClick: () => handleDeleteEmployee(data.id),
+											title: "Delete Employee",
 										},
 								  ]
 								: []

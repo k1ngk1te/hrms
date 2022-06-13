@@ -96,13 +96,13 @@ class UserSerializer(serializers.ModelSerializer):
 		return user
 
 	def update(self, instance, validated_data):
-		email = validated_data.get("email", None)
+		email = validated_data.pop("email", None)
 		if email is not None and email.lower() != instance.email and get_instance(
 			User, {"email": email}) is not None:
 			raise ValidationError({
 				"email": "User with specified email already exists!"
 			})
-		instance.email = validated_data.get("email", instance.email)
+		instance.email = validated_data.get("email", email)
 		instance.first_name = validated_data.get("first_name", instance.first_name)
 		instance.last_name = validated_data.get("last_name", instance.last_name)
 		instance.save()

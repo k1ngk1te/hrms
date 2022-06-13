@@ -2,6 +2,7 @@ import { Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect } from 
 import { Link, useNavigate } from "react-router-dom";
 import { BiRefresh } from "react-icons/bi";
 import { FaArrowLeft } from "react-icons/fa";
+import { DEFAULT_PAGINATION_SIZE } from "../../config";
 import { close as alertClose } from "../../store/features/alert-slice";
 import { logout } from "../../store/features/auth-slice";
 import { close } from "../../store/features/alert-modal-slice";
@@ -163,8 +164,9 @@ const Container: FC<ContainerProps> = ({
 								disabled={paginate.loading || false}
 								onChange={(pageNo: number) => {
 									const value = pageNo - 1 <= 0 ? 0 : pageNo - 1;
-									paginate.offset !== value && paginate.setOffset(value * 50);
+									paginate.offset !== value && paginate.setOffset(value * DEFAULT_PAGINATION_SIZE);
 								}}
+								pageSize={DEFAULT_PAGINATION_SIZE}
 								totalItems={paginate.totalItems || 0}
 							/>
 						</div>

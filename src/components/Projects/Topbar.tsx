@@ -36,11 +36,13 @@ const Topbar: FC<TopbarProps> = ({ loading, openModal, onSubmit }) => {
 					}}
 					inputProps={{
 						bdrColor: "border-primary-500",
+						disabled: loading,
 						Icon: FaSearch,
 						onChange: search.onChange,
 						placeholder:
 							"Search Project Name, Company, Team, Client",
 						rounded: "rounded-l-lg",
+						type: "search",
 						value: search.value,
 					}}
 				/>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaSadTear } from "react-icons/fa";
+import { DEFAULT_PAGINATION_SIZE } from "../../config"
 import { logout } from "../../store/features/auth-slice";
 import { useNotificationsQuery } from "../../store/features/notifications-slice";
 import {
@@ -26,7 +27,7 @@ const NoData = () => (
 const Notifications = () => {
   const [offset, setOffset] = useState(0);
   const notifications = useNotificationsQuery(
-    { limit: 100, offset },
+    { limit: DEFAULT_PAGINATION_SIZE, offset },
     {
       refetchOnMountOrArgChange: true,
     }

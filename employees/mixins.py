@@ -181,8 +181,8 @@ class EmployeeModelMixin:
 	def get_open_and_close_time(self, date=now().date(), **kwargs):
 		wo = kwargs.get('wo', False) # wo stands for 'without overtime'
 
-		open_time = datetime.time(5, 30, 0)
-		closing_time = datetime.time(18, 30, 0)
+		open_time = datetime.time(7, 0, 0)
+		closing_time = datetime.time(20, 30, 0)
 
 		if wo:
 			return OrderedDict({"open": open_time, "close": closing_time})	

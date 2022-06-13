@@ -124,7 +124,7 @@ const Sidebar = forwardRef<HTMLDivElement, PropsType>(
 			{
 				admin: false,
 				Icon: FaUser,
-				title: "my profile",
+				title: "profile",
 				href: routes.PROFILE_PAGE_URL,
 			},
 		];

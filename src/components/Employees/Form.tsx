@@ -1,5 +1,6 @@
 import { FormEvent, FC, useCallback, useEffect, useState } from "react";
 
+import { DEFAULT_PAGINATION_SIZE } from "../../config";
 import { useGetDepartmentsQuery } from "../../store/features/departments-slice";
 import { useGetEmployeesQuery } from "../../store/features/employees-slice";
 import { useGetJobsQuery } from "../../store/features/jobs-slice";
@@ -39,9 +40,9 @@ const Form: FC<FormProps> = ({
   success,
   onSubmit,
 }) => {
-  const [depLimit, setDepLimit] = useState(50);
-  const [empLimit, setEmpLimit] = useState(50);
-  const [jobLimit, setJobLimit] = useState(50);
+  const [depLimit, setDepLimit] = useState(DEFAULT_PAGINATION_SIZE);
+  const [empLimit, setEmpLimit] = useState(DEFAULT_PAGINATION_SIZE);
+  const [jobLimit, setJobLimit] = useState(DEFAULT_PAGINATION_SIZE);
   const [depOptions, setDepOptions] = useState<OptionsType>([]);
   const [empOptions, setEmpOptions] = useState<OptionsType>([]);
   const [jobOptions, setJobOptions] = useState<OptionsType>([]);
@@ -301,7 +302,7 @@ const Form: FC<FormProps> = ({
                   departments.data &&
                   departments.data.count > departments.data.results.length
                 ) {
-                  setDepLimit((prevState) => prevState + 50);
+                  setDepLimit((prevState) => prevState + DEFAULT_PAGINATION_SIZE);
                 }
               },
               title: "load more",
@@ -329,7 +330,7 @@ const Form: FC<FormProps> = ({
               loading: jobs.isFetching,
               onClick: () => {
                 if (jobs.data && jobs.data.count > jobs.data.results.length) {
-                  setJobLimit((prevState) => prevState + 50);
+                  setJobLimit((prevState) => prevState + DEFAULT_PAGINATION_SIZE);
                 }
               },
               title: "load more",
@@ -355,7 +356,7 @@ const Form: FC<FormProps> = ({
                   employees.data &&
                   employees.data.count > employees.data.results.length
                 ) {
-                  setEmpLimit((prevState) => prevState + 50);
+                  setEmpLimit((prevState) => prevState + DEFAULT_PAGINATION_SIZE);
                 }
               },
               title: "load more",

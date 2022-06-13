@@ -1,5 +1,6 @@
 import { ChangeEvent, FormEvent, FC, useEffect, useState } from "react";
 
+import { DEFAULT_PAGINATION_SIZE } from "../../config";
 import { useGetEmployeesQuery } from "../../store/features/employees-slice";
 import { useAppSelector } from "../../hooks";
 import { toCapitalize } from "../../utils";
@@ -29,7 +30,7 @@ const Form: FC<FormProps> = ({
   onSelectChange,
   onTextChange,
 }) => {
-  const [empLimit, setEmpLimit] = useState(50);
+  const [empLimit, setEmpLimit] = useState(DEFAULT_PAGINATION_SIZE);
   const [empOptions, setEmpOptions] = useState<any>([]);
 
   const modalVisible = useAppSelector((state) => state.modal.visible);
@@ -69,7 +70,7 @@ const Form: FC<FormProps> = ({
                     employees.data &&
                     employees.data.count > employees.data.results.length
                   ) {
-                    setEmpLimit((prevState) => prevState + 50);
+                    setEmpLimit((prevState) => prevState + DEFAULT_PAGINATION_SIZE);
                   }
                 },
                 title: "load more",

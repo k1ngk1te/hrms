@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { DEFAULT_PAGINATION_SIZE } from "../../config"
 import { isErrorWithData, isFormError } from "../../store";
 import { logout } from "../../store/features/auth-slice";
 import {
@@ -25,7 +26,7 @@ const Overtime = () => {
 	const modalVisible = useAppSelector((state) => state.modal.visible);
 
 	const overtime = useGetOvertimeQuery({
-		limit: 50,
+		limit: DEFAULT_PAGINATION_SIZE,
 		offset,
 		from: dateQuery.from,
 		to: dateQuery.to,

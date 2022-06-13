@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
 	FaCheckCircle,
 	FaTimesCircle,
@@ -7,10 +7,13 @@ import {
 	FaUserEdit,
 	FaUserSlash,
 	FaLock,
+	FaTrash
 } from "react-icons/fa";
 import { isErrorWithData } from "../../store";
+import { open as alertOpen } from "../../store/features/alert-slice";
+import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
 import { close as modalClose, open as modalOpen } from "../../store/features/modal-slice";
-import { useGetClientQuery } from "../../store/features/employees-slice";
+import { useGetClientQuery, useDeleteClientMutation } from "../../store/features/employees-slice";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { useDeactivateEmployee } from "../../hooks/employees";
 import { UpdateForm } from "../../components/Clients";
@@ -28,6 +31,10 @@ const ClientDetail = () => {
 		skip: id === undefined,
 	});
 
+	const [deleteClient, deleteData] = useDeleteClientMutation()
+
+	const navigate = useNavigate()
+
 	const dispatch = useAppDispatch();
 	const authData = useAppSelector((state) => state.auth.data);
 	const modalVisible = useAppSelector((state) => state.modal.visible);
@@ -36,12 +43,57 @@ const ClientDetail = () => {
 
 	const { deactivate, loading } = useDeactivateEmployee("client");
 
+	const handleDeleteClient = useCallback((id: string) => {
+		dispatch(alertModalOpen({
+			header: "Delete Client?",
+			color: "warning",
+			message: "Do you want to delete client?",
+			decisions: [
+				{
+					bg: "bg-gray-600 hover:bg-gray-500",
+					caps: true,
+					onClick: () => {},
+					title: "cancel"
+				},
+				{
+					bg: "bg-red-600 hover:bg-red-500",
+					caps: true,
+					onClick: () => deleteClient(id),
+					title: "proceed"
+				},
+			]
+		}))
+	}, [dispatch, deleteClient])
+
+	useEffect(() => {
+		const error = deleteData.error;
+		if (isErrorWithData(error)) {
+			if (error?.status) dispatch(logout())
+			else {
+				dispatch(alertModalOpen({
+					header: "Failed to Delete",
+					color: "danger",
+					message: String(error.data?.detail || error.data?.error || "A server error occurred!")
+				}))
+			}
+		}
+	}, [dispatch, deleteData.error])
+
+	useEffect(() => {
+		if (deleteData.isSuccess === true) {
+			dispatch(alertOpen({ type: "success", message: "Client was deleted successfully!" }));
+			navigate(-1)
+		}
+	}, [dispatch, deleteData.isSuccess, navigate])
+
+
 	return (
 		<Container
 			heading="Client Information"
 			refresh={{
 				onClick: refetch,
 			}}
+			title={data ? data.company.toUpperCase() : undefined}
 			icon
 			loading={isLoading}
 			error={
@@ -73,12 +125,14 @@ const ClientDetail = () => {
 												formType !== "client" && setFormType("client");
 												dispatch(modalOpen());
 											},
+											disabled: loading || deleteData.isLoading,
 											IconLeft: FaUserEdit,
 											title: "Edit Client",
 										},
 										{
-											bg: "bg-gray-600 hover:bg-gray-500",
+											bg: "bg-yellow-600 hover:bg-yellow-500",
 											IconLeft: FaLock,
+											disabled: loading || deleteData.isLoading,
 											onClick: () => {
 												formType !== "password" && setFormType("password");
 												dispatch(modalOpen());
@@ -87,9 +141,9 @@ const ClientDetail = () => {
 										},
 										{
 											bg: userActive
-												? "bg-red-500 hover:bg-red-600"
+												? "bg-gray-500 hover:bg-gray-600"
 												: "bg-green-500 hover:bg-green-600",
-											disabled: loading,
+											disabled: loading || deleteData.isLoading,
 											loading: loading,
 											loader: true,
 											onClick: () =>
@@ -100,6 +154,15 @@ const ClientDetail = () => {
 											title: userActive
 												? "Deactivate Client"
 												: "Activate Client",
+										},
+										{
+											bg: "bg-red-600 hover:bg-red-500",
+											IconLeft: FaTrash,
+											disabled: loading || deleteData.isLoading,
+											loading: deleteData.isLoading,
+											loader: true,
+											onClick: () => handleDeleteClient(data.id),
+											title: "Delete Client",
 										},
 								  ]
 								: []

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { DEFAULT_PAGINATION_SIZE } from "../../config";
 import { isErrorWithData, isFormError } from "../../store";
 import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
 import {
@@ -23,7 +24,7 @@ const Clients = () => {
 	const [search, setSearch] = useState("");
 
 	const { data, error, refetch, isLoading, isFetching } = useGetClientsQuery({
-		limit: 50,
+		limit: DEFAULT_PAGINATION_SIZE,
 		offset,
 		search,
 	});

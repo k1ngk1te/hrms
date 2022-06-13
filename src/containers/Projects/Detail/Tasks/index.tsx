@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { DEFAULT_PAGINATION_SIZE } from "../../../../config";
 import { isErrorWithData, isFormError } from "../../../../store";
 import { logout } from "../../../../store/features/auth-slice";
 import {
@@ -26,7 +27,7 @@ const Tasks = () => {
 
 	const { data, error, isFetching, refetch, isLoading } = useGetTasksQuery({
 		project_id: id || "",
-		limit: 50,
+		limit: DEFAULT_PAGINATION_SIZE,
 		offset,
 		search,
 	}, {
