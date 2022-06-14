@@ -245,7 +245,7 @@ class EmployeeModelMixin:
 		overtime = self.user.employee.overtime.filter(date=date)
 		for ov in overtime:
 			# Check if any admin denied it and if the md approved it them return False
-			if ov.a_s != "D" and ov.a_hod != "D" and ov.a_hr != "D" and ov.a_md != "D" and ov.a_md == "A":
+			if ov.a_s == "D" or ov.a_hod == "D" or ov.a_hr == "D" or ov.a_md == "D" or ov.a_md == "A":
 				pass
 			else:
 				return True

@@ -45,7 +45,7 @@ class Leave(models.Model):
 	leave_id = models.BigAutoField(primary_key=True)
 	id = models.CharField(max_length=ID_LENGTH, unique=True, editable=False)
 	employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="leaves")
-	leave_type = models.CharField(max_length=3, choices=LEAVE_CHOICES, verbose_name="type")
+	leave_type = models.CharField(max_length=3, choices=LEAVE_CHOICES, verbose_name="type", default="C")
 	start_date = models.DateField()
 	end_date = models.DateField()
 	reason = models.TextField()
@@ -182,7 +182,7 @@ class Overtime(models.Model):
 	id = models.CharField(max_length=ID_LENGTH, unique=True, editable=False)
 	employee = models.ForeignKey(Employee, unique_for_date='date', 
 		on_delete=models.CASCADE, related_name="overtime")
-	overtime_type = models.CharField(max_length=3, choices=OVERTIME_CHOICES, verbose_name="type")
+	overtime_type = models.CharField(max_length=3, choices=OVERTIME_CHOICES, verbose_name="type", default="V")
 	date = models.DateField()
 	hours = models.IntegerField()
 	reason = models.TextField()
