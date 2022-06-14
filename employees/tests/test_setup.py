@@ -67,6 +67,7 @@ class TestSetUp(APITestCase):
 		self.hod = Employee.objects.create(user=self.user3)
 		self.department = Department.objects.create(name="marketing202", hod=self.hod)
 		self.department2 = Department.objects.create(name="marketing40")
+
 		self.supervisor = Employee.objects.create(user=self.user4, department=self.department)
 		
 		self.employee = Employee.objects.create(user=self.user5, supervisor=self.supervisor,

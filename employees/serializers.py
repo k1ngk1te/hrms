@@ -298,6 +298,8 @@ class EmployeeSerializer(serializers.ModelSerializer):
 		supervisor = get_instance(Employee, {"id": id})
 		if supervisor is None:
 			raise ValidationError({"id": f"Employee with ID {id} does not exist!"})
+		if not supervisor.user.is_active:
+			raise ValidationError({"id": f"Employee with ID {id} is not active!"})
 		return supervisor
 
 

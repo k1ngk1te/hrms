@@ -24,18 +24,11 @@ def set_department_id(sender, instance, **kwargs):
 	if not instance.id:
 		instance.id = generate_id("dep", key="department_id", model=Department)
 
-@receiver(pre_save, sender=Department)
-def check_hod(sender, instance, **kwargs):
-	try:
-		if instance.hod:
-			former_department = get_instance(Department, {"hod": instance.hod})
-			if former_department:
-				former_department.hod = None
-				former_department.save()
-			if instance.hod.department != instance:
-				instance.hod.department = instance
-	except:
-		pass
+@receiver(post_save, sender=Department)
+def set_hod(sender, instance, **kwargs):
+	if instance.hod and instance.hod.department != instance:
+		instance.hod.department = instance
+		instance.hod.save()
 
 @receiver(pre_save, sender=Employee)
 def set_employee_id(sender, instance, **kwargs):

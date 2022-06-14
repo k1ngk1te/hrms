@@ -182,7 +182,10 @@ class EmployeeListViewTests(TestSetUp):
 			"email": user.email, "password": "Passing1234"})
 		response6 = self.client.get(self.employees_url)
 
-		self.assertEqual(self.hod.department, self.department)
+		# Reinitializing the hod instance
+		hod = Employee.objects.get(user=self.hod.user)
+
+		self.assertEqual(hod.department, self.department)
 		self.assertEqual(response1.status_code, 403)
 		self.assertEqual(response2.status_code, 200)
 		self.assertEqual(len(response2.data['results']), 1)
@@ -267,9 +270,11 @@ class EmployeeListViewTests(TestSetUp):
 			},
 			"date_employed": "2022-03-18"
 		}, format="json")		
+
+		# Unique Error Failure Coz Employee was created in response 5 
 		response6 = self.client.post(self.employees_url, {
 			"user": {
-				"email": "Test@teSt.testinG",
+				"email": "Test@teSt.tesTinG",
 				"first_name": "test",
 				"last_name": "test"
 			},
@@ -296,6 +301,7 @@ class EmployeeListViewTests(TestSetUp):
 		self.supervisor.user.is_active = False
 		self.supervisor.user.save()
 
+		# Failure Coz Supervisor is not active
 		response7 = self.client.post(self.employees_url, {
 			"user": {
 				"email": "Test@teSt.testinGa",
@@ -322,6 +328,7 @@ class EmployeeListViewTests(TestSetUp):
 			"date_employed": "2022-03-18"
 		},format="json")
 
+		# Failure Coz of Department not found
 		response8 = self.client.post(self.employees_url, {
 			"user": {
 				"email": "Test@teSt.testinGa",
@@ -348,6 +355,7 @@ class EmployeeListViewTests(TestSetUp):
 			"date_employed": "2022-03-18"
 		}, format="json")
 
+		# Failure Coz of Job not found
 		response9 = self.client.post(self.employees_url, {
 			"user": {
 				"email": "Test@teSt.testinGa",
@@ -374,6 +382,7 @@ class EmployeeListViewTests(TestSetUp):
 			"date_employed": "2022-03-18"
 		}, format="json")
 
+		# Failure Coz of Supervisor not found
 		response10 = self.client.post(self.employees_url, {
 			"user": {
 				"email": "Test@teSt.testinGa",
@@ -400,6 +409,7 @@ class EmployeeListViewTests(TestSetUp):
 			"date_employed": "2022-03-18"
 		}, format="json")
 
+		# Failure Coz Of Invalid Gender
 		response11 = self.client.post(self.employees_url, {
 			"user": {
 				"email": "Test@teSt.testinGba",
@@ -425,8 +435,6 @@ class EmployeeListViewTests(TestSetUp):
 			},
 			"date_employed": "2022-03-18"
 		}, format="json")
-
-		import pdb;pdb.set_trace()
 
 		try:
 			Employee.objects.get(user__email="tester@test.testing")

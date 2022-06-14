@@ -149,8 +149,12 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 			instance.user.last_name = user.get("last_name", instance.user.last_name)
 			instance.user.save()
 
+		_gender = validated_data.get("gender", None)
+		if _gender and _gender != "M" and _gender != "F":
+			raise ValidationError({"gender": "Gender is invalid"})
+
 		instance.image = validated_data.get("image", instance.image)
-		instance.gender = validated_data.get("gender", instance.gender)
+		instance.gender = validated_data.get("gender", _gender)
 		instance.address = validated_data.get("address", instance.address)
 		instance.date_of_birth = validated_data.get("date_of_birth", instance.date_of_birth)
 		instance.phone = validated_data.get("phone", instance.phone)
@@ -182,9 +186,13 @@ class UserProfileSerializer(UserSerializer):
 		user.set_password(validated_data.get("last_name").upper())
 		user.save()
 
+		_gender = profile_data.get("gender", None)
+		if _gender and _gender != "M" and _gender != "F":
+			raise ValidationError({"gender": "Gender is invalid"})
+
 		profile = Profile.objects.get_or_create(user=user)[0]
 		profile.image = profile_data.get("image", profile.image)
-		profile.gender = profile_data.get("gender", profile.gender)
+		profile.gender = profile_data.get("gender", _gender)
 		profile.address = profile_data.get("address", profile.address)
 		profile.date_of_birth = profile_data.get("date_of_birth", profile.date_of_birth)
 		profile.phone = profile_data.get("phone", profile.phone)

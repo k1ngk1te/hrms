@@ -46,12 +46,6 @@ class Department(models.Model):
 	def __str__(self):
 		return self.name
 
-	@staticmethod
-	def get_department(name):
-		if name is None:
-			raise ValueError("department name is required")
-		return get_instance(Department, {"name": name})
-
 	def get_absolute_url(self):
 		return reverse('department-detail', kwargs={"id": self.id})
 
