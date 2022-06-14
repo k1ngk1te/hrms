@@ -1,5 +1,6 @@
 import datetime
 from django.contrib.auth import get_user_model
+from django.utils.timezone import now
 from django.urls import reverse
 from rest_framework.test import APIClient, APITestCase
 
@@ -10,11 +11,11 @@ User = get_user_model()
 
 def get_date(no=None, string=False):
 	if no is None:
-		date = datetime.datetime.today().date()
+		date = now().date()
 		if string:
 			return f"{date.year}-{date.month}-{date.day}"
 		return date
-	date = datetime.datetime.today().date() + datetime.timedelta(days=no)
+	date = now().date() + datetime.timedelta(days=no)
 	if string:
 		return f"{date.year}-{date.month}-{date.day}"	
 	return date
@@ -26,6 +27,8 @@ class TestSetUp(APITestCase):
 		self.login_url = reverse('rest_login')
 		self.leaves_url = reverse('leaves')
 		self.leaves_admin_url = reverse('leaves-admin')
+		self.overtime_url = reverse('overtime')
+		self.overtime_admin_url = reverse('overtime-admin')
 
 		self.user1 = User.objects.create(email="md@example.com")
 		self.user1.set_password("Passing1234")

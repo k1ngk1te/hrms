@@ -27,11 +27,13 @@ class EmployeeModelMixin:
 
 	@property
 	def is_on_leave(self):
-		approved_leave = self.user.employee.leaves.filter(a_md="A").order_by('date_requested').last()
-		if approved_leave:
-			diff = (approved_leave.end_date - now().date()).days
-			if diff > 0:
-				return True
+		# Get all approved leaves with start date less than or equal to today
+		# And end_dates greater than today
+		active_leaves_count = self.user.employee.leaves.filter(a_md="A",
+			start_date__lte=now().date(), end_date__gt=now().date()).order_by(
+			'-date_requested', '-start_date').count()
+		if active_leaves_count > 0:
+			return True
 		return False
 
 	@property
@@ -62,16 +64,6 @@ class EmployeeModelMixin:
 		return LEAVE_TOTAL - self.leaves_taken
 
 	@property
-	def has_pending_leave(self):
-		emp = self.user.employee
-		leaves = emp.leaves.exclude(Q(a_md="A") | Q(a_md="D")
-			| Q(a_hr="D") | Q(a_hod="D") | Q(a_s="D"))
-		for leave in leaves:
-			if leave.status == "P":
-				return True
-		return False
-
-	@property
 	def department_name(self):
 		if self.department is not None:
 			return self.department.name
@@ -87,6 +79,34 @@ class EmployeeModelMixin:
 	def supervised_emps(self):
 		EmployeeModel = self.employee_model
 		return EmployeeModel.objects.filter(supervisor__user=self.user)
+
+	def has_active_leave(self, date):
+		# A method to check if the employee has an active leave in the range of dates
+		leaves = self.user.employee.leaves.filter(a_md="A", start_date__gte=date) # Get active leaves where start date is >= date passed
+		for leave in leaves:
+			if leave.start_date <= date <= leave.end_date:
+				return True
+		return False
+
+	def has_pending_leave(self, date):
+		# A method to check if the employee has a pending leave in the range of dates
+		leaves = self.user.employee.leaves.exclude(Q(a_md="A") | Q(a_md="D") # Remove all active and denied leaves
+			| Q(a_hr="D") | Q(a_hod="D") | Q(a_s="D")).filter(start_date__gte=date) # Get leaves where start date is >= date passed
+		for leave in leaves:
+			if leave.start_date <= date <= leave.end_date:
+				return True
+		return False
+
+	def has_pending_or_active_leave(self, date):
+		# A method to check if the employee has a pending or active leave in the range of dates
+		leaves = self.user.employee.leaves.exclude(Q(a_md="D") # Remove all denied leaves
+			| Q(a_hr="D") | Q(a_hod="D") | Q(a_s="D")).filter(start_date__gte=date) # Get leaves where start date is >= date passed
+		for leave in leaves:
+			if leave.start_date <= date <= leave.end_date:
+				if leave.a_md == "A":
+					return [True, f"You are on leave from {leave.start_date} to {leave.end_date}"]
+				return [True, f"You have pending leave request from {leave.start_date} to {leave.end_date}"]
+		return [False, "You do not have pending nor active leave."]
 
 	def total_hours_for_the_day(self, date=now().date(), **kwargs):
 		# A method that returns the total hours an employee should or
@@ -219,4 +239,15 @@ class EmployeeModelMixin:
 	def has_overtime(self, date=now().date()):
 		overtime = self.user.employee.overtime.filter(date=date, a_md='A')
 		return overtime.first() if overtime.exists() is True else None
+
+	def has_pending_overtime(self, date=now().date()):
+		# A method to check if the employee has a pending overtime for this date
+		overtime = self.user.employee.overtime.filter(date=date)
+		for ov in overtime:
+			# Check if any admin denied it and if the md approved it them return False
+			if ov.a_s != "D" and ov.a_hod != "D" and ov.a_hr != "D" and ov.a_md != "D" and ov.a_md == "A":
+				pass
+			else:
+				return True
+		return False
 

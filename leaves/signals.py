@@ -39,7 +39,9 @@ def send_leave_email_signal(sender, instance, created, **kwargs):
 					else:
 						recipient = get_instance(Employee, {"is_md": True})
 				elif employee.is_supervisor:
-					if employee.department and employee.department.hod:
+					if employee.supervisor:
+						recipient = employee.supervisor
+					elif employee.department and employee.department.hod:
 						recipient = employee.department.hod
 					else:
 						e = get_instances(Employee, {"is_hr": True})
@@ -154,7 +156,9 @@ def send_overtime_email_signal(sender, instance, created, **kwargs):
 					else:
 						recipient = get_instance(Employee, {"is_md": True})
 				elif employee.is_supervisor:
-					if employee.department and employee.department.hod:
+					if employee.supervisor:
+						recipient = employee.supervisor
+					elif employee.department and employee.department.hod:
 						recipient = employee.department.hod
 					else:
 						e = get_instances(Employee, {"is_hr": True})
@@ -228,7 +232,7 @@ def send_overtime_email_signal(sender, instance, created, **kwargs):
 					if admin.job:
 						context.update({"admin_job": instance.created_by.job.name})
 					email_body = render_to_string('overtimes/admin_to_admin.txt', context)
-					send_email_task(message, email_body, settings.OVERTIME_EMIAL, [recipient.user.email])
+					send_email_task(message, email_body, settings.OVERTIME_EMAIL, [recipient.user.email])
 				message=f"{admin.user.get_full_name().upper()} sent a request for overtime on your behalf"
 				Notification.objects.create(_type="O", sender=admin, recipient=employee,
 					message=message, message_id=instance.id)

@@ -165,7 +165,7 @@ class LeaveManager(models.Manager):
 		start_date = leave_data.get('start_date')
 		end_date = leave_data.get('end_date')
 
-		[valid, reason] = self.can_request_leave(emp)
+		[valid, reason] = self.can_request_leave(emp, start_date)
 		if valid is False:
 			raise ValidationError({"detail": reason})
 
@@ -199,15 +199,16 @@ class LeaveManager(models.Manager):
 	def filter_by_date(self, emp, _from, _to):
 		return self.get_queryset().get_leaves_by_date(emp, _from, _to)
 
-	def can_request_leave(self, emp):
+	def can_request_leave(self, emp, date):
 		if emp.user.is_active is False:
 			return [False, "Employee is Inactive!"]
-		if emp.has_pending_leave:
-			return [False, "You already have a pending request!"]
-		if emp.leaves_remaining <= 0:
-			return [False, "You have run out of leaves for this year!"]
 		if emp.is_on_leave is True:
 			return [False, "Currently on leave!"]
+		if emp.leaves_remaining <= 0:
+			return [False, "You have run out of leaves for this year!"]
+		pending_or_active_leave = emp.has_pending_or_active_leave(date)
+		if pending_or_active_leave[0] is True:
+			return [False, pending_or_active_leave[1]]
 		return [True, "Can request a leave"]
 
 	def can_update_leave(self, leave, emp):
@@ -290,7 +291,7 @@ class OvertimeManager(models.Manager):
 		date = overtime_data.get('date')
 		hours = overtime_data.get('hours')
 
-		[valid, reason] = self.can_request_overtime(emp)
+		[valid, reason] = self.can_request_overtime(emp, date)
 		if valid is False:
 			raise ValidationError({"detail": reason})
 
@@ -306,13 +307,11 @@ class OvertimeManager(models.Manager):
 		if (date - current_date).days < 0:
 			raise ValidationError({ "date": "Start date must be a present or future date" })
 
-		active_overtime_for_date = self.filter(employee=emp, date=date, a_md="A")
-		if active_overtime_for_date.exists():
+		if emp.has_overtime(date):
 			raise ValidationError({"date": 
 				"You already have an approved overtime request specified for this date"})
 
-		pending_overtime_for_date = self.filter(employee=emp, date=date, a_md="P")
-		if pending_overtime_for_date.exists():
+		if emp.has_pending_overtime(date):
 			raise ValidationError({"date": 
 				"You have a pending overtime request specified for this date"})
 
@@ -340,11 +339,18 @@ class OvertimeManager(models.Manager):
 	def filter_by_date(self, emp, _from, _to):
 		return self.get_queryset().get_overtime_by_date(emp, _from, _to)
 
-	def can_request_overtime(self, emp):
+	def can_request_overtime(self, emp, date):
 		if emp.user.is_active is False:
 			return [False, "Employee is Inactive!"]
+		if emp.has_overtime(date):
+			return [False, "You already have an approved overtime for this date!"]
+		if emp.has_pending_overtime(date):
+			return [False, "You have a pending overtime request specified for this date"]
 		if emp.is_on_leave is True:
 			return [False, "Currently on leave!"]
+		active_leave = emp.has_active_leave(date)
+		if active_leave:
+			return [False, "You will be or are on leave on specified date"]
 		return [True, "Can request overtime"]
 
 	def can_update_overtime(self, overtime, emp):
