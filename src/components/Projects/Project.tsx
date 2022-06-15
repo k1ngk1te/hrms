@@ -12,7 +12,7 @@ import {
 import { DEFAULT_IMAGE, PROJECT_PAGE_URL } from "../../config";
 import { useOutClick, useDeleteProject, useMarkProject } from "../../hooks";
 import { Avatars, StatusProgressBar } from "../common";
-import { Button } from "../controls";
+import { Button, Loader } from "../controls";
 import { ProjectEmployeeType, ProjectType } from "../../types/employees";
 import { InitStateType } from "./Form";
 
@@ -231,6 +231,14 @@ const Project = ({
 					</li>
 				</ul>
 			</div>
+			{(markProject.isLoading || deleteProject.isLoading) && (
+				<div 
+					className="absolute flex items-center justify-center left-0 h-full rounded-md shadow-lg top-0 w-full z-10"
+					style={{ background: "rgba(0, 0, 0, 0.4)" }}
+				>
+					<Loader size={4} type="dotted" width="sm" />
+				</div>
+			)}
 		</div>
 	);
 };

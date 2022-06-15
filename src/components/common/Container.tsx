@@ -183,10 +183,10 @@ const Container: FC<ContainerProps> = ({
 			/>
 			{disabledLoading === true && (
 				<div 
-					className="fixed flex items-center justify-center h-full main-container-width top-0 z-[100]"
+					className="fixed flex items-center justify-center h-full main-container-width top-0 z-[50]"
 					style={{ background: "rgba(0, 0, 0, 0.6)" }}
 				>
-					<Loader border="border-l-0" color="primary" size={8} type="double" width="md" />
+					<Loader size={8} type="double" width="md" />
 				</div>
 			)}
 		</>
