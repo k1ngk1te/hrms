@@ -208,7 +208,10 @@ const Project = ({
 							disabled={deleteProject.isLoading}
 							loading={deleteProject.isLoading}
 							loader
-							onClick={() => deleteProject.onSubmit(id)}
+							onClick={() => {
+								deleteProject.reset()
+								deleteProject.onSubmit(id)
+							}}
 							title="delete"
 							titleSize="text-sm md:text-base lg:text-sm"
 						/>

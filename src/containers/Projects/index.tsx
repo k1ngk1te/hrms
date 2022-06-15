@@ -65,16 +65,17 @@ const Projects = () => {
 			dispatch(modalClose());
 			setInitState(undefined);
 			setEditMode(false);
-			setEditId(undefined)
+			setEditId(undefined);
+			updateProject.reset()
 		}
-	}, [dispatch, updateProject.success, editMode]);
+	}, [dispatch, updateProject.success, updateProject.reset, editMode]);
 
 	return (
 		<Container
 			background="bg-gray-100"
 			heading="Projects"
 			loading={isLoading}
-			disabledLoading={!isLoading && (isFetching || updateProject.isLoading)}
+			disabledLoading={!isLoading && isFetching}
 			refresh={{
 				onClick: refetch,
 				loading: isFetching,
@@ -111,6 +112,7 @@ const Projects = () => {
 							key={index} 
 							{...project} 
 							editProject={(id: string, initState: InitStateType) => {
+								updateProject.reset()
 								setEditId(id); 
 								setInitState(initState);
 								setEditMode(true);

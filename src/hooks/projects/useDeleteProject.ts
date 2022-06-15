@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { isErrorWithData } from "../../store";
 import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
 import { useDeleteProjectMutation } from "../../store/features/projects-slice";
@@ -7,7 +7,13 @@ import { useAppDispatch } from "../index";
 const useDeleteProject = () => {
   const dispatch = useAppDispatch();
 
+  const [success, setSuccess] = useState(false);
+
   const [deleteProject, { error, isLoading, status }] = useDeleteProjectMutation()
+
+  const reset = useCallback(() => {
+    setSuccess(false)
+  }, [])
 
   const handleSubmit = useCallback((id: string) => {
     dispatch(alertModalOpen({
@@ -31,7 +37,12 @@ const useDeleteProject = () => {
   }, [deleteProject, dispatch])
 
   useEffect(() => {
+    setSuccess(false)
+  }, [isLoading])
+
+  useEffect(() => {
 		if (status === "fulfilled") {
+      setSuccess(true);
 			dispatch(alertModalOpen({
 				color: "warning",
 				header: "Project Deleted",
@@ -41,6 +52,7 @@ const useDeleteProject = () => {
 	}, [dispatch, status])
 
   useEffect(() => {
+    if (error) setSuccess(false);
     if (isErrorWithData(error)) {
       dispatch(alertModalOpen({
         header: "Failed to delete project.",
@@ -51,9 +63,10 @@ const useDeleteProject = () => {
   }, [dispatch, error])
 
   return {
-    success: status === "fulfilled" ? true : status === "rejected" ? false : undefined,
+    success: success && status === "fulfilled" ? true : status === "rejected" ? false : undefined,
     isLoading,
     onSubmit: handleSubmit,
+    reset
   }
 }
 

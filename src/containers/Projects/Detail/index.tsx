@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { FaEye, FaPen } from "react-icons/fa";
+import { useParams, useNavigate } from "react-router-dom";
+import { FaEye, FaPen, FaTrash } from "react-icons/fa";
 import { PROJECT_TASKS_PAGE_URL, PROJECT_TEAM_PAGE_URL } from "../../../config";
 import { isErrorWithData, isFormError } from "../../../store";
 import {
@@ -12,6 +12,7 @@ import {
 	useAppDispatch,
 	useAppSelector,
 	useUpdateProject,
+	useDeleteProject
 } from "../../../hooks";
 import {
 	Form,
@@ -61,6 +62,7 @@ const Detail = () => {
 	const modalVisible = useAppSelector((state) => state.modal.visible);
 
 	const updateProject = useUpdateProject();
+	const deleteProject = useDeleteProject()
 
 	const screens = [
 		{ title: "all tasks", component: <Tasks tasks={data?.tasks || []} /> },
@@ -86,11 +88,20 @@ const Detail = () => {
 		},
 	];
 
+	const navigate = useNavigate()
+
 	useEffect(() => {
 		if (updateProject.success) {
 			dispatch(modalClose());
 		}
 	}, [dispatch, updateProject.success]);
+
+	useEffect(() => {
+		if (deleteProject.success) {
+			navigate(-1)
+			deleteProject.reset()
+		}
+	}, [deleteProject.success, navigate])
 
 	return (
 		<Container
@@ -140,7 +151,25 @@ const Detail = () => {
 								onClick={() => dispatch(modalOpen())}
 								rounded="rounded-xl"
 								disabled={updateProject.isLoading}
+								loading={updateProject.isLoading}
+								loader
 								title="edit project"
+							/>
+						</div>
+						<div className="my-2 w-full sm:px-2 sm:w-1/3 md:w-1/4 lg:w-1/5">
+							<Button
+								bg="bg-red-600 hover:bg-red-500"
+								focus="focus:ring-2 focus:ring-red-600 focus:ring-offset-2"
+								IconLeft={FaTrash}
+								rounded="rounded-xl"
+								title="delete task"
+								disabled={deleteProject.isLoading}
+								loading={deleteProject.isLoading}
+								loader
+								onClick={id !== undefined ? () => {
+									deleteProject.reset();
+									deleteProject.onSubmit(id) 
+								} : undefined}
 							/>
 						</div>
 					</div>

@@ -84,8 +84,6 @@ const leavesApi = baseApi.injectEndpoints({
 				result
 					? [
 							{ type: "Employee", id: "EMPLOYEE_LIST" },
-							{ type: "Leave", id: result.id },
-							{ type: "LeaveAdmin", id: result.id },
 							{ type: "LeaveAdmin", id: "LEAVE_ADMIN_LIST" },
 					  ]
 					: [],
@@ -224,7 +222,6 @@ const leavesApi = baseApi.injectEndpoints({
 			invalidatesTags: (result) =>
 				result
 					? [
-							{ type: "Leave", id: result.id },
 							{ type: "Leave", id: "LEAVE_LIST" },
 					  ]
 					: [],
@@ -242,7 +239,6 @@ const leavesApi = baseApi.injectEndpoints({
 			invalidatesTags: (result) =>
 				result
 					? [
-							{ type: "Overtime", id: result.id },
 							{ type: "Overtime", id: "OVERTIME_LIST" },
 					  ]
 					: [],
