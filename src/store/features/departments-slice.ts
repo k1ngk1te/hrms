@@ -16,8 +16,14 @@ const departmentsApi = baseApi.injectEndpoints({
 					"Content-Type": "application/json",
 				},
 			}),
-			keepUnusedDataFor: DATA_LIFETIME || 60,
-			providesTags: ["Department"],
+			keepUnusedDataFor: DATA_LIFETIME,
+			providesTags: (data) =>
+				data
+					? [
+							...data.results.map(({ id }) => ({ type: "Department", id })),
+							{ type: "Department", id: "DEPARTMENT_LIST" },
+					  ]
+					: [],
 		}),
 		createDepartment: build.mutation<
 			{ success: string },
@@ -32,7 +38,8 @@ const departmentsApi = baseApi.injectEndpoints({
 					"Content-Type": "application/json",
 				},
 			}),
-			invalidatesTags: (result) => (result ? ["Department"] : []),
+			invalidatesTags: (result) =>
+				result ? [{ type: "Department", id: "DEPARTMENT_LIST" }] : [],
 		}),
 		updateDepartment: build.mutation<
 			{ success: string },
@@ -47,7 +54,8 @@ const departmentsApi = baseApi.injectEndpoints({
 					"Content-Type": "application/json",
 				},
 			}),
-			invalidatesTags: (result) => (result ? ["Department"] : []),
+			invalidatesTags: (result, error, args) =>
+				result ? [{ type: "Department", id: args.id }] : [],
 		}),
 		deleteDepartment: build.mutation<{ success: string }, number | string>({
 			query: (id) => ({
@@ -58,7 +66,8 @@ const departmentsApi = baseApi.injectEndpoints({
 					"Content-Type": "application/json",
 				},
 			}),
-			invalidatesTags: (result, error) => (!error ? ["Department"] : []),
+			invalidatesTags: (result, error, id) =>
+				!error ? [{ type: "Department", id }] : [],
 		}),
 	}),
 	overrideExisting: false,

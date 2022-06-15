@@ -16,8 +16,14 @@ const jobsApi = baseApi.injectEndpoints({
 					"Content-Type": "application/json",
 				},
 			}),
-			keepUnusedDataFor: DATA_LIFETIME || 60,
-			providesTags: ["Job"],
+			keepUnusedDataFor: DATA_LIFETIME,
+			providesTags: (data) =>
+				data
+					? [
+							...data.results.map(({ id }) => ({ type: "Job", id })),
+							{ type: "Job", id: "JOB_LIST" },
+					  ]
+					: [],
 		}),
 		createJob: build.mutation<{ success: string }, { name: string }>({
 			query: ({ name }) => ({
@@ -29,7 +35,8 @@ const jobsApi = baseApi.injectEndpoints({
 					"Content-Type": "application/json",
 				},
 			}),
-			invalidatesTags: (result) => (result ? ["Job"] : []),
+			invalidatesTags: (result) =>
+				result ? [{ type: "Job", id: "JOB_LIST" }] : [],
 		}),
 		updateJob: build.mutation<
 			{ success: string },
@@ -44,7 +51,8 @@ const jobsApi = baseApi.injectEndpoints({
 					"Content-Type": "application/json",
 				},
 			}),
-			invalidatesTags: (result) => (result ? ["Job"] : []),
+			invalidatesTags: (result, error, args) =>
+				result ? [{ type: "Job", id: args.id }] : [],
 		}),
 		deleteJob: build.mutation<{ success: string }, number | string>({
 			query: (id) => ({
@@ -55,7 +63,8 @@ const jobsApi = baseApi.injectEndpoints({
 					"Content-Type": "application/json",
 				},
 			}),
-			invalidatesTags: (result, error) => (!error ? ["Job"] : []),
+			invalidatesTags: (result, error, id) =>
+				!error ? [{ type: "Job", id }] : [],
 		}),
 	}),
 	overrideExisting: false,

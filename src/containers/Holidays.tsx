@@ -237,7 +237,7 @@ const Holidays = () => {
 					  }
 					: undefined
 			}
-			disabledLoading={!isLoading && isFetching}
+			disabledLoading={!isLoading && (isFetching || deleteData.isLoading)}
 			loading={isLoading}
 			paginate={data ? {
 				loading: isFetching,

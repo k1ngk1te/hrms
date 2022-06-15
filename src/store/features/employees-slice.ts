@@ -14,6 +14,7 @@ import {
 import { PaginationType } from "../../types/common";
 import {
 	AttendanceListType,
+	AttendanceType,
 	GetEmployeesDataType,
 	ClientType,
 	ClientCreateType,
@@ -30,165 +31,6 @@ import { generateEmployee, generateClient } from "../helpers";
 
 const employeesApi = baseApi.injectEndpoints({
 	endpoints: (build) => ({
-		createClient: build.mutation<ClientType, ClientCreateType>({
-			query: (data) => ({
-				url: CLIENTS_URL,
-				method: "POST",
-				headers: {
-					"default-content-type": "use-browser-default",
-				},
-				credentials: "include",
-				body: generateClient(data),
-			}),
-			invalidatesTags: (result) => (result ? ["Client"] : []),
-		}),
-		getAttendance: build.query<AttendanceListType, PaginateType>({
-			query: ({ limit, offset }) => ({
-				url: `${ATTENDANCE_URL}?limit=${limit}&offset=${offset}`,
-				method: "GET",
-				credentials: "include",
-			}),
-			keepUnusedDataFor: DATA_LIFETIME || 60,
-			providesTags: ["Attendance"],
-		}),
-		getClient: build.query<ClientType, number | string>({
-			query: (id) => ({
-				url: CLIENT_URL(id),
-				method: "GET",
-				credentials: "include",
-			}),
-			keepUnusedDataFor: DATA_LIFETIME || 60,
-			providesTags: ["Client"],
-		}),
-		updateClient: build.mutation<
-			ClientType,
-			{ id: number | string; data: ClientCreateType }
-		>({
-			query: ({ id, data }) => ({
-				url: CLIENT_URL(id),
-				method: "PUT",
-				headers: {
-					"default-content-type": "use-browser-default",
-				},
-				body: generateClient(data),
-				credentials: "include",
-			}),
-			invalidatesTags: (result) => result ? ["Client"] : [],
-		}),
-		getClients: build.query<ClientListType, ClientPaginationType>({
-			query: ({ limit, offset, search, active }) => ({
-				url: `${CLIENTS_URL}?offset=${search ? 0 : offset}&limit=${
-					search ? 0 : limit
-				}&search=${search || ""}&active=${active !== undefined ? active : ""}`,
-				method: "GET",
-				credentials: "include",
-			}),
-			keepUnusedDataFor: DATA_LIFETIME || 60,
-			providesTags: ["Client"],
-		}),
-		deleteClient: build.mutation<unknown, string>({
-			query: (id) => ({
-				url: CLIENT_URL(id),
-				method: "DELETE",
-				credentials: "include"
-			}),
-			invalidatesTags: (result, error) => !error ? ["Client"] : []
-		}),
-		getEmployees: build.query<GetEmployeesDataType, PaginationType>({
-			query: ({ limit, offset, search }) => ({
-				url: `${EMPLOYEES_URL}?offset=${search ? 0 : offset}&limit=${
-					search ? 0 : limit
-				}&search=${search || ""}`,
-				method: "GET",
-				credentials: "include",
-			}),
-			keepUnusedDataFor: DATA_LIFETIME || 60,
-			providesTags: ["Employee"],
-		}),
-		getEmployee: build.query<EmployeeType, number | string>({
-			query: (id) => ({
-				url: EMPLOYEE_URL(id),
-				method: "GET",
-				credentials: "include",
-			}),
-			keepUnusedDataFor: DATA_LIFETIME || 60,
-			providesTags: ["Employee"],
-		}),
-		deleteEmployee: build.mutation<unknown, string>({
-			query: (id) => ({
-				url: EMPLOYEE_URL(id),
-				method: "DELETE",
-				credentials: "include"
-			}),
-			invalidatesTags: (result, error) => !error ? ["Employee"] : []
-		}),
-		getHolidays: build.query<HolidayListType, PaginateType>({
-			query: ({ limit, offset, search }) => ({
-				url: `${HOLIDAYS_URL}?offset=${search ? 0 : offset}&limit=${
-					search ? 0 : limit
-				}&search=${search || ""}`,
-				method: "GET",
-				credentials: "include",
-			}),
-			keepUnusedDataFor: DATA_LIFETIME || 60,
-			providesTags: ["Holiday"],
-		}),
-		createHoliday: build.mutation<HolidayType, HolidayCreateType>({
-			query: (data) => ({
-				url: HOLIDAYS_URL,
-				method: "POST",
-				body: data,
-				credentials: "include",
-			}),
-			invalidatesTags: (result) => (result ? ["Holiday"] : []),
-		}),
-		updateHoliday: build.mutation<
-			HolidayType,
-			{ id: number | string; data: HolidayCreateType }
-		>({
-			query: ({ id, data }) => ({
-				url: HOLIDAY_URL(id),
-				method: "PUT",
-				body: data,
-				credentials: "include",
-			}),
-			invalidatesTags: (result) => (result ? ["Holiday"] : []),
-		}),
-		deleteHoliday: build.mutation<HolidayType, number | string>({
-			query: (id) => ({
-				url: HOLIDAY_URL(id),
-				method: "DELETE",
-				credentials: "include",
-			}),
-			invalidatesTags: (result, error) => (!error ? ["Holiday"] : []),
-		}),
-		createEmployee: build.mutation<EmployeeType, FormType>({
-			query: (employee) => ({
-				url: EMPLOYEES_URL,
-				method: "POST",
-				headers: {
-					"default-content-type": "use-browser-default",
-				},
-				credentials: "include",
-				body: generateEmployee(employee),
-			}),
-			invalidatesTags: (result) => (result ? ["Employee"] : []),
-		}),
-		updateEmployee: build.mutation<
-			EmployeeType,
-			{ employee: FormType; id: number | string }
-		>({
-			query: ({ employee, id }) => ({
-				url: EMPLOYEE_URL(id),
-				method: "PUT",
-				headers: {
-					"default-content-type": "use-browser-default",
-				},
-				credentials: "include",
-				body: generateEmployee(employee),
-			}),
-			invalidatesTags: (result) => (result ? ["Employee"] : []),
-		}),
 		changeEmployeePassword: build.mutation<
 			{ detail: string },
 			ChangePasswordType
@@ -205,8 +47,44 @@ const employeesApi = baseApi.injectEndpoints({
 				credentials: "include",
 			}),
 		}),
+		createClient: build.mutation<ClientType, ClientCreateType>({
+			query: (data) => ({
+				url: CLIENTS_URL,
+				method: "POST",
+				headers: {
+					"default-content-type": "use-browser-default",
+				},
+				credentials: "include",
+				body: generateClient(data),
+			}),
+			invalidatesTags: (result) =>
+				result ? [{ type: "Client", id: "CLIENT_LIST" }] : [],
+		}),
+		createEmployee: build.mutation<EmployeeType, FormType>({
+			query: (employee) => ({
+				url: EMPLOYEES_URL,
+				method: "POST",
+				headers: {
+					"default-content-type": "use-browser-default",
+				},
+				credentials: "include",
+				body: generateEmployee(employee),
+			}),
+			invalidatesTags: (result) =>
+				result ? [{ type: "Employee", id: "EMPLOYEE_LIST" }] : [],
+		}),
+		createHoliday: build.mutation<HolidayType, HolidayCreateType>({
+			query: (data) => ({
+				url: HOLIDAYS_URL,
+				method: "POST",
+				body: data,
+				credentials: "include",
+			}),
+			invalidatesTags: (result) =>
+				result ? [{ type: "Holiday", id: "HOLIDAY_LIST" }] : [],
+		}),
 		deactivateEmployee: build.mutation<
-			{ detail: string; type: "client" | "employee" },
+			{ detail: string; type: "client" | "employee"; id: string },
 			{
 				email: string;
 				action: "activate" | "deactivate";
@@ -220,16 +98,179 @@ const employeesApi = baseApi.injectEndpoints({
 				credentials: "include",
 			}),
 			invalidatesTags: (result) =>
-				result ? (result.type === "client" ? ["Client"] : ["Employee"]) : [],
+				result
+					? result.type === "client"
+						? [{ type: "Client", id: result.id }]
+						: [{ type: "Employee", id: result.id }]
+					: [],
 		}),
-		punchAction: build.mutation<{detail: string}, "in" | "out">({
+		deleteClient: build.mutation<unknown, string>({
+			query: (id) => ({
+				url: CLIENT_URL(id),
+				method: "DELETE",
+				credentials: "include",
+			}),
+			invalidatesTags: (result, error, id) =>
+				!error ? [{ type: "Client", id }] : [],
+		}),
+		deleteEmployee: build.mutation<unknown, string>({
+			query: (id) => ({
+				url: EMPLOYEE_URL(id),
+				method: "DELETE",
+				credentials: "include",
+			}),
+			invalidatesTags: (result, error, id) =>
+				!error ? [{ type: "Employee", id }] : [],
+		}),
+		deleteHoliday: build.mutation<HolidayType, number | string>({
+			query: (id) => ({
+				url: HOLIDAY_URL(id),
+				method: "DELETE",
+				credentials: "include",
+			}),
+			invalidatesTags: (result, error, id) =>
+				!error ? [{ type: "Holiday", id }] : [],
+		}),
+		getAttendance: build.query<AttendanceListType, PaginateType>({
+			query: ({ limit, offset }) => ({
+				url: `${ATTENDANCE_URL}?limit=${limit}&offset=${offset}`,
+				method: "GET",
+				credentials: "include",
+			}),
+			keepUnusedDataFor: DATA_LIFETIME,
+			providesTags: (data) =>
+				data
+					? [
+							...data.results.map(({ id }) => ({ type: "Attendance", id })),
+							{ type: "Attendance", id: "ATTENDANCE_LIST" },
+					  ]
+					: [{ type: "Attendance", id: "ATTENDANCE_LIST" }],
+		}),
+		getClient: build.query<ClientType, number | string>({
+			query: (id) => ({
+				url: CLIENT_URL(id),
+				method: "GET",
+				credentials: "include",
+			}),
+			keepUnusedDataFor: DATA_LIFETIME,
+			providesTags: (result, error, id) =>
+				result ? [{ type: "Client", id }] : [],
+		}),
+		getClients: build.query<ClientListType, ClientPaginationType>({
+			query: ({ limit, offset, search, active }) => ({
+				url: `${CLIENTS_URL}?offset=${search ? 0 : offset}&limit=${
+					search ? 0 : limit
+				}&search=${search || ""}&active=${active !== undefined ? active : ""}`,
+				method: "GET",
+				credentials: "include",
+			}),
+			keepUnusedDataFor: DATA_LIFETIME,
+			providesTags: (data) =>
+				data
+					? [
+							...data.results.map(({ id }) => ({ type: "Client", id })),
+							{ type: "Client", id: "CLIENT_LIST" },
+					  ]
+					: [{ type: "Client", id: "CLIENT_LIST" }],
+		}),
+		getEmployee: build.query<EmployeeType, number | string>({
+			query: (id) => ({
+				url: EMPLOYEE_URL(id),
+				method: "GET",
+				credentials: "include",
+			}),
+			keepUnusedDataFor: DATA_LIFETIME,
+			providesTags: (result, error, id) =>
+				result ? [{ type: "Employee", id }] : [],
+		}),
+		getEmployees: build.query<GetEmployeesDataType, PaginationType>({
+			query: ({ limit, offset, search }) => ({
+				url: `${EMPLOYEES_URL}?offset=${search ? 0 : offset}&limit=${
+					search ? 0 : limit
+				}&search=${search || ""}`,
+				method: "GET",
+				credentials: "include",
+			}),
+			keepUnusedDataFor: DATA_LIFETIME,
+			providesTags: (data) =>
+				data
+					? [
+							...data.results.map(({ id }) => ({ type: "Employee", id })),
+							{ type: "Employee", id: "EMPLOYEE_LIST" },
+					  ]
+					: [{ type: "Employee", id: "EMPLOYEE_LIST" }],
+		}),
+		getHolidays: build.query<HolidayListType, PaginateType>({
+			query: ({ limit, offset, search }) => ({
+				url: `${HOLIDAYS_URL}?offset=${search ? 0 : offset}&limit=${
+					search ? 0 : limit
+				}&search=${search || ""}`,
+				method: "GET",
+				credentials: "include",
+			}),
+			keepUnusedDataFor: DATA_LIFETIME,
+			providesTags: (data) =>
+				data
+					? [
+							...data.results.map(({ id }) => ({ type: "Holiday", id })),
+							{ type: "Holiday", id: "HOLIDAY_LIST" },
+					  ]
+					: [{ type: "Holiday", id: "HOLIDAY_LIST" }],
+		}),
+		punchAction: build.mutation<{ detail: string }, "in" | "out">({
 			query: (action) => ({
 				url: ATTENDANCE_URL,
 				method: "POST",
 				body: { action },
 				credentials: "include",
 			}),
-			invalidatesTags: (result, error) => !error ? ["Attendance"] : [],
+			invalidatesTags: (result) =>
+				result ? [{ type: "Attendance", id: "ATTENDANCE_LIST" }] : [],
+		}),
+		updateClient: build.mutation<
+			ClientType,
+			{ id: number | string; data: ClientCreateType }
+		>({
+			query: ({ id, data }) => ({
+				url: CLIENT_URL(id),
+				method: "PUT",
+				headers: {
+					"default-content-type": "use-browser-default",
+				},
+				body: generateClient(data),
+				credentials: "include",
+			}),
+			invalidatesTags: (result, error, args) =>
+				result ? [{ type: "Client", id: args.id }] : [],
+		}),
+		updateEmployee: build.mutation<
+			EmployeeType,
+			{ employee: FormType; id: number | string }
+		>({
+			query: ({ employee, id }) => ({
+				url: EMPLOYEE_URL(id),
+				method: "PUT",
+				headers: {
+					"default-content-type": "use-browser-default",
+				},
+				credentials: "include",
+				body: generateEmployee(employee),
+			}),
+			invalidatesTags: (result, error, args) =>
+				result ? [{ type: "Employee", id: args.id }] : [],
+		}),
+		updateHoliday: build.mutation<
+			HolidayType,
+			{ id: number | string; data: HolidayCreateType }
+		>({
+			query: ({ id, data }) => ({
+				url: HOLIDAY_URL(id),
+				method: "PUT",
+				body: data,
+				credentials: "include",
+			}),
+			invalidatesTags: (result, error, args) =>
+				result ? [{ type: "Holiday", id: args.id }] : [],
 		}),
 	}),
 	overrideExisting: false,

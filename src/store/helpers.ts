@@ -1,4 +1,19 @@
 import { ClientCreateType, FormType } from "../types/employees";
+import { ProfileFormType } from "../../types/user";
+
+export const generateProfile = (profile: ProfileFormType) => {
+  const form = new FormData();
+  form.append("image", profile.image);
+  form.append("user.first_name", profile.user.first_name);
+  form.append("user.last_name", profile.user.last_name);
+  form.append("gender", profile.gender);
+  form.append("address", profile.address);
+  form.append("phone", profile.phone);
+  form.append("state", profile.state);
+  form.append("city", profile.city);
+  form.append("date_of_birth", profile.date_of_birth);
+  return form;
+};
 
 export const generateEmployee = (data: FormType) => {
 	const form = new FormData();

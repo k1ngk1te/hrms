@@ -1,5 +1,9 @@
 import { baseApi } from "./base";
-import { DATA_LIFETIME, NOTIFICATIONS_URL, NOTIFICATION_URL } from "../../config";
+import {
+	DATA_LIFETIME,
+	NOTIFICATIONS_URL,
+	NOTIFICATION_URL,
+} from "../../config";
 import { PaginationType } from "../../types/common";
 import { GetNotificationsDataType } from "../../types/notifications";
 
@@ -11,8 +15,14 @@ const notificationsApi = baseApi.injectEndpoints({
 				method: "GET",
 				credentials: "include",
 			}),
-			keepUnusedDataFor: DATA_LIFETIME || 60,
-			providesTags: ["Notification"],
+			keepUnusedDataFor: DATA_LIFETIME,
+			providesTags: (data) =>
+				data
+					? [
+							...data.results.map(({ id }) => ({ type: "Notification", id })),
+							{ type: "Notification", id: "NOTIFICATION_LIST" },
+					  ]
+					: [{ type: "Notification", id: "NOTIFICATION_LIST" }],
 		}),
 		deleteNotification: build.mutation<{ success: string }, string | number>({
 			query: (id) => ({
@@ -20,7 +30,8 @@ const notificationsApi = baseApi.injectEndpoints({
 				method: "DELETE",
 				credentials: "include",
 			}),
-			invalidatesTags: (result, error) => !error ? ["Notification"] : [],
+			invalidatesTags: (result, error, id) =>
+				!error ? [{ type: "Notification", id }] : [],
 		}),
 	}),
 	overrideExisting: false,

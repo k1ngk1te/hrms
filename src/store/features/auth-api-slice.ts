@@ -9,20 +9,7 @@ import {
 } from "../../config";
 import { EmployeeType } from "../../types/employees";
 import { ProfileFormType, UserInfoType } from "../../types/user";
-
-const generateForm = (profile: ProfileFormType) => {
-  const form = new FormData();
-  form.append("image", profile.image);
-  form.append("user.first_name", profile.user.first_name);
-  form.append("user.last_name", profile.user.last_name);
-  form.append("gender", profile.gender);
-  form.append("address", profile.address);
-  form.append("phone", profile.phone);
-  form.append("state", profile.state);
-  form.append("city", profile.city);
-  form.append("date_of_birth", profile.date_of_birth);
-  return form;
-};
+import { generateProfile } from "../helpers";
 
 const authApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -55,7 +42,7 @@ const authApi = baseApi.injectEndpoints({
         method: "GET",
         credentials: "include"
       }),
-      keepUnusedDataFor: DATA_LIFETIME || 60,
+      keepUnusedDataFor: DATA_LIFETIME,
       providesTags: ["Profile"],
     }),
     updateProfile: build.mutation<
@@ -68,7 +55,7 @@ const authApi = baseApi.injectEndpoints({
         headers: {
           "default-content-type": "use-browser-default",
         },
-        body: generateForm(profile),
+        body: generateProfile(profile),
         credentials: "include"
       }),
       invalidatesTags: (result) => result ? ["Profile"] : [],

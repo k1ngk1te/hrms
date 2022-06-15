@@ -186,7 +186,7 @@ const Container: FC<ContainerProps> = ({
 					className="fixed flex items-center justify-center h-full main-container-width top-0 z-[50]"
 					style={{ background: "rgba(0, 0, 0, 0.6)" }}
 				>
-					<Loader size={8} type="double" width="md" />
+					<Loader size={6} type="dotted" width="sm" />
 				</div>
 			)}
 		</>

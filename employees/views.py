@@ -286,15 +286,20 @@ class EmployeeDeactivateView(APIView):
 			user.is_active = True
 		user.save()
 		res_status = status.HTTP_200_OK
-		user_type = "employee"
 		if _type == "client":
+			user_type_id = user.client.id
 			user_type = "client"
+		else:
+			user_type_id = user.employee.id
+			user_type = "employee"
 		if action == "activate":
 			message = {
-				"detail": f"{user_type.capitalize()} Activated Successfully", "type": user_type}
+				"detail": f"{user_type.capitalize()} Activated Successfully", 
+				"type": user_type, "id": user_type_id}
 		elif action == "deactivate":
 			message = {
-				"detail": f"{user_type.capitalize()} De-activated Successfully", "type": user_type}
+				"detail": f"{user_type.capitalize()} De-activated Successfully", 
+				"type": user_type, "id": user_type_id}
 		else:
 			message = {"detail", "A server error occurred! Please try again later."}
 			res_status = status.HTTP_400_BAD_REQUEST
