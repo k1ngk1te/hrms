@@ -48,6 +48,7 @@ const employeesApi = baseApi.injectEndpoints({
 				method: "GET",
 				credentials: "include",
 			}),
+			keepUnusedDataFor: DATA_LIFETIME || 60,
 			providesTags: ["Attendance"],
 		}),
 		getClient: build.query<ClientType, number | string>({
@@ -56,6 +57,7 @@ const employeesApi = baseApi.injectEndpoints({
 				method: "GET",
 				credentials: "include",
 			}),
+			keepUnusedDataFor: DATA_LIFETIME || 60,
 			providesTags: ["Client"],
 		}),
 		updateClient: build.mutation<
@@ -109,6 +111,7 @@ const employeesApi = baseApi.injectEndpoints({
 				method: "GET",
 				credentials: "include",
 			}),
+			keepUnusedDataFor: DATA_LIFETIME || 60,
 			providesTags: ["Employee"],
 		}),
 		deleteEmployee: build.mutation<unknown, string>({

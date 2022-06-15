@@ -1,5 +1,6 @@
 import baseApi from "./base";
 import {
+  DATA_LIFETIME,
   LOGIN_URL,
   LOGOUT_URL,
   PASSWORD_CHANGE_URL,
@@ -54,6 +55,7 @@ const authApi = baseApi.injectEndpoints({
         method: "GET",
         credentials: "include"
       }),
+      keepUnusedDataFor: DATA_LIFETIME || 60,
       providesTags: ["Profile"],
     }),
     updateProfile: build.mutation<

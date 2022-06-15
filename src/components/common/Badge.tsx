@@ -65,7 +65,7 @@ const Badge = ({
 
 	return (
 		<div
-			className={`${background} ${txtColor} ${margin} ${round} flex items-center ${
+			className={`${background} ${txtColor} ${margin} ${round} w-full flex items-center ${
 				centered ? "justify-center" : ""
 			}`}
 		>

@@ -14,13 +14,13 @@ const heads: HeadType = [
   { value: "resumption" },
   { value: "days" },
   { value: "status" },
-  { value: "date requested" },
+  { value: "date" },
   { type: "actions", value: "view" },
 ];
 
 const getRows = (data: Leave[]): RowType[] =>
   data.map((leave) => [
-    { value: leave.leave_type.name || "---" },
+    { link: LEAVE_DETAIL_PAGE_URL(leave.id), value: leave.leave_type.name || "---" },
     { value: leave.start_date || "---" },
     { value: leave.end_date || "---" },
     { value: leave.resume_date || "---" },

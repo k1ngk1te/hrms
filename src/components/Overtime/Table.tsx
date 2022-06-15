@@ -18,7 +18,7 @@ const heads: HeadType = [
 
 const getRows = (data: Overtime[]): RowType[] =>
   data.map((ovt) => [
-    { value: ovt.overtime_type.name || "---" },
+    { link: OVERTIME_DETAIL_PAGE_URL(ovt.id)), value: ovt.overtime_type.name || "---" },
     { value: ovt.date || "---" },
     { value: ovt.hours || "---" },
     {

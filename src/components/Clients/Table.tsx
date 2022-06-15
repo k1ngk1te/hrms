@@ -16,7 +16,7 @@ const heads: HeadType = [
 
 const getRows = (data: ClientType[]): RowType[] =>
   data.map((client) => [
-    { value: client.company || "---" },
+    { link: CLIENT_PAGE_URL(client.id), value: client.company || "---" },
     { value: client.id || "---" },
     { value: client.contact.full_name || "---" },
     { value: client.contact.email || "---" },

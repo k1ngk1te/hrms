@@ -101,9 +101,9 @@ const leavesApi = baseApi.injectEndpoints({
 					"Content-Type": "application/json",
 				},
 			}),
+			keepUnusedDataFor: DATA_LIFETIME || 60,
 			providesTags: ["Leave"],
 		}),
-
 		getOvertime: build.query<OvertimeListType, QueryType>({
 			query: ({ from, limit, offset, to }) => ({
 				url: `${OVERTIME_URL}?offset=${offset}&limit=${limit}&from=${from}&to=${to}`,
@@ -178,6 +178,7 @@ const leavesApi = baseApi.injectEndpoints({
 					"Content-Type": "application/json",
 				},
 			}),
+			keepUnusedDataFor: DATA_LIFETIME || 60,
 			providesTags: ["Overtime"],
 		}),
 	}),

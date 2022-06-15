@@ -16,7 +16,7 @@ const heads: HeadType = [
 
 const getRows = (data: EmployeeType[]): RowType[] =>
   data.map((employee) => [
-    { value: employee.user.first_name || "---" },
+    { link: EMPLOYEE_PAGE_URL(employee.id), value: employee.user.first_name || "---" },
     { value: employee.user.last_name || "---" },
     { value: employee.user.email || "---" },
     { value: employee.department?.name || "---" },

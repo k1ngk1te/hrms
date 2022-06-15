@@ -20,7 +20,7 @@ const getRows = (
   project_id?: string,
 ): RowType[] =>
   data.map((task) => [
-    { value: task.name || "---" },
+    { link: PROJECT_TASK_PAGE_URL(task.id), value: task.name || "---" },
     { value: task.due_date ? new Date(task.due_date).toLocaleDateString() : "---"},
     {
       options: {

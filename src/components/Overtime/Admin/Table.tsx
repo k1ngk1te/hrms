@@ -19,6 +19,7 @@ const heads: HeadType = [
 const getRows = (data: OvertimeType[]): RowType[] =>
   data.map((overtime) => [
     {
+      link: ADMIN_OVERTIME_DETAIL_PAGE_URL(overtime.id),
       value: overtime.user
         ? `${overtime.user.first_name} ${overtime.user.last_name}`
         : "---",

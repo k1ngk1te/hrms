@@ -13,13 +13,13 @@ const heads: HeadType = [
   { value: "end date" },
   { value: "resumption" },
   { value: "status" },
-  { value: "date requested" },
+  { value: "date" },
   { type: "actions", value: "options" },
 ];
 
 const getRows = (data: LeaveType[]): RowType[] =>
   data.map((leave) => [
-    {
+    { link: ADMIN_LEAVE_DETAIL_PAGE_URL(leave.id),
       value: leave.user
         ? `${leave.user.first_name} ${leave.user.last_name}`
         : "---",
