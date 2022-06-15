@@ -51,11 +51,10 @@ const getRows = (data: EmployeeType[]): RowType[] =>
 
 type TableType = {
   employees: EmployeeType[];
-  loading: boolean;
   setStatus: (e: "" | "active" | "on leave" | "inactive") => void
 };
 
-const EmployeeTable = ({ employees, loading, setStatus }: TableType) => {
+const EmployeeTable = ({ employees, setStatus }: TableType) => {
   const [rows, setRows] = useState<RowType[]>([]);
   const [activeRow, setActiveRow] = useState<"all" | "active" | "on leave" | "inactive">(
     "all"
@@ -80,7 +79,6 @@ const EmployeeTable = ({ employees, loading, setStatus }: TableType) => {
   return (
     <div className="mt-4 rounded-lg p-2 md:p-3 lg:p-4">
       <Table
-        loading={loading}
         heads={heads}
         rows={rows}
         split={{

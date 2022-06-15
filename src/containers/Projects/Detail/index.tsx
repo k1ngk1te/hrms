@@ -97,6 +97,7 @@ const Detail = () => {
 			background="bg-gray-100 overflow-y-hidden"
 			heading="Project Information"
 			loading={isLoading}
+			disabledLoading={!isLoading && (isFetching || updateProject.isLoading)}
 			refresh={{
 				onClick: refetch,
 				loading: isFetching,

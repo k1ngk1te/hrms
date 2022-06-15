@@ -162,6 +162,11 @@ const Jobs = () => {
         loading: isFetching,
         onClick: () => refetch(),
       }}
+      error={isErrorWithData(error) ? {
+        status: error.status || 500,
+        title: String(error.data?.detail || error.data?.error || "")
+      } : undefined}
+      disabledLoading={!isLoading && isFetching}
       loading={isLoading}
       paginate={data ? {
       	loading: isFetching, offset, setOffset,
@@ -214,7 +219,6 @@ const Jobs = () => {
       </div>
       <JobTable
         jobs={data?.results || []}
-        loading={isFetching}
         updateJob={(form: { id: string | number; name: string }) => {
           setInitState(form);
           dispatch(modalOpen());

@@ -217,6 +217,7 @@ const Leave = () => {
 				},
 			}}
 			loading={leaves.isLoading}
+			disabledLoading={!leaves.isLoading && leaves.isFetching}
 			paginate={leaves.data ? {
 				loading: leaves.data.isFetching, setOffset, offset,
 				totalItems: leaves.data.count
@@ -236,7 +237,6 @@ const Leave = () => {
 				openModal={() => dispatch(modalOpen())}
 			/>
 			<LeaveTable
-				loading={leaves.isFetching}
 				leaves={leaves.data?.results || []}
 			/>
 			<Modal

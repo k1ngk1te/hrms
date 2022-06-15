@@ -16,3 +16,27 @@ body {
 * {
     box-sizing: border-box;
 }
+
+.main-container-width {
+    @apply min-h-[75vh] w-full lg:ml-auto lg:w-5/6
+}
+/*
+.grow-down {
+    animation: growDown 0.5s ease-in-out forwards;
+    transform-origin: top center;
+}
+
+@keyframes growDown {
+    0% {
+        transform: scaleY(0)
+    }
+    50% {
+        transform: scaleY(0.5)
+    }
+    80% {
+        transform: scaleY(1.1)
+    }
+    100% {
+        transform: scaleY(1)
+    }
+}*/

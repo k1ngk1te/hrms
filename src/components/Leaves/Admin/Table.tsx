@@ -7,14 +7,13 @@ import Table, { HeadType, RowType } from "../../controls/Table";
 
 const heads: HeadType = [
   { value: "employee name" },
-  { value: "email" },
   { value: "type" },
   { value: "start date" },
   { value: "end date" },
   { value: "resumption" },
   { value: "status" },
   { value: "date" },
-  { type: "actions", value: "options" },
+  { type: "actions", value: "view" },
 ];
 
 const getRows = (data: LeaveType[]): RowType[] =>
@@ -24,7 +23,6 @@ const getRows = (data: LeaveType[]): RowType[] =>
         ? `${leave.user.first_name} ${leave.user.last_name}`
         : "---",
     },
-    { value: leave.user ? `${leave.user.email}` : "---" },
     { value: leave.leave_type.name || "---" },
     { value: leave.start_date || "---" },
     { value: leave.end_date || "---" },
@@ -59,12 +57,11 @@ const getRows = (data: LeaveType[]): RowType[] =>
   ]);
 
 type TableType = {
-  loading: boolean;
   leaves: LeaveType[];
   setStatus: (e: "" | "approved" | "denied" | "pending") => void;
 };
 
-const LeaveTable = ({ leaves, loading, setStatus }: TableType) => {
+const LeaveTable = ({ leaves, setStatus }: TableType) => {
   const [rows, setRows] = useState<RowType[]>([]);
   const [activeRow, setActiveRow] = useState<
     "all" | "approved" | "denied" | "pending"
@@ -87,7 +84,6 @@ const LeaveTable = ({ leaves, loading, setStatus }: TableType) => {
   return (
     <div className="mt-4 rounded-lg p-2 md:p-3 lg:p-4">
       <Table
-        loading={loading}
         heads={heads}
         rows={rows}
         split={{
@@ -106,7 +102,7 @@ const LeaveTable = ({ leaves, loading, setStatus }: TableType) => {
               onClick: () => {
                 setRows(
                   getRows(leaves).filter(
-                    (row: RowType) => row[6].value === "approved" && row
+                    (row: RowType) => row[5].value === "approved" && row
                   )
                 );
                 setActiveRow("approved");
@@ -119,7 +115,7 @@ const LeaveTable = ({ leaves, loading, setStatus }: TableType) => {
               onClick: () => {
                 setRows(
                   getRows(leaves).filter(
-                    (row: RowType) => row[6].value === "denied" && row
+                    (row: RowType) => row[5].value === "denied" && row
                   )
                 );
                 setActiveRow("denied");
@@ -132,7 +128,7 @@ const LeaveTable = ({ leaves, loading, setStatus }: TableType) => {
               onClick: () => {
                 setRows(
                   getRows(leaves).filter(
-                    (row: RowType) => row[6].value === "pending" && row
+                    (row: RowType) => row[5].value === "pending" && row
                   )
                 );
                 setActiveRow("pending");

@@ -18,7 +18,7 @@ const heads: HeadType = [
 
 const getRows = (data: Overtime[]): RowType[] =>
   data.map((ovt) => [
-    { link: OVERTIME_DETAIL_PAGE_URL(ovt.id)), value: ovt.overtime_type.name || "---" },
+    { link: OVERTIME_DETAIL_PAGE_URL(ovt.id), value: ovt.overtime_type.name || "---" },
     { value: ovt.date || "---" },
     { value: ovt.hours || "---" },
     {
@@ -52,10 +52,9 @@ const getRows = (data: Overtime[]): RowType[] =>
 
 type TableType = {
   overtime: Overtime[];
-  loading: boolean;
 };
 
-const OvertimeTable = ({ overtime, loading }: TableType) => {
+const OvertimeTable = ({ overtime }: TableType) => {
   const [rows, setRows] = useState<RowType[]>([]);
   const [activeRow, setActiveRow] = useState<
     "all" | "approved" | "denied" | "pending"
@@ -78,7 +77,6 @@ const OvertimeTable = ({ overtime, loading }: TableType) => {
   return (
     <div className="mt-4 rounded-lg p-2 md:p-3 lg:p-4">
       <Table
-        loading={loading}
         heads={heads}
         rows={rows}
         split={{

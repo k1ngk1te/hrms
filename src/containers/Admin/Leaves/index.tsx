@@ -249,6 +249,7 @@ const Leave = () => {
 					leaves?.refetch();
 				},
 			}}
+			disabledLoading={!leaves.isLoading && leaves.isFetching}
 			loading={leaves.isLoading}
 			paginate={leaves.data ? {
 				offset, setOffset, loading: leaves.isFetching, totalItems: leaves.data.count
@@ -270,7 +271,6 @@ const Leave = () => {
 				exportData={exportLeave}
 			/>
 			<LeaveTable
-				loading={leaves.isFetching}
 				setStatus={setStatus}
 				leaves={leaves.data?.results || []}
 			/>

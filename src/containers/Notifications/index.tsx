@@ -50,6 +50,11 @@ const Notifications = () => {
         onClick: () => notifications?.refetch(),
         loading: notifications?.isFetching,
       }}
+      error={isErrorWithData(notifications.error) ? {
+        status: notifications.error.status || 500,
+        title: String(notifications.error.data?.detail || notifications.error.data?.error || "")
+      } : undefined}
+      disabledLoading={!notifications.isLoading && notifications.isFetching}
       loading={notifications.isLoading}
       paginate={notifications.data ? {
       	totalItems: notifications.data.count,

@@ -24,7 +24,6 @@ const getRows = (data: AttendanceType[]): RowType[] =>
 
 type TableType = {
   attendance: AttendanceType[];
-  loading: boolean;
 };
 
 const ClientTable = ({ attendance = [], loading }: TableType) => {
@@ -37,7 +36,6 @@ const ClientTable = ({ attendance = [], loading }: TableType) => {
   return (
     <div className="mt-4 rounded-lg p-2 md:p-3 lg:p-4">
       <Table
-        loading={loading}
         heads={heads}
         rows={rows}
       />

@@ -33,7 +33,7 @@ const Layout = () => {
               ref={menu.ref}
             />
 
-            <main className="min-h-[75vh] w-full lg:ml-auto lg:w-5/6">
+            <main className="main-container-width">
               <Topbar />
               <Outlet />
               <ScrollToTop

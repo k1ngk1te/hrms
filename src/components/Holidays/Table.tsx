@@ -52,12 +52,11 @@ const getRows = (
 
 type TableType = {
 	holidays: HolidayType[];
-	loading: boolean;
 	onEdit: (id: number | string, initState: HolidayCreateType) => void;
 	onDelete: (id: number | string, initState: HolidayCreateType) => void;
 };
 
-const HolidayTable = ({ holidays, onEdit, onDelete, loading }: TableType) => {
+const HolidayTable = ({ holidays, onEdit, onDelete }: TableType) => {
 	const [rows, setRows] = useState<RowType[]>([]);
 
 	const authData = useAppSelector((state) => state.auth.data);
@@ -74,7 +73,7 @@ const HolidayTable = ({ holidays, onEdit, onDelete, loading }: TableType) => {
 
 	return (
 		<div className="mt-4 rounded-lg p-2 md:p-3 lg:p-4">
-			<Table loading={loading} heads={_heads} rows={rows} />
+			<Table heads={_heads} rows={rows} />
 		</div>
 	);
 };

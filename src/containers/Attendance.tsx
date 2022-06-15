@@ -36,6 +36,7 @@ const Attendance = () => {
 					  }
 					: undefined
 			}
+			disabledLoading={!isLoading && isFetching}
 			loading={isLoading}
 			paginate={
 				data
@@ -68,7 +69,6 @@ const Attendance = () => {
 					</div>
 					<AttendanceTable
 						attendance={data ? data.results : []}
-						loading={isFetching}
 					/>
 				</>
 			)}

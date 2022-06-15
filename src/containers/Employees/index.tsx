@@ -159,6 +159,7 @@ const Employees = () => {
 				loading: employees.isFetching,
 				onClick: () => employees.refetch(),
 			}}
+			disabledLoading={!employees.isLoading && employees.isFetching}
 			loading={employees.isLoading}
 			paginate={employees.data ? {
 				offset, setOffset, loading: employees.isFetching,
@@ -182,7 +183,6 @@ const Employees = () => {
 			<div className="mt-3">
 				<EmployeeTable
 					employees={employees.data?.results || []}
-					loading={employees.isFetching}
 					setStatus={setStatus}
 				/>
 			</div>

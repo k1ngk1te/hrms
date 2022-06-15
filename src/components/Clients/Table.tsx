@@ -45,10 +45,9 @@ const getRows = (data: ClientType[]): RowType[] =>
 
 type TableType = {
   clients: ClientType[];
-  loading: boolean;
 };
 
-const ClientTable = ({ clients, loading }: TableType) => {
+const ClientTable = ({ clients }: TableType) => {
   const [rows, setRows] = useState<RowType[]>([]);
   const [activeRow, setActiveRow] = useState<"all" | "active" | "inactive">(
     "all"
@@ -69,7 +68,6 @@ const ClientTable = ({ clients, loading }: TableType) => {
   return (
     <div className="mt-4 rounded-lg p-2 md:p-3 lg:p-4">
       <Table
-        loading={loading}
         heads={heads}
         rows={rows}
         split={{

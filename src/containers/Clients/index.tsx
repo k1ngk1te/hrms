@@ -83,6 +83,11 @@ const Clients = () => {
 		<Container
 			heading="Clients"
 			loading={isLoading}
+			disabledLoading={!isLoading && isFetching}
+			error={isErrorWithData(error) ? {
+				status: error.data?.status || 500,
+				title: String(error.data?.detail || error.data?.error || "")
+			} : undefined}
 			refresh={{
 				onClick: refetch,
 				loading: isFetching
@@ -105,7 +110,7 @@ const Clients = () => {
 				loading={isFetching}
 				onSubmit={(name: string) => setSearch(name)}
 			/>
-			<ClientTable clients={data ? data.results : []} loading={isFetching} />
+			<ClientTable clients={data ? data.results : []} />
 			<Modal
 				close={() => dispatch(modalClose())}
 				component={

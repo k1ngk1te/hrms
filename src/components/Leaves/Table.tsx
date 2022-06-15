@@ -56,10 +56,9 @@ const getRows = (data: Leave[]): RowType[] =>
 
 type TableType = {
   leaves: Leave[];
-  loading: boolean;
 };
 
-const LeaveTable = ({ leaves, loading }: TableType) => {
+const LeaveTable = ({ leaves }: TableType) => {
   const [rows, setRows] = useState<RowType[]>([]);
   const [activeRow, setActiveRow] = useState<
     "all" | "approved" | "denied" | "pending"
@@ -82,7 +81,6 @@ const LeaveTable = ({ leaves, loading }: TableType) => {
   return (
     <div className="mt-4 rounded-lg p-2 md:p-3 lg:p-4">
       <Table
-        loading={loading}
         heads={heads}
         rows={rows}
         split={{

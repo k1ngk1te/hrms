@@ -237,6 +237,7 @@ const Holidays = () => {
 					  }
 					: undefined
 			}
+			disabledLoading={!isLoading && isFetching}
 			loading={isLoading}
 			paginate={data ? {
 				loading: isFetching,
@@ -256,7 +257,6 @@ const Holidays = () => {
 			/>
 			<HolidayTable
 				holidays={data ? data.results : []}
-				loading={isFetching}
 				onEdit={(id: number | string, data: HolidayCreateType) => {
 					setEditMode(true);
 					setHolidayId(id);

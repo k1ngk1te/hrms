@@ -9,7 +9,7 @@ import { close } from "../../store/features/alert-modal-slice";
 import Error from "../../pages/error";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { AlertModal, Pagination } from "./index";
-import { Alert } from "../controls"
+import { Alert, Loader } from "../controls"
 import { LoadingPage } from "../../utils";
 
 type IconProps = {
@@ -57,6 +57,7 @@ type ContainerProps = {
 		onClick: () => void;
 		loading?: boolean;
 	};
+	disabledLoading?: boolean;
 	error?: {
 		statusCode?: number;
 		title?: string;
@@ -76,6 +77,7 @@ const Container: FC<ContainerProps> = ({
 	error,
 	heading,
 	icon,
+	disabledLoading,
 	loading,
 	paginate,
 	refresh,
@@ -179,6 +181,14 @@ const Container: FC<ContainerProps> = ({
 				message={options.message}
 				visible={visible}
 			/>
+			{disabledLoading === true && (
+				<div 
+					className="fixed flex items-center justify-center h-full main-container-width top-0 z-[100]"
+					style={{ background: "rgba(0, 0, 0, 0.6)" }}
+				>
+					<Loader border="border-l-0" color="primary" size={8} type="double" width="md" />
+				</div>
+			)}
 		</>
 	);
 };

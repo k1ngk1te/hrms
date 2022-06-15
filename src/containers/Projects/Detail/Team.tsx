@@ -57,6 +57,7 @@ const Team = () => {
 			}
 			icon
 			loading={isLoading}
+			disabledLoading={!isLoading && (isFetching || loading)}
 			title={data ? data.name : undefined}
 		>
 			{data && (

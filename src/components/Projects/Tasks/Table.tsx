@@ -66,13 +66,12 @@ const getRows = (
 
 type TableType = {
   tasks: TaskType[];
-  loading: boolean;
   deleteLoading: boolean;
   onEdit: (id: string, initState: TaskCreateType) => void;
   onDelete: (id: string) => void;
 };
 
-const TaskTable = ({ tasks, deleteLoading, loading, onEdit, onDelete }: TableType) => {
+const TaskTable = ({ tasks, deleteLoading, onEdit, onDelete }: TableType) => {
   const [rows, setRows] = useState<RowType[]>([]);
   const [activeRow, setActiveRow] = useState<"" | "completed" | "ongoing">("");
 
@@ -95,7 +94,6 @@ const TaskTable = ({ tasks, deleteLoading, loading, onEdit, onDelete }: TableTyp
   return (
     <div className="mt-4 rounded-lg p-2 md:p-3 lg:p-4">
       <Table
-        loading={loading}
         heads={heads}
         rows={rows}
         split={{

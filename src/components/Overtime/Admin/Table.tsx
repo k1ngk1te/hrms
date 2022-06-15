@@ -7,13 +7,12 @@ import Table, { HeadType, RowType } from "../../controls/Table";
 
 const heads: HeadType = [
   { value: "employee name" },
-  { value: "email" },
   { value: "type" },
   { value: "date" },
   { value: "hours" },
   { value: "status" },
   { value: "date requested" },
-  { type: "actions", value: "options" },
+  { type: "actions", value: "view" },
 ];
 
 const getRows = (data: OvertimeType[]): RowType[] =>
@@ -24,7 +23,6 @@ const getRows = (data: OvertimeType[]): RowType[] =>
         ? `${overtime.user.first_name} ${overtime.user.last_name}`
         : "---",
     },
-    { value: overtime.user ? `${overtime.user.email}` : "---" },
     { value: overtime.overtime_type.name || "---" },
     { value: overtime.date || "---" },
     { value: overtime.hours || "---" },
@@ -58,12 +56,11 @@ const getRows = (data: OvertimeType[]): RowType[] =>
   ]);
 
 type TableType = {
-  loading: boolean;
   overtime: OvertimeType[];
   setStatus: (e: "" | "approved" | "denied" | "pending") => void;
 };
 
-const OvertimeTable = ({ overtime, loading, setStatus }: TableType) => {
+const OvertimeTable = ({ overtime, setStatus }: TableType) => {
   const [rows, setRows] = useState<RowType[]>([]);
   const [activeRow, setActiveRow] = useState<
     "all" | "approved" | "denied" | "pending"
@@ -86,7 +83,6 @@ const OvertimeTable = ({ overtime, loading, setStatus }: TableType) => {
   return (
     <div className="mt-4 rounded-lg p-2 md:p-3 lg:p-4">
       <Table
-        loading={loading}
         heads={heads}
         rows={rows}
         split={{
@@ -105,7 +101,7 @@ const OvertimeTable = ({ overtime, loading, setStatus }: TableType) => {
               onClick: () => {
                 setRows(
                   getRows(overtime).filter(
-                    (row: RowType) => row[5].value === "approved" && row
+                    (row: RowType) => row[4].value === "approved" && row
                   )
                 );
                 setActiveRow("approved");
@@ -118,7 +114,7 @@ const OvertimeTable = ({ overtime, loading, setStatus }: TableType) => {
               onClick: () => {
                 setRows(
                   getRows(overtime).filter(
-                    (row: RowType) => row[5].value === "denied" && row
+                    (row: RowType) => row[4].value === "denied" && row
                   )
                 );
                 setActiveRow("denied");
@@ -131,7 +127,7 @@ const OvertimeTable = ({ overtime, loading, setStatus }: TableType) => {
               onClick: () => {
                 setRows(
                   getRows(overtime).filter(
-                    (row: RowType) => row[5].value === "pending" && row
+                    (row: RowType) => row[4].value === "pending" && row
                   )
                 );
                 setActiveRow("pending");

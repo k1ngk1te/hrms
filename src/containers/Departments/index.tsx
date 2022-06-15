@@ -186,6 +186,11 @@ const Departments = () => {
 				loading: departments.isFetching,
 				onClick: () => departments.refetch(),
 			}}
+			error={isErrorWithData(departments.error) ? {
+				status: departments.error.status || 500,
+				title: String(departments.error.data?.detail || departments.error.data?.error || "")
+			} : undefined}
+			disabledLoading={!departments.isLoading && departments.isFetching}
 			loading={departments.isLoading}
 			paginate={departments.data ? {
 				loading: departments.isFetching,
@@ -238,7 +243,6 @@ const Departments = () => {
 			<div className="w-full">
 				<DepartmentTable
 					departments={departments.data?.results || []}
-					loading={departments.isFetching}
 					updateDep={(data: {
 						id: string | number;
 						name: string;

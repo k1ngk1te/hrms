@@ -94,6 +94,7 @@ const Overtime = () => {
 					overtime?.refetch();
 				},
 			}}
+			disabledLoading={!overtime.isLoading && overtime.isFetching}
 			loading={overtime.isLoading}
 			paginate={overtime.data ? {
 				loading: overtime.data.isFetching, setOffset, offset,
@@ -107,7 +108,6 @@ const Overtime = () => {
 			/>
 			<Topbar
 				adminView={false}
-				loading={overtime.isFetching}
 				dateSubmit={({ fromDate, toDate }) =>
 					setDateQuery({ from: fromDate, to: toDate })
 				}

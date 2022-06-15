@@ -53,7 +53,6 @@ const getRows = (
 
 type TableType = {
   departments: DepartmentType[];
-  loading: boolean;
   updateDep: (data: { id: number; name: string; hod: string }) => void;
   deleteDep: (id: number) => void;
   disableAction: boolean;
@@ -61,7 +60,6 @@ type TableType = {
 
 const DepartmentTable = ({
   departments = [],
-  loading,
   deleteDep,
   disableAction,
   updateDep,
@@ -92,7 +90,7 @@ const DepartmentTable = ({
 
   return (
     <div className="mt-4 rounded-lg p-2 md:p-3 lg:p-4">
-      <Table heads={heads} loading={loading} rows={rows} />
+      <Table heads={heads} rows={rows} />
     </div>
   );
 };

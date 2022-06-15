@@ -97,6 +97,7 @@ const Tasks = () => {
 				} : undefined
 			}
 			icon
+			disabledLoading={!isLoading && isFetching}
 			loading={isLoading}
 			paginate={data ? {
 				offset, setOffset, loading: isFetching,
@@ -122,7 +123,6 @@ const Tasks = () => {
 			<div className="mt-3">
 				<TaskTable
 					tasks={data ? data.results : []}
-					loading={isFetching}
 					onEdit={(id: string, initState: TaskCreateType) => {
 						setEditId(id);
 						setInitState(initState);

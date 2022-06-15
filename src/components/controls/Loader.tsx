@@ -1,3 +1,4 @@
+import { CSSProperties } from "react"
 const containerStyle = "flex justify-center items-center rounded-full";
 
 export type DotsLoaderType = {
@@ -179,7 +180,7 @@ export type LoaderProps = {
 	size?: number;
 	type?: "dashed" | "dotted" | "double" | "solid";
 	width?: "xs" | "sm" | "md" | "lg";
-	style?: object;
+	style?: CSSProperties;
 }
 
 export default Loader;

@@ -74,6 +74,7 @@ const Projects = () => {
 			background="bg-gray-100"
 			heading="Projects"
 			loading={isLoading}
+			disabledLoading={!isLoading && (isFetching || updateProject.isLoading)}
 			refresh={{
 				onClick: refetch,
 				loading: isFetching,

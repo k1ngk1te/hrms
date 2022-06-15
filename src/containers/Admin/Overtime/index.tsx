@@ -130,6 +130,7 @@ const Overtime = () => {
 					overtime?.refetch();
 				},
 			}}
+			disabledLoading={!overtime.isLoading && overtime.isFetching}
 			loading={overtime.isLoading}
 			paginate={overtime.data ? {
 				offset, setOffset, loading: overtime.isFetching, totalItems: overtime.data.count
@@ -151,7 +152,6 @@ const Overtime = () => {
 				exportData={exportLeave}
 			/>
 			<OvertimeTable
-				loading={overtime.isFetching}
 				setStatus={setStatus}
 				overtime={overtime.data?.results || []}
 			/>
