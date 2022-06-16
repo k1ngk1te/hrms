@@ -1,6 +1,7 @@
 import { baseApi } from "./base";
 import {
 	ATTENDANCE_URL,
+	ATTENDANCE_INFO_URL,
 	DATA_LIFETIME,
 	CLIENT_URL,
 	CLIENTS_URL,
@@ -13,8 +14,9 @@ import {
 } from "../../config";
 import { PaginationType } from "../../types/common";
 import {
-	AttendanceListType,
 	AttendanceType,
+	AttendanceInfoType,
+	AttendanceListType,
 	GetEmployeesDataType,
 	ClientType,
 	ClientCreateType,
@@ -138,13 +140,16 @@ const employeesApi = baseApi.injectEndpoints({
 				credentials: "include",
 			}),
 			keepUnusedDataFor: DATA_LIFETIME,
-			providesTags: (data) =>
-				data
-					? [
-							...data.results.map(({ id }) => ({ type: "Attendance", id })),
-							{ type: "Attendance", id: "ATTENDANCE_LIST" },
-					  ]
-					: [{ type: "Attendance", id: "ATTENDANCE_LIST" }],
+			providesTags: ["Attendance"],
+		}),
+		getAttendanceInfo: build.query<AttendanceInfoType, void>({
+			query: () => ({
+				url: ATTENDANCE_INFO_URL,
+				method: "GET",
+				credentials: "include",
+			}),
+			keepUnusedDataFor: DATA_LIFETIME,
+			providesTags: ["Attendance"]
 		}),
 		getClient: build.query<ClientType, number | string>({
 			query: (id) => ({
@@ -225,7 +230,7 @@ const employeesApi = baseApi.injectEndpoints({
 				credentials: "include",
 			}),
 			invalidatesTags: (result) =>
-				result ? [{ type: "Attendance", id: "ATTENDANCE_LIST" }] : [],
+				result ? [Attendance] : [],
 		}),
 		updateClient: build.mutation<
 			ClientType,
@@ -286,6 +291,7 @@ export const {
 	useDeleteEmployeeMutation,
 	useDeleteHolidayMutation,
 	useGetAttendanceQuery,
+	useGetAttendanceInfoQuery,
 	useGetClientQuery,
 	useGetClientsQuery,
 	useGetEmployeeQuery,

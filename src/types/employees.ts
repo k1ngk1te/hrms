@@ -26,12 +26,15 @@ export type AttendanceStatisticsType = {
   overtime?: number;
 }
 
-export interface AttendanceListType extends DataListType {
+export type AttendanceInfoType = {
   hours_spent_today?: AttendanceDayType;
   overtime_hours?: number;
-  results: AttendanceType[];
   week_hours?: AttendanceWeekType;
   statistics?: AttendanceStatisticsType
+}
+
+export interface AttendanceListType extends DataListType {
+  results: AttendanceType[];
 }
 
 export type AttendanceType = {

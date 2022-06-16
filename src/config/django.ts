@@ -14,6 +14,7 @@ export const PROFILE_URL = `${ROOT_URL}/profile/`;
 
 // Employees URLs Start
 export const ATTENDANCE_URL = `${ROOT_URL}/attendance/`;
+export const ATTENDANCE_INFO_URL = `${ROOT_URL}/attendance/info/`;
 
 export const CLIENTS_URL = `${ROOT_URL}/clients/`;
 export const CLIENT_URL = (id: string) => `${ROOT_URL}/clients/${id}/`;

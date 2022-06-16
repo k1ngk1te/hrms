@@ -1,6 +1,8 @@
 import csv
+import datetime
 import xlwt
 from allauth.account.adapter import get_adapter
+from collections import OrderedDict
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.http import HttpResponse
@@ -26,7 +28,6 @@ from .models import (
 	Task
 )
 from .pagination import (
-	AttendancePagination,
 	ClientPagination,
 	EmployeePagination,
 	ProjectPagination,
@@ -56,8 +57,51 @@ from .serializers import (
 User = get_user_model()
 
 
-class AttendanceView(generics.ListAPIView):
-	pagination_class = AttendancePagination
+class AttendanceInfoView(APIView):
+	def get(self, request, *args, **kwargs):
+		return Response(OrderedDict([
+				('hours_spent_today', Attendance.objects.get_hours(
+					self.request.user.employee.has_attendance())),
+				('week_hours', Attendance.objects.get_week_hours(
+					employee=self.request.user.employee)),
+				('overtime_hours', self.get_overtime_hours()),
+				('statistics', self.get_statistics()),
+			]))
+
+	def get_overtime_hours(self):
+		overtime = self.request.user.employee.has_overtime()
+		return overtime.hours if overtime else None
+
+	def get_statistics(self):
+		today_total_expected_hours = self.request.user.employee.total_hours_for_the_day()
+		today_total_hours_spent = self.request.user.employee.total_hours_spent_for_the_day()
+
+		week_total_expected_hours = self.request.user.employee.total_hours_for_the_week()
+		week_total_hours_spent = self.request.user.employee.total_hours_spent_for_the_week()
+
+		month_total_expected_hours = self.request.user.employee.total_hours_for_the_month()
+		month_total_hours_spent = self.request.user.employee.total_hours_spent_for_the_month()
+
+		statistics = OrderedDict({})
+		statistics["today"] = today_total_hours_spent / today_total_expected_hours
+		statistics["week"] = week_total_hours_spent / week_total_expected_hours
+		statistics["month"] = month_total_hours_spent / month_total_expected_hours
+		statistics["overtime"] = self.get_overtime_statistics()
+		return statistics
+
+	def get_overtime_statistics(self):
+		overtime = self.request.user.employee.has_overtime()
+		attendance = self.request.user.employee.has_attendance()
+		if not overtime or not attendance or not attendance.punch_in:
+			return 0
+		hours_spent = self.request.user.employee.total_hours_spent_for_the_day()
+		hours_without_overtime = self.request.user.employee.total_hours_for_the_day(wo=True)
+		if hours_spent > hours_without_overtime:
+			return (hours_spent - hours_without_overtime) / overtime.hours
+		return 0
+
+
+class AttendanceListView(generics.ListAPIView):
 	serializer_class = AttendanceSerializer
 	permission_classes = (IsEmployee, )
 

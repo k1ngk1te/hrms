@@ -5,6 +5,7 @@ import { useGetAdminLeavesQuery } from "../store/features/leaves-slice";
 import { useNotificationsQuery } from "../store/features/notifications-slice";
 import { useAppSelector } from "../hooks";
 import { getDateString } from "../utils";
+import { StatsCard } from "../components/Attendance";
 import { Card, Container } from "../components/common";
 import { Button } from "../components/controls";
 
@@ -91,6 +92,8 @@ const Home = () => {
             ))}
           </div>
         )}
+
+        <StatsCard />
 
         <div className="flex flex-col items-center w-full md:flex-row md:items-start md:justify-between">
           <div className="mt-5 w-full md:pr-2 md:w-1/2">

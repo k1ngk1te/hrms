@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (
-	AttendanceView, ClientView, DepartmentView, EmployeeView,
+	AttendanceListView, AttendanceInfoView, 
+	ClientView, DepartmentView, EmployeeView,
 	EmployeeDeactivateView, EmployeePasswordChangeView,
 	EmployeeExportDataView, HolidayView,
 	ProjectView, ProjectFileView, ProjectCompletedView, ProjectEmployeesView,
@@ -9,7 +10,8 @@ from .views import (
 
 
 urlpatterns = [
-	path('api/attendance/', AttendanceView.as_view(), name="attendance"),
+	path('api/attendance/info/', AttendanceInfoView.as_view(), name="attendance-info"),
+	path('api/attendance/', AttendanceListView.as_view(), name="attendance-list"),
 	path('api/clients/', ClientView.as_view(), name="clients"),
 	path('api/clients/<str:id>/', ClientView.as_view(), name="client-detail"),
 	path('api/departments/', DepartmentView.as_view(), name="departments"),

@@ -1,67 +1,9 @@
-import datetime
 from collections import OrderedDict
 from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
 
-from .models import Attendance, Client, Employee, Project, Task
-
-
-class AttendancePagination(LimitOffsetPagination):
-	def get_paginated_response(self, data):
-		try:
-			return Response(OrderedDict([
-				('count', self.count),
-				('next', self.get_next_link()),
-				('previous', self.get_previous_link()),
-				('hours_spent_today', Attendance.objects.get_hours(
-					self.request.user.employee.has_attendance())),
-				('week_hours', Attendance.objects.get_week_hours(
-					employee=self.request.user.employee)),
-				('overtime_hours', self.get_overtime_hours()),
-				('statistics', self.get_statistics()),
-				('results', data),
-			]))
-		except:
-			return Response(OrderedDict([
-				('count', self.count),
-				('next', self.get_next_link()),
-				('previous', self.get_previous_link()),
-				('results', data),
-			]))
-		return None
-
-	def get_overtime_hours(self):
-		overtime = self.request.user.employee.has_overtime()
-		return overtime.hours if overtime else None
-
-	def get_statistics(self):
-		today_total_expected_hours = self.request.user.employee.total_hours_for_the_day()
-		today_total_hours_spent = self.request.user.employee.total_hours_spent_for_the_day()
-
-		week_total_expected_hours = self.request.user.employee.total_hours_for_the_week()
-		week_total_hours_spent = self.request.user.employee.total_hours_spent_for_the_week()
-
-		month_total_expected_hours = self.request.user.employee.total_hours_for_the_month()
-		month_total_hours_spent = self.request.user.employee.total_hours_spent_for_the_month()
-
-		statistics = OrderedDict({})
-		statistics["today"] = today_total_hours_spent / today_total_expected_hours
-		statistics["week"] = week_total_hours_spent / week_total_expected_hours
-		statistics["month"] = month_total_hours_spent / month_total_expected_hours
-		statistics["overtime"] = self.get_overtime_statistics()
-		return statistics
-
-	def get_overtime_statistics(self):
-		overtime = self.request.user.employee.has_overtime()
-		attendance = self.request.user.employee.has_attendance()
-		if not overtime or not attendance or not attendance.punch_in:
-			return 0
-		hours_spent = self.request.user.employee.total_hours_spent_for_the_day()
-		hours_without_overtime = self.request.user.employee.total_hours_for_the_day(wo=True)
-		if hours_spent > hours_without_overtime:
-			return (hours_spent - hours_without_overtime) / overtime.hours
-		return 0
+from .models import Client, Employee, Project, Task
 
 
 class ClientPagination(LimitOffsetPagination):
