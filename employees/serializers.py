@@ -138,7 +138,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
 		if hod and hod != instance.hod:
 			dep = get_instance(Department, {"hod": hod})
 			if dep:
-				raise ValidationError({ hod: {
+				raise ValidationError({ "hod": {
 					"id": f"This employee is already the Head of Department for {dep.name}"}})
 			instance.hod = hod
 		instance.save()

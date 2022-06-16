@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { FaCheckCircle, FaSearch, FaPlus, FaTimesCircle } from "react-icons/fa";
 import { DEFAULT_PAGINATION_SIZE } from "../../config";
-import { isErrorWithData } from "../../store";
+import { isErrorWithData, isFormError } from "../../store";
 import { logout } from "../../store/features/auth-slice";
 import {
 	useGetDepartmentsQuery,
@@ -263,8 +263,18 @@ const Departments = () => {
 						initState={initState}
 						errors={
 							editMode
-								? isErrorWithData(update.error) && update.error?.data?.error
-								: isErrorWithData(error) && error?.data?.error
+								? isFormError<{
+									name?: string;
+									hod?: {
+										id: string;
+									}
+								}>(update.error) && update.error?.data
+								: isFormError<{
+									name?: string;
+									hod?: {
+										id: string;
+									}
+								}>(error) && error?.data
 						}
 						editMode={editMode}
 						loading={editMode ? update.isLoading : isLoading}

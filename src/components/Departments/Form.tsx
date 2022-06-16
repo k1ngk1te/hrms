@@ -12,7 +12,9 @@ type FormType = {
 
 type ErrorType = {
   name?: string;
-  hod?: string;
+  hod?: {
+    id: string;
+  }
 };
 
 type FormProps = {
