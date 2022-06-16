@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaSadTear } from "react-icons/fa";
 import { DEFAULT_PAGINATION_SIZE } from "../../config"
+import { isErrorWithData } from "../../store";
 import { logout } from "../../store/features/auth-slice";
 import { useNotificationsQuery } from "../../store/features/notifications-slice";
 import {

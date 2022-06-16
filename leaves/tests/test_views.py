@@ -28,7 +28,7 @@ class LeaveListViewTests(TestSetUp):
 		self.assertEqual(response.status_code, 401)
 
 	def test_create_leave_by_authenticated_user(self):
-		can_request = Leave.objects.can_request_leave(self.employee, global_start_date)[0]
+		can_request = Leave.objects.can_request_leave(self.employee, global_start_date, global_end_date)[0]
 		self.client.post(self.login_url, {
 			"email": self.employee.user.email, "password": "Passing1234"})
 		response1 = self.client.post(self.leaves_url, {
@@ -57,7 +57,7 @@ class LeaveListViewTests(TestSetUp):
 		self.assertEqual(response4.status_code, 400)
 		self.assertEqual(response5.status_code, 201)
 		self.assertEqual(response6.status_code, 400)
-		self.assertFalse(Leave.objects.can_request_leave(self.employee, global_start_date)[0])
+		self.assertFalse(Leave.objects.can_request_leave(self.employee, global_start_date, global_end_date)[0])
 		self.assertIsNotNone(leave)
 
 

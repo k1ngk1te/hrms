@@ -80,29 +80,35 @@ class EmployeeModelMixin:
 		EmployeeModel = self.employee_model
 		return EmployeeModel.objects.filter(supervisor__user=self.user)
 
-	def has_active_leave(self, date):
+	def has_active_leave(self, start_date, end_date=None):
+		assert end_date is not None, ('Provide End Date')
 		# A method to check if the employee has an active leave in the range of dates
-		leaves = self.user.employee.leaves.filter(a_md="A", start_date__gte=date) # Get active leaves where start date is >= date passed
+		leaves = self.user.employee.leaves.filter(a_md="A") # Get active leaves
 		for leave in leaves:
-			if leave.start_date <= date <= leave.end_date:
+			if (leave.start_date <= start_date <= leave.end_date) or (
+				leave.start_date <= end_date <= leave.end_date):
 				return True
 		return False
 
-	def has_pending_leave(self, date):
+	def has_pending_leave(self, start_date, end_date=None):
+		assert end_date is not None, ('Provide End Date')
 		# A method to check if the employee has a pending leave in the range of dates
 		leaves = self.user.employee.leaves.exclude(Q(a_md="A") | Q(a_md="D") # Remove all active and denied leaves
-			| Q(a_hr="D") | Q(a_hod="D") | Q(a_s="D")).filter(start_date__gte=date) # Get leaves where start date is >= date passed
+			| Q(a_hr="D") | Q(a_hod="D") | Q(a_s="D"))
 		for leave in leaves:
-			if leave.start_date <= date <= leave.end_date:
+			if (leave.start_date <= start_date <= leave.end_date) or (
+				leave.start_date <= end_date <= leave.end_date):
 				return True
 		return False
 
-	def has_pending_or_active_leave(self, date):
+	def has_pending_or_active_leave(self, start_date, end_date=None):
+		assert end_date is not None, ('Provide End Date')
 		# A method to check if the employee has a pending or active leave in the range of dates
 		leaves = self.user.employee.leaves.exclude(Q(a_md="D") # Remove all denied leaves
-			| Q(a_hr="D") | Q(a_hod="D") | Q(a_s="D")).filter(start_date__gte=date) # Get leaves where start date is >= date passed
+			| Q(a_hr="D") | Q(a_hod="D") | Q(a_s="D"))
 		for leave in leaves:
-			if leave.start_date <= date <= leave.end_date:
+			if (leave.start_date <= start_date <= leave.end_date) or (
+				leave.start_date <= end_date <= leave.end_date):
 				if leave.a_md == "A":
 					return [True, f"You are on leave from {leave.start_date} to {leave.end_date}"]
 				return [True, f"You have pending leave request from {leave.start_date} to {leave.end_date}"]

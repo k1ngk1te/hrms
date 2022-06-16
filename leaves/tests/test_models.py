@@ -19,7 +19,7 @@ global_end_date = get_date(1)
 """ Leave Model Tests """
 class LeaveTests(TestSetUp):
 	def test_create_leave_by_employee(self):
-		can_request = Leave.objects.can_request_leave(self.employee, global_start_date)[0]
+		can_request = Leave.objects.can_request_leave(self.employee, global_start_date, global_end_date)[0]
 		leave = Leave.objects.create(
 			employee=self.employee, leave_type="C", start_date=global_start_date,
 			end_date=global_end_date, reason="Testing purposes")
@@ -32,7 +32,7 @@ class LeaveTests(TestSetUp):
 		self.assertEqual(leave.a_hr, "P")
 		self.assertEqual(leave.a_md, "P")
 		self.assertTrue(can_request)
-		self.assertFalse(Leave.objects.can_request_leave(self.employee, global_start_date)[0])
+		self.assertFalse(Leave.objects.can_request_leave(self.employee, global_start_date, global_end_date)[0])
 		self.assertTrue(Leave.objects.can_view_leave(leave, self.employee))
 		self.assertTrue(Leave.objects.can_view_leave(leave, self.supervisor))
 		self.assertTrue(Leave.objects.can_view_leave(leave, self.hod))
@@ -167,7 +167,7 @@ class LeaveTests(TestSetUp):
 class LeaveAdminTests(TestSetUp):
 	def test_create_leave_by_employee1_for_employee(self):
 		""" Test that only staffs can create a leave """
-		can_request = Leave.objects.can_request_leave(self.employee, global_start_date)[0]
+		can_request = Leave.objects.can_request_leave(self.employee, global_start_date, global_end_date)[0]
 		with self.assertRaises(ValueError):
 			Leave.admin_objects.create(
 				employee=self.employee, leave_type="C", start_date=global_start_date,
@@ -176,7 +176,7 @@ class LeaveAdminTests(TestSetUp):
 
 	def test_create_leave_by_supervisor_for_employee1(self):
 		""" Test that staffs cannot create a leave for employee they don't supervise"""
-		can_request = Leave.objects.can_request_leave(self.employee, global_start_date)[0]
+		can_request = Leave.objects.can_request_leave(self.employee, global_start_date, global_end_date)[0]
 		with self.assertRaises(ValueError):
 			Leave.admin_objects.create(
 				employee=self.employee1, leave_type="C", start_date=global_start_date,
@@ -185,7 +185,7 @@ class LeaveAdminTests(TestSetUp):
 
 	def test_create_leave_by_hod_for_employee1(self):
 		""" Test that staffs cannot create a leave for employee not in their department"""
-		can_request = Leave.objects.can_request_leave(self.employee, global_start_date)[0]
+		can_request = Leave.objects.can_request_leave(self.employee, global_start_date, global_end_date)[0]
 		with self.assertRaises(ValueError):
 			Leave.admin_objects.create(
 				employee=self.employee1, leave_type="C", start_date=global_start_date,
@@ -194,7 +194,7 @@ class LeaveAdminTests(TestSetUp):
 
 	def test_create_leave_by_supervisor_for_employee(self):
 		""" Test that supervisor can create a leave """
-		can_request = Leave.objects.can_request_leave(self.employee, global_start_date)[0]
+		can_request = Leave.objects.can_request_leave(self.employee, global_start_date, global_end_date)[0]
 		leave = Leave.admin_objects.create(
 			employee=self.employee, leave_type="C", start_date=global_start_date,
 			end_date=global_end_date, reason="Testing purposes", created_by=self.supervisor)
@@ -210,7 +210,7 @@ class LeaveAdminTests(TestSetUp):
 		self.assertEqual(leave.a_hr, "P")
 		self.assertEqual(leave.a_md, "P")
 		self.assertTrue(can_request)
-		self.assertFalse(Leave.objects.can_request_leave(self.employee, global_start_date)[0])
+		self.assertFalse(Leave.objects.can_request_leave(self.employee, global_start_date, global_end_date)[0])
 		self.assertTrue(Leave.objects.can_view_leave(leave, self.employee))
 		self.assertTrue(Leave.objects.can_view_leave(leave, self.supervisor))
 		self.assertTrue(Leave.objects.can_view_leave(leave, self.hod))
@@ -224,7 +224,7 @@ class LeaveAdminTests(TestSetUp):
 
 	def test_create_leave_by_hod_for_employee(self):
 		""" Test that hod can create a leave """
-		can_request = Leave.objects.can_request_leave(self.employee, global_start_date)[0]
+		can_request = Leave.objects.can_request_leave(self.employee, global_start_date, global_end_date)[0]
 		leave = Leave.admin_objects.create(
 			employee=self.employee, leave_type="C", start_date=global_start_date,
 			end_date=global_end_date, reason="Testing purposes", created_by=self.hod)
@@ -240,7 +240,7 @@ class LeaveAdminTests(TestSetUp):
 		self.assertEqual(leave.a_hr, "P")
 		self.assertEqual(leave.a_md, "P")
 		self.assertTrue(can_request)
-		self.assertFalse(Leave.objects.can_request_leave(self.employee, global_start_date)[0])
+		self.assertFalse(Leave.objects.can_request_leave(self.employee, global_start_date, global_end_date)[0])
 		self.assertTrue(Leave.objects.can_view_leave(leave, self.employee))
 		self.assertTrue(Leave.objects.can_view_leave(leave, self.supervisor))
 		self.assertTrue(Leave.objects.can_view_leave(leave, self.hod))
@@ -254,7 +254,7 @@ class LeaveAdminTests(TestSetUp):
 
 	def test_create_leave_by_hr_for_employee(self):
 		""" Test that HR can create a leave """
-		can_request = Leave.objects.can_request_leave(self.employee, global_start_date)[0]
+		can_request = Leave.objects.can_request_leave(self.employee, global_start_date, global_end_date)[0]
 		leave = Leave.admin_objects.create(
 			employee=self.employee, leave_type="C", start_date=global_start_date,
 			end_date=global_end_date, reason="Testing purposes", created_by=self.hr)
@@ -270,7 +270,7 @@ class LeaveAdminTests(TestSetUp):
 		self.assertEqual(leave.a_hr, "A")
 		self.assertEqual(leave.a_md, "P")
 		self.assertTrue(can_request)
-		self.assertFalse(Leave.objects.can_request_leave(self.employee, global_start_date)[0])
+		self.assertFalse(Leave.objects.can_request_leave(self.employee, global_start_date, global_end_date)[0])
 		self.assertTrue(Leave.objects.can_view_leave(leave, self.employee))
 		self.assertTrue(Leave.objects.can_view_leave(leave, self.supervisor))
 		self.assertTrue(Leave.objects.can_view_leave(leave, self.hod))
@@ -284,7 +284,7 @@ class LeaveAdminTests(TestSetUp):
 
 	def test_create_leave_by_md_for_employee(self):
 		""" Test that md can create a leave """
-		can_request = Leave.objects.can_request_leave(self.employee, global_start_date)[0]
+		can_request = Leave.objects.can_request_leave(self.employee, global_start_date, global_end_date)[0]
 		leave = Leave.admin_objects.create(
 			employee=self.employee, leave_type="C", start_date=global_start_date,
 			end_date=global_end_date, reason="Testing purposes", created_by=self.md)
@@ -297,7 +297,7 @@ class LeaveAdminTests(TestSetUp):
 		self.assertEqual(leave.a_hr, "N")
 		self.assertEqual(leave.a_md, "A")
 		self.assertTrue(can_request)
-		self.assertFalse(Leave.objects.can_request_leave(self.employee, global_start_date)[0])
+		self.assertFalse(Leave.objects.can_request_leave(self.employee, global_start_date, global_end_date)[0])
 		self.assertTrue(Leave.objects.can_view_leave(leave, self.employee))
 		self.assertTrue(Leave.objects.can_view_leave(leave, self.supervisor))
 		self.assertTrue(Leave.objects.can_view_leave(leave, self.hod))

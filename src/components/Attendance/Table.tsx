@@ -7,9 +7,9 @@ const heads: HeadType = [
   { value: "date" },
   { value: "punch in"},
   { value: "punch out" },
+  { value: "overtime (hours)" },
   { value: "production" },
   { value: "break" },
-  { value: "overtime (hours)" }
 ];
 
 const getRows = (data: AttendanceType[]): RowType[] =>
@@ -17,9 +17,9 @@ const getRows = (data: AttendanceType[]): RowType[] =>
     { value: attendance.date ? new Date(attendance.date).toDateString() : "---" },
     { value: attendance.punch_in ? getTime(attendance.punch_in) : "---" },
     { value: attendance.punch_out ? getTime(attendance.punch_out) : "---" },
+    { value: attendance.overtime || "---" },
     { value: attendance.production || "---" },
     { value: attendance.break || "---" },
-    { value: attendance.overtime || "---" }
   ]);
 
 type TableType = {
