@@ -4,16 +4,11 @@ import Badge from "./Badge";
 
 type InfoCompType = {
 	description?: string;
-	image?: {
-		className?: string;
-		src: string;
-		alt: string;
-	};
 	infos: {
 		options?: any;
 		title: string;
 		type?: "badge";
-		value: string;
+		value: any; // string | { alt: string; src: string }
 	}[];
 	title: string;
 	titleWidth?: string;

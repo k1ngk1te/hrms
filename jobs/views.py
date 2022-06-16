@@ -1,12 +1,13 @@
 from django.db.models import Q
 from rest_framework import generics
 
+from core.views import ListCreateView
 from employees.permissions import IsHROrMD, IsHROrMDOrAdminUser
 from .models import Job
 from .serializers import JobSerializer
 
 
-class JobListView(generics.ListCreateAPIView):
+class JobListView(ListCreateView):
 	queryset = Job.objects.all().order_by('-id')
 	serializer_class = JobSerializer
 	permission_classes = (IsHROrMDOrAdminUser, )

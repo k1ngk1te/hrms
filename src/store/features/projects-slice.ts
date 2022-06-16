@@ -26,6 +26,10 @@ export interface TaskPaginationType extends PaginationType {
 	project_id: string;
 }
 
+export interface ProjectEmployeesListType extends PaginationType {
+	results: UserEmployeeType[]
+}
+
 const generateProjectFile = (data: ProjectFileCreateType) => {
 	const form = new FormData();
 	form.append("name", data.name);

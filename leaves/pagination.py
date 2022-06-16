@@ -1,37 +1,25 @@
 from collections import OrderedDict
 from rest_framework.response import Response
-from rest_framework.pagination import LimitOffsetPagination
 
-from employees.models import Employee
-from users.models import User
-from .models import Leave, Overtime
+from core.pagination import CustomLimitOffsetPagination
 
 
-class LeavePagination(LimitOffsetPagination):
-	def get_paginated_response(self, data):
-		try:
-			return Response(OrderedDict([
-				('approved_count', self.get_status_count(self.request.user.employee, "A")),
-				('count', self.count),
-				('denied_count', self.get_status_count(self.request.user.employee, "D")),
-				('next', self.get_next_link()),
-				('pending_count', self.get_status_count(self.request.user.employee, "P")),
-				('previous', self.get_previous_link()),
-				('results', data),
-			]))
-		except:
-			pass
+class LeavePagination(CustomLimitOffsetPagination):
+	def get_paginated_response(self, data, queryset):
 		return Response(OrderedDict([
+			('approved_count', self.get_status_count(queryset, "A")),
 			('count', self.count),
+			('denied_count', self.get_status_count(queryset, "D")),
 			('next', self.get_next_link()),
+			('pending_count', self.get_status_count(queryset, "P")),
 			('previous', self.get_previous_link()),
 			('results', data),
 		]))
 		
-	def get_status_count(self, employee, status):
+	def get_status_count(self, queryset, status):
 		try:
 			leave_count = 0
-			for leave in Leave.objects.filter(employee=employee):
+			for leave in queryset:
 				if leave.status == status:
 					leave_count += 1
 			return leave_count
@@ -40,38 +28,29 @@ class LeavePagination(LimitOffsetPagination):
 		return 0
 
 
-class LeaveAdminPagination(LimitOffsetPagination):
-	def get_paginated_response(self, data):
-		try:
-			return Response(OrderedDict([
-				('approved_count', self.get_status_count(self.request.user.employee, "A")),
-				('count', self.count),
-				('denied_count', self.get_status_count(self.request.user.employee, "D")),
-				('next', self.get_next_link()),
-				('pending_count', self.get_status_count(self.request.user.employee, "P")),
-				('previous', self.get_previous_link()),
-				('results', data),
-			]))
-		except:
-			pass
+class LeaveAdminPagination(CustomLimitOffsetPagination):
+	def get_paginated_response(self, data, queryset):
 		return Response(OrderedDict([
+			('approved_count', self.get_status_count(queryset, "A")),
 			('count', self.count),
+			('denied_count', self.get_status_count(queryset, "D")),
 			('next', self.get_next_link()),
+			('pending_count', self.get_status_count(queryset, "P")),
 			('previous', self.get_previous_link()),
 			('results', data),
 		]))
 
-	def get_status_count(self, employee, status):
+	def get_status_count(self, queryset, status):
 		try:
-			leaves = Leave.admin_objects.leaves(employee)
+			employee = self.request.user.employee
 			if employee.is_md:
-				return leaves.filter(a_md=status).count()
+				return queryset.filter(a_md=status).count()
 			elif employee.is_hr:
-				return leaves.filter(a_hr=status).count()
+				return queryset.filter(a_hr=status).count()
 			elif employee.is_hod:
-				return leaves.filter(a_hod=status).count()
+				return queryset.filter(a_hod=status).count()
 			elif employee.is_supervisor:
-				return leaves.filter(a_s=status).count()
+				return queryset.filter(a_s=status).count()
 			else:
 				return 0
 		except:
@@ -79,31 +58,22 @@ class LeaveAdminPagination(LimitOffsetPagination):
 		return 0
 
 
-class OvertimePagination(LimitOffsetPagination):
-	def get_paginated_response(self, data):
-		try:
-			return Response(OrderedDict([
-				('approved_count', self.get_status_count(self.request.user.employee, "A")),
-				('count', self.count),
-				('denied_count', self.get_status_count(self.request.user.employee, "D")),
-				('next', self.get_next_link()),
-				('pending_count', self.get_status_count(self.request.user.employee, "P")),
-				('previous', self.get_previous_link()),
-				('results', data),
-			]))
-		except:
-			pass
+class OvertimePagination(CustomLimitOffsetPagination):
+	def get_paginated_response(self, data, queryset):
 		return Response(OrderedDict([
+			('approved_count', self.get_status_count(queryset, "A")),
 			('count', self.count),
+			('denied_count', self.get_status_count(queryset, "D")),
 			('next', self.get_next_link()),
+			('pending_count', self.get_status_count(queryset, "P")),
 			('previous', self.get_previous_link()),
 			('results', data),
 		]))
 		
-	def get_status_count(self, employee, status):
+	def get_status_count(self, queryset, status):
 		try:
 			overtime_count = 0
-			for overtime in Overtime.objects.filter(employee=employee):
+			for overtime in queryset:
 				if overtime.status == status:
 					overtime_count += 1
 			return overtime_count
@@ -112,38 +82,29 @@ class OvertimePagination(LimitOffsetPagination):
 		return 0
 
 
-class OvertimeAdminPagination(LimitOffsetPagination):
-	def get_paginated_response(self, data):
-		try:
-			return Response(OrderedDict([
-				('approved_count', self.get_status_count(self.request.user.employee, "A")),
-				('count', self.count),
-				('denied_count', self.get_status_count(self.request.user.employee, "D")),
-				('next', self.get_next_link()),
-				('pending_count', self.get_status_count(self.request.user.employee, "P")),
-				('previous', self.get_previous_link()),
-				('results', data),
-			]))
-		except:
-			pass
+class OvertimeAdminPagination(CustomLimitOffsetPagination):
+	def get_paginated_response(self, data, queryset):
 		return Response(OrderedDict([
+			('approved_count', self.get_status_count(queryset, "A")),
 			('count', self.count),
+			('denied_count', self.get_status_count(queryset, "D")),
 			('next', self.get_next_link()),
+			('pending_count', self.get_status_count(queryset, "P")),
 			('previous', self.get_previous_link()),
 			('results', data),
 		]))
 
-	def get_status_count(self, employee, status):
+	def get_status_count(self, queryset, status):
 		try:
-			overtimes = Overtime.admin_objects.overtimes(employee)
+			employee = self.request.user.employee
 			if employee.is_md:
-				return overtimes.filter(a_md=status).count()
+				return queryset.filter(a_md=status).count()
 			elif employee.is_hr:
-				return overtimes.filter(a_hr=status).count()
+				return queryset.filter(a_hr=status).count()
 			elif employee.is_hod:
-				return overtimes.filter(a_hod=status).count()
+				return queryset.filter(a_hod=status).count()
 			elif employee.is_supervisor:
-				return overtimes.filter(a_s=status).count()
+				return queryset.filter(a_s=status).count()
 			else:
 				return 0
 		except:

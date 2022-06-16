@@ -199,7 +199,7 @@ export type ClientFormErrorType = {
 };
 
 export type HolidayType = {
-  id: string | number;
+  id: string;
   name: string;
   date: string;
 };
@@ -221,7 +221,7 @@ export interface UserEmployeeType extends UserType {
 }
 
 export type ProjectType = {
-  id: string | number;
+  id: string;
   client: ClientType;
   leaders: UserEmployeeType[];
   team: UserEmployeeType[];
@@ -234,7 +234,6 @@ export type ProjectType = {
   priority: "H" | "M" | "L";
   description: string;
   completed: boolean;
-  verified: boolean;
   is_active: boolean;
   tasks: {
     id: string;
@@ -245,7 +244,7 @@ export type ProjectType = {
 };
 
 export type ProjectCreateType = {
-  client: string | number;
+  client: string | null;
   leaders: { id: string }[];
   team: { id: string }[];
   name: string;
@@ -271,6 +270,9 @@ export type ProjectCreateErrorType = {
 };
 
 export interface ProjectListType extends DataListType {
+  total?: number;
+  completed?: number;
+  ongoing?: number;
   results: ProjectType[];
 }
 
@@ -323,7 +325,7 @@ export type TaskCreateErrorType = {
   description: string;
 };
 
-export type ProfileFileType = {
+export type ProjectFileType = {
   id: number;
   project: {
     id: string;

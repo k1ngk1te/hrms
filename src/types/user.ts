@@ -47,7 +47,7 @@ export interface UserInfoType extends UserType {
   job?: string;
   is_admin?: boolean;
   admin_status?: "supervisor" | "hod" | "hr" | "md" | null;
-  empId?: string | number;
+  empId?: string;
   leaves_taken?: number;
 leaves_remaining?: number;
 punched_in?: boolean;

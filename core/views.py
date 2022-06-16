@@ -2,13 +2,25 @@ from rest_framework import mixins
 from rest_framework.exceptions import server_error, MethodNotAllowed
 from rest_framework.generics import GenericAPIView
 
+from .mixins import CustomListModelMixin
 
-class ListCreateView(mixins.ListModelMixin, mixins.CreateModelMixin,
-											GenericAPIView):
 
+class ListView(CustomListModelMixin, GenericAPIView):
 	def get(self, request, *args, **kwargs):
 		return self.list(request, *args, **kwargs)
-	
+
+	def get_paginated_response(self, data, queryset):
+		"""
+		Return a paginated style `Response` object for the given output data.
+		Use this to pass in the queryset
+		"""
+		# queryset = self.filter_queryset(self.get_queryset())
+		assert self.paginator is not None
+		return self.paginator.get_paginated_response(data, queryset)
+
+
+class ListCreateView(mixins.CreateModelMixin, ListView):
+
 	def post(self, request, *args, **kwargs):
 		return self.custom_create(request, *args, **kwargs)
 

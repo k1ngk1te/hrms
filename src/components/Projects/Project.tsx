@@ -82,14 +82,6 @@ const Project = ({
 					<BiDotsVerticalRounded className="cursor-pointer duration-500 text-xl text-gray-700 hover:text-primary-500 hover:scale-105 md:text-2xl lg:text-xl" />
 				</span>
 			</div>
-			<div className="mb-1">
-				<span className="font-medium mr-1 text-gray-800 text-sm">
-					1 <span className="font-bold text-gray-600">open tasks</span>,
-				</span>
-				<span className="font-medium mr-1 text-gray-800 text-sm">
-					9 <span className="font-bold text-gray-600">tasks completed</span>
-				</span>
-			</div>
 			<div className="my-1">
 				<p className="font-semibold my-2 text-left text-sm text-gray-600 md:text-base">
 					{description.slice(0, 75)} {description.length > 75 ? "..." : ""}
@@ -105,13 +97,36 @@ const Project = ({
 							? "text-red-600"
 							: priority === "M"
 							? "text-yellow-600"
-							: "text-success-600"
+							: "text-green-600"
 					} capitalize flex flex-wrap items-center font-semibold mx-2 text-sm md:text-base lg:text-sm`}
 				>
 					{priority === "H" ? "High" : priority === "M" ? "Medium" : "Low"}
 					<span className="mx-2 pb-1">
 						<FaExclamationCircle className="text-sm" />
 					</span>
+				</p>
+			</div>
+			<div className="flex flex-wrap items-end my-1">
+				<h6 className="capitalize font-medium text-gray-800 text-base md:text-lg lg:text-base">
+					Status:
+				</h6>
+				<p
+					className={`${
+						completed
+							? "text-green-600"
+							: "text-yellow-600"
+					} capitalize flex flex-wrap items-center font-semibold mx-2 text-sm md:text-base lg:text-sm`}
+				>
+					{completed ? "completed" : "ongoing"}
+					{completed ? (
+						<span className="mx-2 pb-1">
+							<FaCheckCircle className="text-sm" />
+						</span>
+					) : (
+						<span className="mx-2 pb-1">
+							<FaExclamationCircle className="text-sm" />
+						</span>
+					)}
 				</p>
 			</div>
 			<div className="flex flex-wrap items-end my-1">

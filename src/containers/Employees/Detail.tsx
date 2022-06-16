@@ -96,6 +96,7 @@ const Employee = () => {
 				onClick: () => refetch(),
 			}}
 			loading={isLoading}
+			disabledLoading={!isLoading && isFetching}
 			error={
 				error && isErrorWithData(error)
 					? {

@@ -2,7 +2,7 @@ import { DataListType } from "./common";
 import { UserInfoType } from "./user";
 
 export type NotificationType = {
-	id: string | number;
+	id: string;
 	_type: "L";
 	sender: UserInfoType;
 	recipient: UserInfoType;

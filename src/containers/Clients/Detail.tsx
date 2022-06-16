@@ -96,6 +96,7 @@ const ClientDetail = () => {
 			title={data ? data.company.toUpperCase() : undefined}
 			icon
 			loading={isLoading}
+			disabledLoading={!isLoading && isFetching}
 			error={
 				isErrorWithData(error)
 					? {

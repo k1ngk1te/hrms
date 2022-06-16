@@ -29,7 +29,7 @@ const leavesApi = baseApi.injectEndpoints({
 	endpoints: (build) => ({
 		approveLeave: build.mutation<
 			string,
-			{ id: string | number; approval: "approved" | "denied" }
+			{ id: string; approval: "approved" | "denied" }
 		>({
 			query: ({ id, approval }) => ({
 				url: LEAVE_ADMIN_DETAIL_URL(id),

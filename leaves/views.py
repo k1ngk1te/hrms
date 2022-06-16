@@ -451,7 +451,7 @@ class OvertimeExportDataView(APIView):
 		overtime = self.get_queryset()
 		for ov in overtime:
 			row_num += 1
-			data = self.get_leave_data(ov)
+			data = self.get_overtime_data(ov)
 
 			for col_num in range(len(data)):
 				ws.write(row_num, col_num, str(data[col_num]), font_style)

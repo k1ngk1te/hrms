@@ -27,7 +27,7 @@ class EmployeeAdmin(admin.ModelAdmin):
 
 
 class ProjectAdmin(admin.ModelAdmin):
-	list_display = ('name', 'start_date', 'end_date', 'completed', 'verified')
+	list_display = ('name', 'start_date', 'end_date', 'completed')
 	inlines = (TaskInline, )
 
 

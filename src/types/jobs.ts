@@ -1,7 +1,7 @@
 import { DataListType } from "./common";
 
 export type JobType = {
-	id: string | number;
+	id: string;
 	name: string;
 }
 

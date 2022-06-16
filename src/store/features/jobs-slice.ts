@@ -40,7 +40,7 @@ const jobsApi = baseApi.injectEndpoints({
 		}),
 		updateJob: build.mutation<
 			{ success: string },
-			{ id: number | string; name: string }
+			{ id: string; name: string }
 		>({
 			query: ({ id, name }) => ({
 				url: JOB_URL(id),
@@ -54,7 +54,7 @@ const jobsApi = baseApi.injectEndpoints({
 			invalidatesTags: (result, error, args) =>
 				result ? [{ type: "Job", id: args.id }] : [],
 		}),
-		deleteJob: build.mutation<{ success: string }, number | string>({
+		deleteJob: build.mutation<{ success: string }, string>({
 			query: (id) => ({
 				url: JOB_URL(id),
 				method: "DELETE",

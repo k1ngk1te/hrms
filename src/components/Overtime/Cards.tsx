@@ -2,9 +2,9 @@ import { FaClock, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { Card } from "../common";
 
 const cards = [
-	{bgColor: "bg-yellow-400", icon: FaClock, "title": "PENDING OVERTIME REQUESTS", txtColor: "text-yellow-400" },
-	{bgColor: "bg-green-400", icon: FaCheckCircle, "title": "APPROVED OVERTIME REQUESTS", txtColor: "text-green-400" },
-	{bgColor: "bg-red-400", icon: FaTimesCircle, "title": "DENIED OVERTIME REQUESTS", txtColor: "text-red-400" },
+	{bgColor: "bg-yellow-400", Icon: FaClock, "title": "PENDING OVERTIME REQUESTS", txtColor: "text-yellow-400" },
+	{bgColor: "bg-green-400", Icon: FaCheckCircle, "title": "APPROVED OVERTIME REQUESTS", txtColor: "text-green-400" },
+	{bgColor: "bg-red-400", Icon: FaTimesCircle, "title": "DENIED OVERTIME REQUESTS", txtColor: "text-red-400" },
 ]
 
 type CardsType = { 

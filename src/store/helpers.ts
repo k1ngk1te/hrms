@@ -1,5 +1,5 @@
 import { ClientCreateType, FormType } from "../types/employees";
-import { ProfileFormType } from "../../types/user";
+import { ProfileFormType } from "../types/user";
 
 export const generateProfile = (profile: ProfileFormType) => {
   const form = new FormData();

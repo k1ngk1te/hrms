@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { FaCheckCircle, FaLock, FaUserEdit } from "react-icons/fa"
 
-import { LEAVES_PAGE_URL } from "../config/routes";
+import { DEFAULT_IMAGE, LEAVES_PAGE_URL } from "../config";
 import { isErrorWithData, isFormError } from "../store"
 import { logout } from "../store/features/auth-slice";
 import {
@@ -50,17 +50,18 @@ const Profile = () => {
     <Container
       heading="My Profile"
       refresh={{
-        loading: getData?.isFetching,
-        onClick: () => getData?.refetch(),
+        loading: getData.isFetching,
+        onClick: getData.refetch,
       }}
       loading={getData.isLoading}
+      disabledLoading={!getData.isLoading && getData.isFetching}
     >
       <InfoTopBar
         email={empData?.user?.email}
         full_name={toCapitalize(
           `${empData?.user?.first_name} ${empData?.user?.last_name}`
         )}
-        image={empData?.profile?.image || "/static/images/default.png"}
+        image={empData?.profile?.image || DEFAULT_IMAGE}
         actions={[
           {
             IconLeft: FaUserEdit,

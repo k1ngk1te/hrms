@@ -82,10 +82,11 @@ const Detail = ({ admin }: { admin?: boolean }) => {
 					: undefined
 			}
 			refresh={{
-				loading: overtime?.isFetching,
-				onClick: () => overtime?.refetch(),
+				loading: overtime.isFetching,
+				onClick: overtime.refetch,
 			}}
 			loading={loading}
+			disabledLoading={!overtime.isLoading && overtime.isFetching}
 		>
 			<InfoTopBar
 				email={overtime.data?.user?.email}

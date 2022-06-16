@@ -1,11 +1,12 @@
 from rest_framework import generics
 
+from core.views import ListView
 from .models import Notification
 from .pagination import NotificationPagination
 from .serializers import NotificationSerializer
 
 
-class NotificationListView(generics.ListAPIView):
+class NotificationListView(ListView):
 	serializer_class = NotificationSerializer
 	pagination_class = NotificationPagination
 

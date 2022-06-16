@@ -6,13 +6,14 @@ from collections import OrderedDict
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.http import HttpResponse
-from rest_framework import generics, permissions, status
+from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError, server_error
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from common.utils import get_instance
 from core.views import (
+	ListView,
 	ListCreateRetrieveDestroyView,
 	ListCreateRetrieveUpdateView,
 	ListCreateRetrieveUpdateDestroyView
@@ -101,7 +102,7 @@ class AttendanceInfoView(APIView):
 		return 0
 
 
-class AttendanceListView(generics.ListAPIView):
+class AttendanceListView(ListView):
 	serializer_class = AttendanceSerializer
 	permission_classes = (IsEmployee, )
 
@@ -160,7 +161,7 @@ class DepartmentView(ListCreateRetrieveUpdateDestroyView):
 class EmployeeView(ListCreateRetrieveUpdateDestroyView):
 	serializer_class = EmployeeSerializer
 	pagination_class = EmployeePagination
-	permission_classes = (IsHROrMDOrAdminUser, )
+	permission_classes = (IsHROrMDOrAdminUser, IsEmployee)
 	ordering_fields = ('user__first_name', 'user__last_name', 'user__email')
 	search_fields = ('user__first_name', 'user__last_name', 'user__email')
 	lookup_field = 'id'
@@ -458,7 +459,7 @@ class ProjectCompletedView(APIView):
 			}, status=status.HTTP_200_OK)
 
 
-class ProjectEmployeesView(generics.ListAPIView):
+class ProjectEmployeesView(ListView):
 	serializer_class = UserEmployeeSerializer
 	permission_classes = (IsHROrMDOrLeaderOrReadOnlyEmployeeAndClient, )
 
@@ -513,7 +514,10 @@ class TaskView(ListCreateRetrieveUpdateDestroyView):
 
 	def delete(self, request, *args, **kwargs):
 		task = self.get_task()
-		if task is not None and task.created_by.user == request.user:
+		emp = request.user.employee
+		if task is not None and (
+			task.created_by.user == request.user or emp.is_hr is True or emp.is_md is True
+			):
 			return self.destroy(request, *args, **kwargs)
 		raise PermissionDenied({"detail": "You do not have permission to make this request!"})
 

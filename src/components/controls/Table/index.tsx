@@ -1,4 +1,4 @@
-import { CSSProperties } from "react";
+import { FC, CSSProperties, ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { FaSadTear } from "react-icons/fa";
 import Badge from "../../common/Badge";
@@ -80,7 +80,14 @@ const NoData = ({ loading }: { loading?: boolean }) => (
   </tbody>
 );
 
-export const Container = ({ children, link, classes, ...props }) => {
+export type TableContainerProps = {
+  children: ReactNode;
+  link?: string;
+  classes?: string;
+  props?: any
+}
+
+export const Container: FC<TableContainerProps> = ({ children, link, classes, ...props }) => {
   const defaultClasses = "flex items-center justify-center px-2 py-3 w-full " + (classes || "")
   const linkClass = !classes ? " cursor-pointer hover:bg-purple-100 " : ""
   return link ? (
@@ -195,7 +202,7 @@ const Table = ({
                 } ${
                   options?.rows?.hoverDefault
                     ? "hover:bg-gray-100 hover:even:bg-gray-300 cursor-pointer"
-                    : options.rows?.hoverClasses || ""
+                    : options?.rows?.hoverClasses || ""
                 } bg-white even:bg-gray-200`}
               >
                 {sn && (

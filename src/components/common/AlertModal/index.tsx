@@ -95,7 +95,7 @@ const AlertModal = ({ close, color, decisions, header, Icon, footer, keepVisible
 			className={`${wrapperStyle}
 				${visible ? "opacity-100 scale-100 visible" : "invisible opacity-0 scale-0"}
 			`}
-			style={{ background: "rgba(0, 0, 0, 0.5)" }}
+			style={{ background: "rgba(0, 0, 0, 0.6)" }}
 		>
 			<div 
 				ref={ref}

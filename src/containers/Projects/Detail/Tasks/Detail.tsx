@@ -126,7 +126,7 @@ const Detail = () => {
 				loading: isFetching,
 				onClick: refetch,
 			}}
-			disabledLoading={!isLoading && (isFetching || updateTask.isLoading || deleteTask.isLoading)}
+			disabledLoading={!isLoading && isFetching}
 			error={error && isErrorWithData(error) ? {
 				statusCode: error.status || 500,
 				title: String(error.data.detail || error.data.error || "")

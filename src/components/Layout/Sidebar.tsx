@@ -1,16 +1,23 @@
 import { forwardRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-	FaComment,
-	FaPlaneDeparture,
+	FaCalendarAlt,
+	FaCommentDots,
 	FaSignOutAlt,
 	FaSuitcase,
 	FaTimesCircle,
 	FaThLarge,
 	FaWarehouse,
-	FaUser,
 	FaUsers,
 	FaJournalWhills,
+	FaProjectDiagram,
+	FaRProject,
+	FaHandshake,
+	FaUserFriends,
+	FaSuitcaseRolling,
+	FaUserTie,
+	FaClock,
+	FaUserClock,
 } from "react-icons/fa";
 import * as routes from "../../config/routes";
 import { useAppDispatch, useAppSelector } from "../../hooks";
@@ -50,24 +57,24 @@ const Sidebar = forwardRef<HTMLDivElement, PropsType>(
 				links: [
 					{
 						admin: true,
-						Icon: FaUsers,
+						Icon: FaUserFriends,
 						title: "all employees",
 						href: routes.EMPLOYEES_PAGE_URL,
 					},
 					{
 						admin: false,
-						Icon: FaSuitcase,
+						Icon: FaSuitcaseRolling,
 						title: "leaves",
 						href: routes.LEAVES_PAGE_URL,
 					},
 					{
 						admin: true,
-						Icon: FaPlaneDeparture,
+						Icon: FaSuitcase,
 						title: "leaves (admin)",
 						href: routes.ADMIN_LEAVES_PAGE_URL,
 					},
 					{
-						Icon: FaUser,
+						Icon: FaUserClock,
 						title: "attendance",
 						href: routes.ATTENDANCE_PAGE_URL,
 					},
@@ -79,19 +86,19 @@ const Sidebar = forwardRef<HTMLDivElement, PropsType>(
 					},
 					{
 						admin: true,
-						Icon: FaPlaneDeparture,
+						Icon: FaCalendarAlt,
 						title: "holidays",
 						href: routes.HOLIDAYS_PAGE_URL,
 					},
 					{
 						admin: false,
-						Icon: FaSuitcase,
+						Icon: FaUserClock,
 						title: "overtime",
 						href: routes.OVERTIME_PAGE_URL,
 					},
 					{
 						admin: true,
-						Icon: FaPlaneDeparture,
+						Icon: FaClock,
 						title: "overtime (admin)",
 						href: routes.ADMIN_OVERTIME_PAGE_URL,
 					},
@@ -99,31 +106,31 @@ const Sidebar = forwardRef<HTMLDivElement, PropsType>(
 			},
 			{
 				admin: false,
-				Icon: FaUsers,
+				Icon: FaHandshake,
 				title: "clients",
 				href: routes.CLIENTS_PAGE_URL,
 			},
 			{
 				admin: true,
-				Icon: FaUsers,
+				Icon: FaProjectDiagram,
 				title: "projects",
 				href: routes.PROJECTS_PAGE_URL,
 			},
 			{
 				admin: true,
-				Icon: FaJournalWhills,
+				Icon: FaRProject,
 				title: "jobs",
 				href: routes.JOBS_PAGE_URL,
 			},
 			{
 				admin: false,
-				Icon: FaComment,
+				Icon: FaCommentDots,
 				title: "notifications",
 				href: routes.NOTIFICATIONS_PAGE_URL,
 			},
 			{
 				admin: false,
-				Icon: FaUser,
+				Icon: FaUserTie,
 				title: "profile",
 				href: routes.PROFILE_PAGE_URL,
 			},

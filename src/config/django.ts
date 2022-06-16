@@ -58,7 +58,7 @@ export const PROJECT_EMPLOYEES_URL = (id: string) =>
   `${ROOT_URL}/projects/${id}/employees/`;
 export const PROJECT_FILES_URL = (id: string) =>
   `${ROOT_URL}/projects/${id}/files/`;
-export const PROJECT_FILE_URL = (project_id: string, id: string) =>
+export const PROJECT_FILE_URL = (project_id: string, id: number) =>
   `${ROOT_URL}/projects/${project_id}/files/${id}/`;
 
 export const TASKS_URL = (project_id: string) =>

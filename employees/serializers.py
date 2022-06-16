@@ -321,7 +321,6 @@ class ProjectSerializer(serializers.ModelSerializer):
 	tasks = serializers.SerializerMethodField('get_tasks')
 	files = serializers.SerializerMethodField('get_files')
 	completed = serializers.BooleanField(read_only=True)
-	verified = serializers.BooleanField(read_only=True)
 	is_active = serializers.SerializerMethodField('get_is_active')
 
 	class Meta:

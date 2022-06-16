@@ -26,7 +26,7 @@ type TableType = {
   attendance: AttendanceType[];
 };
 
-const ClientTable = ({ attendance = [], loading }: TableType) => {
+const AttendanceTable = ({ attendance = [] }: TableType) => {
   const [rows, setRows] = useState<RowType[]>([]);
 
   useEffect(() => {
@@ -43,4 +43,4 @@ const ClientTable = ({ attendance = [], loading }: TableType) => {
   );
 };
 
-export default ClientTable;
+export default AttendanceTable;

@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { useParams } from "react-router-dom"
-import { CLIENT_PAGE_URL, EMPLOYEE_PAGE_URL } from "../../../config";
+import { CLIENT_PAGE_URL, EMPLOYEE_PAGE_URL, DEFAULT_IMAGE } from "../../../config";
 import { isErrorWithData } from "../../../store"
 import { open as alertModalOpen } from "../../../store/features/alert-modal-slice"
 import { useGetProjectQuery } from "../../../store/features/projects-slice"
@@ -57,7 +57,7 @@ const Team = () => {
 			}
 			icon
 			loading={isLoading}
-			disabledLoading={!isLoading && (isFetching || loading)}
+			disabledLoading={!isLoading && isFetching}
 			title={data ? data.name : undefined}
 		>
 			{data && (
@@ -99,7 +99,7 @@ const Team = () => {
 										title="Project Creator"
 										name={data.created_by.full_name || "-----"}
 										label={data.created_by.job || "-----"}
-										image={{src: data.created_by?.image}}
+										image={{src: data.created_by?.image || DEFAULT_IMAGE}}
 									/>								
 								</div>
 							) : (
@@ -120,7 +120,7 @@ const Team = () => {
 										title={data.client.company || "------"}
 										name={data.client.contact.full_name || "------"}
 										label={data.client.position || "------"}
-										image={{src: data.client.contact?.image}}
+										image={{src: data.client.contact?.image || DEFAULT_IMAGE}}
 										actions={[
 											{
 												bg: "bg-white hover:bg-green-100",
@@ -153,7 +153,7 @@ const Team = () => {
 											title="Team Leader"
 											name={leader.full_name || "-----"}
 											label={leader.job || "-----"}
-											image={{src: leader.image}}
+											image={{src: leader.image || DEFAULT_IMAGE}}
 											options={[
 												{
 													bg: "bg-white hover:bg-red-100",
@@ -211,7 +211,7 @@ const Team = () => {
 											title="Team member"
 											name={member.full_name || "------"}
 											label={member.job || "------"}
-											image={{src: member.image}}
+											image={{src: member.image || DEFAULT_IMAGE}}
 											options={[
 												{
 													bg: "bg-white hover:bg-success-100",

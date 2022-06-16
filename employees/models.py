@@ -115,17 +115,15 @@ class Project(models.Model):
 	team = models.ManyToManyField(Employee, related_name="team", blank=True)
 	description = models.TextField(blank=True, null=True)
 	completed = models.BooleanField(default=False)
-	verified = models.BooleanField(default=False)
 
 	def __str__(self):
 		return self.name
 
 	@property
 	def is_active(self):
-		current_date = now().date()
-		if current_date <= self.end_date:
-			return True
-		return False
+		if self.completed:
+			return False
+		return True
 
 
 def file_folder(instance, filename):

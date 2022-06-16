@@ -43,7 +43,7 @@ const departmentsApi = baseApi.injectEndpoints({
 		}),
 		updateDepartment: build.mutation<
 			{ success: string },
-			{ id: number | string; hod?: string; name: string }
+			{ id: string; hod?: string; name: string }
 		>({
 			query: ({ id, ...data }) => ({
 				url: DEPARTMENT_URL(id),
@@ -57,7 +57,7 @@ const departmentsApi = baseApi.injectEndpoints({
 			invalidatesTags: (result, error, args) =>
 				result ? [{ type: "Department", id: args.id }] : [],
 		}),
-		deleteDepartment: build.mutation<{ success: string }, number | string>({
+		deleteDepartment: build.mutation<{ success: string }, string>({
 			query: (id) => ({
 				url: DEPARTMENT_URL(id),
 				method: "DELETE",

@@ -25,5 +25,5 @@ export const OVERTIME_DETAIL_PAGE_URL = (slug: string) => `/employees/overtime/$
 export const PROJECTS_PAGE_URL = "/employees/projects/";
 export const PROJECT_PAGE_URL = (slug: string) => `/employees/projects/${slug}/`;
 export const PROJECT_TASKS_PAGE_URL = (slug: string) => `/employees/projects/${slug}/tasks/`;
-export const PROJECT_TASK_PAGE_URL = (slug: string, id: string) => `/employees/projects/${slug}/tasks/${id}/`;
+export const PROJECT_TASK_PAGE_URL = (slug: string, id?: string = "") => `/employees/projects/${slug}/tasks/${id}/`;
 export const PROJECT_TEAM_PAGE_URL = (slug: string) => `/employees/projects/${slug}/team/`

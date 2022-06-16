@@ -42,16 +42,16 @@ const TimeSheet: FC<TimeSheetProps> = ({ loading, hours_spent, overtime_hours, p
 	}, [dispatch, punchAction]);
 
 	const able = typeof punchedIn  === "string" && typeof punchedOut === "string" ? false : true
-	const split_time = String(hours_spent).split("."); // Get the hours as 0th index of an array and mins as 1th index
-	const hour = parseInt(split_time[0]) // Convert the hours to integer
-	const minute = split_time[1] ? parseInt(split_time[1].slice(0, 2)) : 0 // Check if there a value in the 1th index, slice the length to 2 and convert to integer
+	const split_time = hours_spent ? String(hours_spent).split(".") : undefined; // Get the hours as 0th index of an array and mins as 1th index
+	const hour = split_time ? parseInt(split_time[0]) : 0 // Convert the hours to integer
+	const minute = split_time && split_time[1] ? parseInt(split_time[1].slice(0, 2)) : 0 // Check if there a value in the 1th index, slice the length to 2 and convert to integer
 
 	const suffix = hour < 1 ? minute === 1 ? "min" : "mins" : hour === 1 && minute < 1 ? "hr" : "hrs"
 
 	const minutes = Math.floor(minute * 60 / 100)
 	const hours = hour >= 1 ? `${hour}.${minute}` : 0
 	
-	const time = hours_spent >= 1 ? hours : minutes
+	const time = hours_spent && hours_spent >= 1 ? hours : minutes
 
 	useEffect(() => {
 		if (status === "fulfilled" && data)

@@ -7,7 +7,7 @@ class IsEmployee(BasePermission):
 	"""
 
 	def has_permission(self, request, view):
-		return bool(request.user.is_authenticated and request.user.is_employee)
+		return bool(request.user.is_authenticated and request.user.is_employee and request.user.is_active)
 
 
 class IsHROrMDOrReadOnly(BasePermission):

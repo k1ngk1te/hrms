@@ -1,52 +1,33 @@
 from collections import OrderedDict
-from django.db.models import Q
 from rest_framework.response import Response
-from rest_framework.pagination import LimitOffsetPagination
 
-from .models import Client, Employee, Project, Task
-
-
-class ClientPagination(LimitOffsetPagination):
-	def get_paginated_response(self, data):
-		try:
-			return Response(OrderedDict([
-				('active', Client.objects.filter(contact__is_active=True).count()),
-				('count', self.count),
-				('inactive', Client.objects.filter(contact__is_active=False).count()),
-				('next', self.get_next_link()),
-				('previous', self.get_previous_link()),
-				('results', data),
-			]))
-		except:
-			return Response(OrderedDict([
-				('count', self.count),
-				('next', self.get_next_link()),
-				('previous', self.get_previous_link()),
-				('results', data),
-			]))
-		return None
+from core.pagination import CustomLimitOffsetPagination
+from .models import Employee
 
 
-class EmployeePagination(LimitOffsetPagination):
-	def get_paginated_response(self, data):
-		try:
-			return Response(OrderedDict([
-				('active', self.get_employee_count(self.request.user.employee, "active")),
-				('count', self.count),
-				('inactive', self.get_employee_count(self.request.user.employee, "inactive")),
-				('on_leave', self.get_employee_count(self.request.user.employee, "on leave")),
-				('next', self.get_next_link()),
-				('previous', self.get_previous_link()),
-				('results', data),
-			]))
-		except:
-			return Response(OrderedDict([
-				('count', self.count),
-				('next', self.get_next_link()),
-				('previous', self.get_previous_link()),
-				('results', data),
-			]))
-		return None
+class ClientPagination(CustomLimitOffsetPagination):
+	def get_paginated_response(self, data, queryset):
+		return Response(OrderedDict([
+			('active', queryset.filter(contact__is_active=True).count()),
+			('count', self.count),
+			('inactive', queryset.filter(contact__is_active=False).count()),
+			('next', self.get_next_link()),
+			('previous', self.get_previous_link()),
+			('results', data),
+		]))
+
+
+class EmployeePagination(CustomLimitOffsetPagination):
+	def get_paginated_response(self, data, queryset):
+		return Response(OrderedDict([
+			('active', self.get_employee_count(self.request.user.employee, "active")),
+			('count', self.count),
+			('inactive', self.get_employee_count(self.request.user.employee, "inactive")),
+			('on_leave', self.get_employee_count(self.request.user.employee, "on leave")),
+			('next', self.get_next_link()),
+			('previous', self.get_previous_link()),
+			('results', data),
+		]))
 
 	def get_employee_count(self, employee, status):
 		try:
@@ -60,88 +41,38 @@ class EmployeePagination(LimitOffsetPagination):
 		return 0
 
 
-class ProjectPagination(LimitOffsetPagination):
-	def get_paginated_response(self, data):
-		try:
-			return Response(OrderedDict([
-				('count', self.count),
-				('total', self.get_filtered_count()),
-				('completed', self.get_filtered_count(completed=True)),
-				('verified', self.get_filtered_count(verified=True)),
-				('ongoing', self.get_ongoing_count()),
-				('inactive', self.get_inactive_count()),
-				('next', self.get_next_link()),
-				('previous', self.get_previous_link()),
-				('results', data),
-			]))
-		except:
-			return Response(OrderedDict([
-				('count', self.count),
-				('next', self.get_next_link()),
-				('previous', self.get_previous_link()),
-				('results', data),
-			]))
-		return None
-
-	def get_filtered_count(self, **kwargs):
-		return self.get_projects().filter(**kwargs).count()
-
-	def get_ongoing_count(self):
-		projects = self.get_projects().filter(verified=False, completed=False)
-		ongoing = [x for x in projects if x.is_active is True]
-		return len(ongoing)
-
-	def get_inactive_count(self):
-		projects = self.get_projects().filter(verified=False, completed=False)
-		ongoing = [x for x in projects if x.is_active is False]
-		return len(ongoing)
-
-	def get_projects(self):
-		user = self.request.user
-		if not user.is_client and not user.is_employee:
-			return Project.objects.none()
-		if user.is_client:
-			queryset = Project.objects.filter(client__contact=user).distinct()
-		if user.is_employee and (user.employee.is_hr or user.employee.is_md):
-			queryset = Project.objects.all().distinct()
-		else:
-			queryset = Project.objects.filter(Q(created_by__user=user) | Q(team=user.employee)).distinct()
-		return queryset
+class ProjectPagination(CustomLimitOffsetPagination):
+	def get_paginated_response(self, data, queryset):
+		return Response(OrderedDict([
+			('count', self.count),
+			('total', self.count),
+			('completed', queryset.filter(completed=True).count()),
+			('ongoing', queryset.filter(completed=False).count()),
+			('next', self.get_next_link()),
+			('previous', self.get_previous_link()),
+			('results', data),
+		]))
 
 
-class TaskPagination(LimitOffsetPagination):
-	def get_paginated_response(self, data):
-		try:
-			return Response(OrderedDict([
-				('project', self.get_project()),
-				('total', Task.objects.all().count()),
-				('completed', Task.objects.filter(completed=True).count()),
-				('verified', Task.objects.filter(verified=True).count()),
-				('count', self.count),
-				('ongoing', Task.objects.filter(completed=False).count()),
-				('next', self.get_next_link()),
-				('previous', self.get_previous_link()),
-				('results', data),
-			]))
-		except:
-			return Response(OrderedDict([
-				('count', self.count),
-				('next', self.get_next_link()),
-				('previous', self.get_previous_link()),
-				('results', data),
-			]))
-		return None
+class TaskPagination(CustomLimitOffsetPagination):
+	def get_paginated_response(self, data, queryset):
+		return Response(OrderedDict([
+			('project', self.get_project(queryset, self.count)),
+			('total', self.count),
+			('completed', queryset.filter(completed=True).count()),
+			('ongoing', queryset.filter(completed=False).count()),
+			('count', self.count),
+			('next', self.get_next_link()),
+			('previous', self.get_previous_link()),
+			('results', data),
+		]))
 
-	def get_project(self):
-		kwargs = self.request.parser_context.get("kwargs", None)
-		project_id = kwargs.get("project_id", None)
-		try:
-			project = Project.objects.get(id=project_id)
-			return {
-				"name": project.name,
-				"id": project.id
-			}
-		except:
-			pass
-		return None
+	def get_project(self, queryset, count):
+		if not queryset or count <= 0:
+			return None
+		project = queryset.first().project
+		return {
+			"name": project.name,
+			"id": project.id
+		}
 		

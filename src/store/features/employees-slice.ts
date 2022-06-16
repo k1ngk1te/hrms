@@ -124,7 +124,7 @@ const employeesApi = baseApi.injectEndpoints({
 			invalidatesTags: (result, error, id) =>
 				!error ? [{ type: "Employee", id }] : [],
 		}),
-		deleteHoliday: build.mutation<HolidayType, number | string>({
+		deleteHoliday: build.mutation<HolidayType, string>({
 			query: (id) => ({
 				url: HOLIDAY_URL(id),
 				method: "DELETE",
@@ -151,7 +151,7 @@ const employeesApi = baseApi.injectEndpoints({
 			keepUnusedDataFor: DATA_LIFETIME,
 			providesTags: ["Attendance"]
 		}),
-		getClient: build.query<ClientType, number | string>({
+		getClient: build.query<ClientType, string>({
 			query: (id) => ({
 				url: CLIENT_URL(id),
 				method: "GET",
@@ -178,7 +178,7 @@ const employeesApi = baseApi.injectEndpoints({
 					  ]
 					: [{ type: "Client", id: "CLIENT_LIST" }],
 		}),
-		getEmployee: build.query<EmployeeType, number | string>({
+		getEmployee: build.query<EmployeeType, string>({
 			query: (id) => ({
 				url: EMPLOYEE_URL(id),
 				method: "GET",
@@ -230,11 +230,11 @@ const employeesApi = baseApi.injectEndpoints({
 				credentials: "include",
 			}),
 			invalidatesTags: (result) =>
-				result ? [Attendance] : [],
+				result ? ["Attendance"] : [],
 		}),
 		updateClient: build.mutation<
 			ClientType,
-			{ id: number | string; data: ClientCreateType }
+			{ id: string; data: ClientCreateType }
 		>({
 			query: ({ id, data }) => ({
 				url: CLIENT_URL(id),
@@ -250,7 +250,7 @@ const employeesApi = baseApi.injectEndpoints({
 		}),
 		updateEmployee: build.mutation<
 			EmployeeType,
-			{ employee: FormType; id: number | string }
+			{ employee: FormType; id: string }
 		>({
 			query: ({ employee, id }) => ({
 				url: EMPLOYEE_URL(id),
@@ -266,7 +266,7 @@ const employeesApi = baseApi.injectEndpoints({
 		}),
 		updateHoliday: build.mutation<
 			HolidayType,
-			{ id: number | string; data: HolidayCreateType }
+			{ id: string; data: HolidayCreateType }
 		>({
 			query: ({ id, data }) => ({
 				url: HOLIDAY_URL(id),

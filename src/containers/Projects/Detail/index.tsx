@@ -108,7 +108,7 @@ const Detail = () => {
 			background="bg-gray-100 overflow-y-hidden"
 			heading="Project Information"
 			loading={isLoading}
-			disabledLoading={!isLoading && (isFetching || updateProject.isLoading)}
+			disabledLoading={!isLoading && isFetching}
 			refresh={{
 				onClick: refetch,
 				loading: isFetching,
@@ -162,7 +162,7 @@ const Detail = () => {
 								focus="focus:ring-2 focus:ring-red-600 focus:ring-offset-2"
 								IconLeft={FaTrash}
 								rounded="rounded-xl"
-								title="delete task"
+								title="delete project"
 								disabled={deleteProject.isLoading}
 								loading={deleteProject.isLoading}
 								loader

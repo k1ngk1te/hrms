@@ -182,6 +182,11 @@ class EmployeeListViewTests(TestSetUp):
 			"email": user.email, "password": "Passing1234"})
 		response6 = self.client.get(self.employees_url)
 
+		emp = Employee(user=user)
+		emp.save()
+
+		response7 = self.client.get(self.employees_url)
+
 		# Reinitializing the hod instance
 		hod = Employee.objects.get(user=self.hod.user)
 
@@ -195,8 +200,9 @@ class EmployeeListViewTests(TestSetUp):
 		self.assertEqual(len(response4.data['results']), 5)
 		self.assertEqual(response5.status_code, 200)
 		self.assertEqual(len(response5.data['results']), 6)
-		self.assertEqual(response6.status_code, 200)
-		self.assertEqual(len(response6.data['results']), 0)
+		self.assertEqual(response6.status_code, 403)
+		self.assertEqual(response7.status_code, 200)
+		self.assertEqual(len(response7.data['results']), 0)
 
 	def test_create_employee_by_unauthenticated_user(self):
 		response = self.client.post(self.employees_url, {})
