@@ -1,7 +1,9 @@
 import { FC } from "react";
+import { DEFAULT_IMAGE } from "../../config"
 import Badge from "./Badge";
 
 type InfoCompType = {
+	description?: string;
 	image?: {
 		className?: string;
 		src: string;
@@ -17,39 +19,54 @@ type InfoCompType = {
 	titleWidth?: string;
 }
 
-const InfoComp: FC<InfoCompType> = ({ image, infos, title, titleWidth }) => (
-	<div className="bg-white mt-4 mb-4 p-2 rounded-lg shadow-lg">
-		<h4 className="capitalize font-bold mt-2 mb-1 text-lg text-primary-500 underline">
-			{title}
-		</h4>
-		{image && (
-			<div className="relative w-full">
-				<div className="h-[150px] w-[150px] relative md:h-[200px] md:w-[200px]">
-					<img className="h-full w-full" {...image} />
-				</div>
-			</div>
-		)}
-		<div className="divide-y divide-gray-500 divide-opacity-25">
-			{infos.map((info, id) => (
-				<div key={id} className="flex items-start py-3">
-					<p className={`font-medium mx-1 text-sm text-gray-800 ${titleWidth || "w-[120px]"}`}>
-						{`${info.title} :`}
-					</p>
-					{info?.type === "badge" ? (
-						<div className="font-medium w-full">
-							<div className="max-w-[120px]">
-								<Badge margin="mx-1" title={info.value} {...info.options} />
-							</div>
-						</div>
-					) : (
-						<span className="font-medium ml-2 text-left text-gray-700 text-sm w-full">
-							{info.value || "--------"}
-						</span>
-					)}					
-				</div>
-			))}
-		</div>
-	</div>
+const InfoComp: FC<InfoCompType> = ({ description, image, infos, title, titleWidth }) => (
+	
+	<div className="bg-white shadow-md mt-4 mb-4 p-2 overflow-hidden sm:rounded-lg">
+    <div className="px-4 py-5 sm:px-6">
+      <h3 className="capitalize text-lg leading-6 font-medium text-gray-700">
+        {title}
+      </h3>
+      {description && (
+      	<p className="mt-1 max-w-2xl text-sm text-gray-500">{description}</p>
+      )}
+    </div>
+    <div className="border-t border-gray-200">
+      <dl>
+        {infos.map((detail, index) => (
+          <div
+            key={index}
+            className={`${
+              index % 2 === 0 ? "bg-gray-50" : "bg-white"
+            } px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6`}
+          >
+            <dt className="text-sm font-medium text-gray-500 md:text-base">
+              {detail.title}
+            </dt>
+            <dd className="mt-1 text-sm text-gray-700 sm:mt-0 sm:col-span-2 md:text-base">
+              {detail?.type === "badge" ? (
+                <div className="font-medium w-full">
+									<div className="max-w-[120px]">
+										<Badge margin="mx-1" title={detail.value} {...detail.options} />
+									</div>
+								</div>
+              ) : detail.type === "image" ? (
+                <div className={`${index % 2 === 0 ? "border-white" : "border-gray-50"} border-2 h-[150px] rounded-full w-[160px]`}>
+                  <img
+                    alt={typeof detail.value === 'object' ? detail.value.alt : "no-image"}
+                    className="h-full rounded-full w-full"
+                    src={typeof detail.value === 'object' ? detail.value.src : DEFAULT_IMAGE}
+                  />
+                </div>
+              ) : (
+                detail.value || "-------"
+              )}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </div>
+
 )
 
 export default InfoComp;
