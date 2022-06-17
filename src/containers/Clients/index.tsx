@@ -85,7 +85,7 @@ const Clients = () => {
 			loading={isLoading}
 			disabledLoading={!isLoading && isFetching}
 			error={isErrorWithData(error) ? {
-				status: error.data?.status || 500,
+				statusCode: error?.status || 500,
 				title: String(error.data?.detail || error.data?.error || "")
 			} : undefined}
 			refresh={{

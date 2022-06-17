@@ -20,7 +20,6 @@ def get_gender_name(gender):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-	image_url = serializers.SerializerMethodField('get_image_url')
 	date = serializers.SerializerMethodField('get_date')
 	gender = CustomChoiceField(get_gender_name)
 	last_leave_info = serializers.SerializerMethodField('get_last_leave_info')
@@ -28,19 +27,9 @@ class ProfileSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Profile
 		fields = (
-			'image', 'image_url', 'gender', 'address', 'last_leave_info',
+			'image', 'gender', 'address', 'last_leave_info',
 			'date_of_birth', 'phone', 'state', 'city', 'date'
 		)
-
-	def get_image_url(self, obj):
-		if obj.image._file is None:
-			return None
-		request = self.context.get('request')
-		if obj.image:
-			if request:
-				return request.build_absolute_uri(obj.image.url)
-			return obj.image.url
-		return None
 
 	def get_date(self, obj):
 		return obj.date_updated

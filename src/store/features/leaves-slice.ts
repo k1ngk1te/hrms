@@ -28,7 +28,7 @@ interface QueryType extends PaginationType {
 const leavesApi = baseApi.injectEndpoints({
 	endpoints: (build) => ({
 		approveLeave: build.mutation<
-			string,
+			{detail: string},
 			{ id: string; approval: "approved" | "denied" }
 		>({
 			query: ({ id, approval }) => ({
@@ -50,7 +50,7 @@ const leavesApi = baseApi.injectEndpoints({
 					: [],
 		}),
 		approveOvertime: build.mutation<
-			string,
+			{detail: string},
 			{ id: string; approval: "approved" | "denied" }
 		>({
 			query: ({ id, approval }) => ({
@@ -196,7 +196,7 @@ const leavesApi = baseApi.injectEndpoints({
 					  ]
 					: [{ type: "Overtime", id: "OVERTIME_LIST" }],
 		}),
-		getOvertimeData: build.query<LeaveType, string>({
+		getOvertimeData: build.query<OvertimeType, string>({
 			query: (id) => ({
 				url: OVERTIME_DETAIL_URL(id),
 				method: "GET",

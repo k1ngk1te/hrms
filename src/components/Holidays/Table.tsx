@@ -12,12 +12,12 @@ const heads: HeadType = [
 
 const getRows = (
 	data: HolidayType[],
-	onEdit: (id: number | string, initState: HolidayCreateType) => void,
-	onDelete: (id: number | string, initState: HolidayCreateType) => void,
+	onEdit: (id: string, initState: HolidayCreateType) => void,
+	onDelete: (id: string, initState: HolidayCreateType) => void,
 	isAdmin: boolean
 ): RowType[] =>
 	data.map((holiday) => {
-		let row: RowType[] = [
+		let row: RowType = [
 			{ value: holiday.name || "---" },
 			{ value: holiday.date || "---" },
 			{ value: new Date(holiday.date).toDateString() || "---" },
@@ -52,8 +52,8 @@ const getRows = (
 
 type TableType = {
 	holidays: HolidayType[];
-	onEdit: (id: number | string, initState: HolidayCreateType) => void;
-	onDelete: (id: number | string, initState: HolidayCreateType) => void;
+	onEdit: (id: string, initState: HolidayCreateType) => void;
+	onDelete: (id: string, initState: HolidayCreateType) => void;
 };
 
 const HolidayTable = ({ holidays, onEdit, onDelete }: TableType) => {
@@ -63,7 +63,7 @@ const HolidayTable = ({ holidays, onEdit, onDelete }: TableType) => {
 	const isAdmin =
 		authData?.admin_status === "hr" || authData?.admin_status === "md";
 
-	const _heads = isAdmin
+	const _heads: HeadType = isAdmin
 		? [...heads, { type: "actions", value: "actions" }]
 		: heads;
 

@@ -13,7 +13,7 @@ const useAppointProjectLeader = () => {
 		if (appoint === true) {
 			newLeaders = [...data.leaders]
 			const emp = data.team.find(member => member.id === employee_id)
-			newLeaders.push(emp)
+			if (emp) newLeaders.push(emp)
 		} else {
 			newLeaders = data.leaders.filter(leader => leader.id !== employee_id)
 		}

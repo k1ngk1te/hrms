@@ -8,7 +8,7 @@ import Button, { ButtonProps } from "../controls/Button"
 export type PersonCardType = {
 	image?: {
 		src: string;
-		alt: string;
+		alt?: string;
 	};
 	name: string;
 	label?: string;

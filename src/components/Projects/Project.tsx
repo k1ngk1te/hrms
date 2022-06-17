@@ -13,10 +13,10 @@ import { DEFAULT_IMAGE, PROJECT_PAGE_URL } from "../../config";
 import { useOutClick, useDeleteProject, useMarkProject } from "../../hooks";
 import { Avatars, StatusProgressBar } from "../common";
 import { Button, Loader } from "../controls";
-import { ProjectEmployeeType, ProjectType } from "../../types/employees";
+import { UserEmployeeType, ProjectType } from "../../types/employees";
 import { InitStateType } from "./Form";
 
-const ImageBlocks = ({ team }: { team: ProjectEmployeeType[] }) => {
+const ImageBlocks = ({ team }: { team: UserEmployeeType[] }) => {
 	const images = team.slice(0, 4).map((person) => ({
 		src: person.image || DEFAULT_IMAGE,
 		alt: ""

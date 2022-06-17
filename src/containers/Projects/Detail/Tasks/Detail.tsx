@@ -2,7 +2,7 @@ import { useCallback, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import { FaPen, FaTrash } from "react-icons/fa";
 import { isErrorWithData } from "../../../../store"
-import { EMPLOYEE_PAGE_URL } from "../../../../config"
+import { DEFAULT_IMAGE, EMPLOYEE_PAGE_URL } from "../../../../config"
 import { open as alertModalOpen } from "../../../../store/features/alert-modal-slice"
 import { open as modalOpen, close as modalClose } from "../../../../store/features/modal-slice";
 import { useGetTaskQuery } from "../../../../store/features/projects-slice"
@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector, useDeleteTask, useUpdateTask } from "..
 import { Container, Modal, PersonCard } from "../../../../components/common";
 import { Button } from "../../../../components/controls"
 import { TaskForm } from "../../../../components/Projects"
-import { TaskCreateType } from "../../../../types/employees"
+import { TaskCreateType, TaskFormInitStateType } from "../../../../types/employees"
 
 
 const Detail = () => {
@@ -30,13 +30,13 @@ const Detail = () => {
 
 	const handleRemoveEmployee = useCallback((employee_id: string) => {
 		if (employee_id) {
-			const newLeaders = data.leaders.filter(leader => leader.id !== employee_id)
-			const newTeam = data.followers.filter(member => member.id !== employee_id)
+			const newLeaders = data ? data.leaders.filter(leader => leader.id !== employee_id) : []
+			const newTeam = data ? data.followers.filter(member => member.id !== employee_id) : []
 			const createData = {
-				name: data.name,
-				description: data.description,
-				priority: data.priority,
-				due_date: data.due_date,
+				name: data?.name || "",
+				description: data?.description || "",
+				priority: data?.priority || "L",
+				due_date: data?.due_date || "",
 				leaders: newLeaders.map(leader => ({id: leader.id})),
 				followers: newTeam.map(member => ({id: member.id})),
 			}
@@ -56,7 +56,7 @@ const Detail = () => {
 						bg: "bg-red-600 hover:bg-red-500",
 						caps: true,
 						focus: "",
-						onClick: () => updateTask.onSubmit(id, task_id, createData),
+						onClick: id && task_id ? () => updateTask.onSubmit(id, task_id, createData) : () => {},
 						title: "Proceed"
 					},
 				]
@@ -68,42 +68,44 @@ const Detail = () => {
 		if (employee_id) {
 			let newLeaders;
 			if (appoint === true) {
-				newLeaders = [...data.leaders]
-				const emp = data.followers.find(member => member.id === employee_id)
-				newLeaders.push(emp)
+				newLeaders = data ? [...data.leaders] : []
+				const emp = data ? data.followers.find(member => member.id === employee_id) : undefined
+				if (emp) newLeaders.push(emp)
 			} else {
-				newLeaders = data.leaders.filter(leader => leader.id !== employee_id)
+				newLeaders = data ? data.leaders.filter(leader => leader.id !== employee_id) : undefined
 			}
 
-			const createData = {
-				name: data.name,
-				description: data.description,
-				priority: data.priority,
-				due_date: data.due_date,
-				leaders: newLeaders.map(leader => ({id: leader.id})),
-				followers: data.followers.map(member => ({id: member.id})),
+			if (newLeaders) {
+				const createData = {
+					name: data?.name || "",
+					description: data?.description || "",
+					priority: data?.priority || "L",
+					due_date: data?.due_date || "",
+					leaders: newLeaders.map(leader => ({id: leader.id})),
+					followers: data ? data.followers.map(member => ({id: member.id})) : [],
+				}
+				dispatch(alertModalOpen({
+					color: "warning",
+					header: appoint ? "Add New Leader?" : "Remove Leader?",
+					message: appoint ? "Do you wish to appoint this member as a leader?" : "Click Proceed to continue",
+					decisions: [
+						{
+							bg: "bg-gray-500 hover:bg-gray-400",
+							caps: true,
+							focus: "",
+							onClick: () => {},
+							title: "Cancel"
+						},
+						{
+							bg: "bg-yellow-600 hover:bg-yellow-500",
+							caps: true,
+							focus: "",
+							onClick: id && task_id ? () => updateTask.onSubmit(id, task_id, createData) : () => {},
+							title: "Proceed"
+						},
+					]
+				}))
 			}
-			dispatch(alertModalOpen({
-				color: "warning",
-				header: appoint ? "Add New Leader?" : "Remove Leader?",
-				message: appoint ? "Do you wish to appoint this member as a leader?" : "Click Proceed to continue",
-				decisions: [
-					{
-						bg: "bg-gray-500 hover:bg-gray-400",
-						caps: true,
-						focus: "",
-						onClick: () => {},
-						title: "Cancel"
-					},
-					{
-						bg: "bg-yellow-600 hover:bg-yellow-500",
-						caps: true,
-						focus: "",
-						onClick: () => updateTask.onSubmit(id, task_id, createData),
-						title: "Proceed"
-					},
-				]
-			}))
 		}
 	}, [dispatch, updateTask, id, task_id, data])
 
@@ -129,7 +131,7 @@ const Detail = () => {
 			disabledLoading={!isLoading && isFetching}
 			error={error && isErrorWithData(error) ? {
 				statusCode: error.status || 500,
-				title: String(error.data.detail || error.data.error || "")
+				title: String(error.data?.detail || error.data?.error || "")
 				} : undefined
 			}
 			icon
@@ -183,7 +185,7 @@ const Detail = () => {
 									Task Leaders
 								</h3>
 							</div>
-							{data.leaders && data.leaders.length > 0 ? (
+							{data && data.leaders && data.leaders.length > 0 ? (
 								<div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:gap-5 lg:grid-cols-3 lg:gap-4">
 									{data.leaders.map((leader, index) => (
 										<PersonCard 
@@ -191,7 +193,7 @@ const Detail = () => {
 											title="Team Leader"
 											name={leader.full_name || "-----"}
 											label={leader.job || "-----"}
-											image={{src: leader.image}}
+											image={{src: leader?.image || DEFAULT_IMAGE}}
 											options={[
 												{
 													bg: "bg-white hover:bg-red-100",
@@ -241,7 +243,7 @@ const Detail = () => {
 									Task Followers
 								</h3>
 							</div>
-							{data.followers && data.followers.length > 0 ? (
+							{data && data.followers && data.followers.length > 0 ? (
 								<div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:gap-5 lg:grid-cols-3 lg:gap-4">
 									{data.followers.map((member, index) => (
 										<PersonCard 
@@ -249,7 +251,7 @@ const Detail = () => {
 											title="Task follower"
 											name={member.full_name || "-----"}
 											label={member.job || "-----"}
-											image={{src: member.image}}
+											image={{src: member?.image || DEFAULT_IMAGE}}
 											options={[
 												{
 													bg: "bg-white hover:bg-blue-100",
@@ -298,8 +300,8 @@ const Detail = () => {
 						close={() => dispatch(modalClose())}
 						component={<TaskForm
 								initState={{
-									name: data.name || "",
-									description: data.description || "",
+									name: data?.name || "",
+									description: data?.description || "",
 									leaders: data ?  data.leaders.map(leader => leader.id) : [],
 									followers: data ?  data.followers.map(follower => follower.id) : [],
 									priority: data.priority || "H",

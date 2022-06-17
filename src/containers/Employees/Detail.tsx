@@ -111,9 +111,7 @@ const Employee = () => {
 				<>
 					<InfoTopBar
 						email={data?.user.email}
-						full_name={toCapitalize(
-							`${data?.user?.first_name} ${data?.user?.last_name}`
-						)}
+						full_name={data ? toCapitalize(data.user.full_name) : ""}
 						image={data?.profile?.image || DEFAULT_IMAGE}
 						actions={
 							admin_status === "hr" || admin_status === "md"
@@ -268,11 +266,14 @@ const Employee = () => {
 
 						{data?.supervisor && (
 							<InfoComp
-								image={{
-									src: data.supervisor.image || DEFAULT_IMAGE,
-									alt: "profile",
-								}}
 								infos={[
+									{
+										title: "Image",
+										value: { 
+											src: data.supervisor?.image || DEFAULT_IMAGE,
+											alt: data.supervisor?.full_name,
+										}
+									},
 									{
 										title: "First Name",
 										value: data.supervisor?.first_name || "-------",

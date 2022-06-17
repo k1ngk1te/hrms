@@ -122,8 +122,8 @@ const Form: FC<FormProps> = ({ initState }) => {
 				first_name: data?.user.first_name,
 				last_name: data?.user.last_name,
 			};
-			if (data?.image_url !== null && data?.image_url !== undefined)
-				userData["image"] = data?.image_url;
+			if (data?.image !== null && data?.image !== undefined)
+				userData["image"] = data?.image;
 			dispatch(setData(userData));
 		}
 	}, [dispatch, status, data]);

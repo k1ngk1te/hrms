@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { FaBell } from "react-icons/fa"
+import { BRAND_IMAGE, DEFAULT_IMAGE } from "../../config"
 import { NOTIFICATIONS_PAGE_URL } from "../../config/routes";
 import { useNotificationsQuery } from "../../store/features/notifications-slice";
 import { useAppSelector } from "../../hooks";
@@ -22,7 +23,7 @@ const Topbar = () => {
           <div className="h-[30px] w-[130px]">
             <img
               className="h-full w-full"
-              src="/static/images/logo.jpg"
+              src={BRAND_IMAGE}
               alt="kite"
             />
           </div>
@@ -42,8 +43,8 @@ const Topbar = () => {
         <div className="flex flex-col h-full justify-start text-right min-h-[1.5rem] mx-1 pt-2 sm:mx-3">
           <p className="capitalize font-semibold leading-tight text-primary-500 text-xs sm:leading-tighter sm:text-sm">
             {data
-              ? `${data?.first_name} ${data?.last_name}`
-              : "No Name"}
+              ? data.full_name
+              : "-------"}
           </p>
           <span className="capitalize pt-1 text-gray-400 text-xs sm:pt-0 lg:pt-2">
             {data && data?.job || ""}
@@ -54,7 +55,7 @@ const Topbar = () => {
             <img
               className="h-full rounded-full w-full"
               src={
-                data && data.image !== undefined ? data.image : "/static/images/default.png"
+                data && data.image !== undefined ? data.image : DEFAULT_IMAGE
               }
               alt=""
             />

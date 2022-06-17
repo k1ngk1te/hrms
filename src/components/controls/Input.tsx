@@ -4,7 +4,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Badge, { BadgeProps } from "../common/Badge";
 import Button, { ButtonProps } from "./Button";
 
-export interface InputProps extends InputHTMLAttributes {
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 	badge?: BadgeProps;
 	bg?: string;
 	bdr?: string;

@@ -20,6 +20,7 @@ import { Button, InputButton } from "../../components/controls";
 import { Form, JobTable } from "../../components/Jobs";
 
 const Jobs = () => {
+  const [editId, setEditId] = useState<string | undefined>(undefined);
   const [initState, setInitState] = useState({ name: "" });
   const [editMode, setEditMode] = useState(false);
   const [nameError, setNameError] = useState<string>("");
@@ -118,20 +119,19 @@ const Jobs = () => {
   }, [dispatch, editMode, createData.status]);
 
   const handleSubmit = useCallback(
-    (form: { id?: number | string; name: string }) => {
-      const _form = omitKey(form, ["id"]);
+    (form: { name: string }) => {
       const { valid, result }: { valid: boolean; result: any } =
-        validateForm(_form);
+        validateForm(form);
       if (valid) {
-        if (editMode && form.id) updateJob({ id: form.id, name: form.name });
+        if (editMode && editId) updateJob({ id: editId, name: form.name });
         else if (editMode === false) createJob({ name: form.name });
       } else setNameError(result?.name || "This field has an error");
     },
-    [editMode, createJob, updateJob]
+    [editMode, editId, createJob, updateJob]
   );
 
   const handleDelete = useCallback(
-    (id: number) => {
+    (id: string) => {
       dispatch(
         alertModalOpen({
           color: "warning",
@@ -163,7 +163,7 @@ const Jobs = () => {
         onClick: () => refetch(),
       }}
       error={isErrorWithData(error) ? {
-        status: error.status || 500,
+        statusCode: error.status || 500,
         title: String(error.data?.detail || error.data?.error || "")
       } : undefined}
       disabledLoading={!isLoading && isFetching}
@@ -219,13 +219,14 @@ const Jobs = () => {
       </div>
       <JobTable
         jobs={data?.results || []}
-        updateJob={(form: { id: string | number; name: string }) => {
+        updateJob={(id: string, form: { name: string }) => {
+          setEditId(id);
           setInitState(form);
           dispatch(modalOpen());
           setEditMode(true);
         }}
         disableAction={deleteData.isLoading}
-        deleteJob={(id: string | number) => handleDelete(id)}
+        deleteJob={(id: string) => handleDelete(id)}
       />
       <Modal
         close={() => dispatch(modalClose())}
@@ -239,12 +240,12 @@ const Jobs = () => {
               editMode
                 ? isFormError<{
                 	name?: string;
-                }>(updateData.error) &&
-                  updateData.error?.data
+                }>(updateData.error) ?
+                  updateData.error?.data : undefined
                 : isFormError<{
                 	name?: string;
-                }>(createData.error) &&
-                  createData.error?.data
+                }>(createData.error) ?
+                  createData.error?.data : undefined
             }
             loading={editMode ? updateData.isLoading : createData.isLoading}
             success={createData.status === "fulfilled"}

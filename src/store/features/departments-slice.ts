@@ -1,7 +1,7 @@
 import { baseApi } from "./base";
 import { DATA_LIFETIME, DEPARTMENTS_URL, DEPARTMENT_URL } from "../../config";
 import { PaginationType } from "../../types/common";
-import { GetDepartmentsDataType } from "../../types/departments";
+import { GetDepartmentsDataType, DepartmentCreateType } from "../../types/departments";
 
 const departmentsApi = baseApi.injectEndpoints({
 	endpoints: (build) => ({
@@ -27,7 +27,7 @@ const departmentsApi = baseApi.injectEndpoints({
 		}),
 		createDepartment: build.mutation<
 			{ success: string },
-			{ name: string; hod?: string }
+			DepartmentCreateType
 		>({
 			query: (data) => ({
 				url: DEPARTMENTS_URL,
@@ -43,9 +43,9 @@ const departmentsApi = baseApi.injectEndpoints({
 		}),
 		updateDepartment: build.mutation<
 			{ success: string },
-			{ id: string; hod?: string; name: string }
+			{ id: string; data: DepartmentCreateType }
 		>({
-			query: ({ id, ...data }) => ({
+			query: ({ id, data }) => ({
 				url: DEPARTMENT_URL(id),
 				method: "PUT",
 				body: data,

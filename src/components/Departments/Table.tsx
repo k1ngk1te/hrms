@@ -7,9 +7,9 @@ import Table, { HeadType, RowType } from "../controls/Table";
 
 const getRows = (
   data: DepartmentType[],
-  updateDep: (data: { id: number; name: string; hod: string }) => void,
+  updateDep: (data: { id: string; name: string; hod: string }) => void,
   adminStatus: "hr" | "md" | "supervisor" | "hod" | null | undefined,
-  deleteDep: (id: number) => void,
+  deleteDep: (id: string) => void,
   disableAction: boolean
 ): RowType[] =>
   data.map((department) => {
@@ -53,8 +53,8 @@ const getRows = (
 
 type TableType = {
   departments: DepartmentType[];
-  updateDep: (data: { id: number; name: string; hod: string }) => void;
-  deleteDep: (id: number) => void;
+  updateDep: (data: { id: string; name: string; hod: string }) => void;
+  deleteDep: (id: string) => void;
   disableAction: boolean;
 };
 

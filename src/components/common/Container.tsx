@@ -106,8 +106,8 @@ const Container: FC<ContainerProps> = ({
 						<div className={`${icon ? "flex items-center" : ""} w-full`}>
 							{icon && (
 								<IconContainer
-									link={icon?.link}
-									onClick={icon?.onClick}
+									link={typeof icon === "object" ? icon?.link : undefined}
+									onClick={typeof icon === "object" ? icon?.onClick : undefined}
 									className="block cursor-pointer duration-500 flex items-center justify-center ml-4 rounded-full text-primary-500 transform transition-colors hover:bg-gray-200"
 								>
 									<span className="block p-1">

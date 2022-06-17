@@ -88,16 +88,16 @@ const Overtime = () => {
 				title: String(overtime.error.data.detail || overtime.error.data.error || "")
 			} : undefined}
 			refresh={{
-				loading: overtime?.isFetching,
+				loading: overtime.isFetching,
 				onClick: () => {
 					setDateQuery({ from: "", to: "" });
-					overtime?.refetch();
+					overtime.refetch();
 				},
 			}}
 			disabledLoading={!overtime.isLoading && overtime.isFetching}
 			loading={overtime.isLoading}
 			paginate={overtime.data ? {
-				loading: overtime.data.isFetching, setOffset, offset,
+				loading: overtime.isFetching, setOffset, offset,
 				totalItems: overtime.data.count
 			} : undefined}
 		>
@@ -107,6 +107,7 @@ const Overtime = () => {
 				pending={overtime.data?.pending_count || 0}
 			/>
 			<Topbar
+				loading={overtime.isFetching}
 				adminView={false}
 				dateSubmit={({ fromDate, toDate }) =>
 					setDateQuery({ from: fromDate, to: toDate })
@@ -114,14 +115,13 @@ const Overtime = () => {
 				openModal={() => dispatch(modalOpen())}
 			/>
 			<OvertimeTable
-				loading={overtime.isFetching}
 				overtime={overtime.data?.results || []}
 			/>
 			<Modal
 				close={() => dispatch(modalClose())}
 				component={
 					<Form
-						errors={isFormError<OvertimeCreateErrorType>(error) && error.data}
+						errors={isFormError<OvertimeCreateErrorType>(error) ? error.data : undefined}
 						loading={isLoading}
 						onSubmit={handleSubmit}
 						success={status === "fulfilled"}

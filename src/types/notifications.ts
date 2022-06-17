@@ -7,7 +7,7 @@ export type NotificationType = {
 	sender: UserInfoType;
 	recipient: UserInfoType;
 	message: string;
-	message_id: number;
+	message_id: string | number;
 	read: boolean;
 	date_sent: string;
 }

@@ -12,12 +12,12 @@ import {
 } from "../../../hooks";
 import { toCapitalize, validateForm } from "../../../utils";
 import { Button, Input, Select, Textarea } from "../../controls";
-import { TaskCreateType, TaskCreateErrorType } from "../../../types/employees";
+import { TaskCreateType, TaskCreateErrorType,TaskFormInitStateType } from "../../../types/employees";
 
 export type FormProps = {
 	editMode?: boolean;
 	errors?: TaskCreateErrorType;
-	initState?: InitStateType;
+	initState?: TaskFormInitStateType;
 	loading: boolean;
 	success?: boolean;
 	onSubmit: (form: TaskCreateType) => void;
@@ -37,16 +37,7 @@ const initialState = {
 	description: ""
 };
 
-export type InitStateType = {
-	name: string;
-	due_date: string;
-	priority: string;
-	followers: string[];
-	leaders: string[];
-	description: string;
-};
-
-interface InitErrorType extends Omit<InitStateType, "followers" | "leaders"> {
+interface InitErrorType extends Omit<TaskFormInitStateType, "followers" | "leaders"> {
 	followers: string;
 	leaders: string;
 }
@@ -134,7 +125,7 @@ const Form: FC<FormProps> = ({
 		multiple: true
 	});
 	const followers = useFormSelect(initState.followers, {
-		onChange: () => (removeErrors ? removeErrors("team") : ""),
+		onChange: () => (removeErrors ? removeErrors("followers") : ""),
 		multiple: true
 	});
 	const description = useFormTextArea(initState.description, {

@@ -17,7 +17,7 @@ const UpdateForm = ({ client }: { client: ClientType }) => {
 	] = useUpdateClientMutation();
 
 	const handleSubmit = useCallback(
-		(form: ClientCreateType, id: number | string) => {
+		(form: ClientCreateType, id: string) => {
 			updateClient({ id, data: form });
 		},
 		[updateClient]

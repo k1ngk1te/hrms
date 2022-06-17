@@ -18,10 +18,11 @@ import { useAppDispatch, useAppSelector, useFormInput } from "../../hooks";
 import { Form, DepartmentTable } from "../../components/Departments";
 import { Container, Modal } from "../../components/common";
 import { Button, InputButton } from "../../components/controls";
+import { DepartmentCreateType } from "../../types"
 
 const Departments = () => {
 	const [editMode, setEditMode] = useState(false);
-	const [depId, setDepId] = useState<number | string>(0);
+	const [depId, setDepId] = useState<string | undefined>(undefined);
 	const [offset, setOffset] = useState(0);
 	const [nameSearch, setNameSearch] = useState("");
 
@@ -142,11 +143,11 @@ const Departments = () => {
 
 	const handleSubmit = useCallback(
 		(form: { name: string; hod?: string }) => {
-			const data = { name: form.name.toLowerCase()}
+			const data: DepartmentCreateType = { name: form.name.toLowerCase()}
 			if (form.hod) data["hod"] = { id: form.hod }
 
-			if (editMode) updateDepartment({
-						...data,
+			if (editMode && depId) updateDepartment({
+						data,
 						id: depId,
 				  })
 			else createDepartment(data);
@@ -155,7 +156,7 @@ const Departments = () => {
 	);
 
 	const handleDelete = useCallback(
-		(id: number) => {
+		(id: string) => {
 			dispatch(
 				alertModalOpen({
 					color: "warning",
@@ -187,7 +188,7 @@ const Departments = () => {
 				onClick: () => departments.refetch(),
 			}}
 			error={isErrorWithData(departments.error) ? {
-				status: departments.error.status || 500,
+				statusCode: departments.error.status || 500,
 				title: String(departments.error.data?.detail || departments.error.data?.error || "")
 			} : undefined}
 			disabledLoading={!departments.isLoading && departments.isFetching}
@@ -244,7 +245,7 @@ const Departments = () => {
 				<DepartmentTable
 					departments={departments.data?.results || []}
 					updateDep={(data: {
-						id: string | number;
+						id: string;
 						name: string;
 						hod: string;
 					}) => {
@@ -253,7 +254,7 @@ const Departments = () => {
 						setEditMode(true);
 						dispatch(modalOpen());
 					}}
-					deleteDep={(id: number) => handleDelete(id)}
+					deleteDep={(id: string) => handleDelete(id)}
 					disableAction={departments.isFetching}
 				/>
 			</div>
@@ -268,13 +269,13 @@ const Departments = () => {
 									hod?: {
 										id: string;
 									}
-								}>(update.error) && update.error?.data
+								}>(update.error) ? update.error?.data : undefined
 								: isFormError<{
 									name?: string;
 									hod?: {
 										id: string;
 									}
-								}>(error) && error?.data
+								}>(error) ? error?.data : undefined
 						}
 						editMode={editMode}
 						loading={editMode ? update.isLoading : isLoading}

@@ -7,14 +7,14 @@ type InfoCompType = {
 	infos: {
 		options?: any;
 		title: string;
-		type?: "badge";
+		type?: "badge" | "image";
 		value: any; // string | { alt: string; src: string }
 	}[];
 	title: string;
 	titleWidth?: string;
 }
 
-const InfoComp: FC<InfoCompType> = ({ description, image, infos, title, titleWidth }) => (
+const InfoComp: FC<InfoCompType> = ({ description, infos, title, titleWidth }) => (
 	
 	<div className="bg-white shadow-md mt-4 mb-4 p-2 overflow-hidden sm:rounded-lg">
     <div className="px-4 py-5 sm:px-6">
@@ -44,7 +44,7 @@ const InfoComp: FC<InfoCompType> = ({ description, image, infos, title, titleWid
 										<Badge margin="mx-1" title={detail.value} {...detail.options} />
 									</div>
 								</div>
-              ) : detail.type === "image" ? (
+              ) : detail?.type === "image" ? (
                 <div className={`${index % 2 === 0 ? "border-white" : "border-gray-50"} border-2 h-[150px] rounded-full w-[160px]`}>
                   <img
                     alt={typeof detail.value === 'object' ? detail.value.alt : "no-image"}

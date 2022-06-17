@@ -45,7 +45,7 @@ const Form: FC<FormProps> = ({
   const modalVisible = useAppSelector((state) => state.modal.visible);
 
   const employees = useGetEmployeesQuery(
-    { limit, offset: 0, name: "" },
+    { limit, offset: 0, search: "" },
     {
       skip: !modalVisible,
     }

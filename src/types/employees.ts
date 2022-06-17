@@ -55,22 +55,18 @@ export interface GetEmployeesDataType extends DataListType {
 }
 
 export type ProfileErrorType = {
-  image: string;
-  gender: string;
-  phone: string;
-  address: string;
-  state: string;
-  city: string;
-  date_of_birth: string;
+  image?: string;
+  gender?: string;
+  phone?: string;
+  address?: string;
+  state?: string;
+  city?: string;
+  date_of_birth?: string;
 };
 
 export type EmployeeType = {
   id: string;
-  user: {
-    first_name: string;
-    last_name: string;
-    email: string;
-  };
+  user: UserType;
   job?: {
     id: string;
     name: string;
@@ -104,37 +100,39 @@ export type ErrorFormType =
   | undefined;
 
 export type FormType = {
-  image: any;
-  first_name: string;
-  last_name: string;
-  email: string;
-  department: string;
-  date_of_birth: string;
-  date_employed: string;
-  job: string;
-  supervisor: string;
-  gender: string;
-  state: string;
-  city: string;
-  phone: string;
-  address: string;
+  image?: any;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  department?: string;
+  date_of_birth?: string;
+  date_employed?: string;
+  job?: string;
+  supervisor?: string;
+  gender?: string;
+  state?: string;
+  city?: string;
+  phone?: string;
+  address?: string;
 };
 
 export type FormErrorType = {
-  user: {
+  user?: {
     email: string;
     first_name: string;
     last_name: string;
   };
-  profile: ProfileErrorType;
-  job: {
+  profile?: ProfileErrorType;
+  job?: {
     id: string;
   };
-  department: {
+  department?: {
     id: string;
   };
-  supervisor: string;
-  date_employed: string;
+  supervisor?: {
+    id: string;
+  };
+  date_employed?: string;
 };
 
 export type ErrorsKeyType =
@@ -231,20 +229,21 @@ export type ProjectType = {
   end_date: string;
   initial_cost: number;
   rate: number;
-  priority: "H" | "M" | "L";
+  priority: string;
+  // priority: "H" | "M" | "L";
   description: string;
   completed: boolean;
   is_active: boolean;
   tasks: {
     id: string;
     name: string;
-    completed: string;
+    completed: boolean;
   }[];
   files: ProjectFileType[];
 };
 
 export type ProjectCreateType = {
-  client: string | null;
+  client?: string;
   leaders: { id: string }[];
   team: { id: string }[];
   name: string;
@@ -252,7 +251,7 @@ export type ProjectCreateType = {
   end_date: string;
   initial_cost: number;
   rate: number;
-  priority: "H" | "M" | "L";
+  priority: string;
   description: string;
 };
 
@@ -286,7 +285,7 @@ export type TaskType = {
   verified: boolean;
   name: string;
   description: string;
-  priority: "L" | "M" | "H";
+  priority: string;
   followers: UserEmployeeType[];
   leaders: UserEmployeeType[];
   created_by: UserEmployeeType;
@@ -312,7 +311,16 @@ export type TaskCreateType = {
   followers: { id: string }[];
   name: string;
   due_date: string;
-  priority: "H" | "M" | "L";
+  priority: string;
+  description: string;
+};
+
+export type TaskFormInitStateType = {
+  name: string;
+  due_date: string;
+  priority: string;
+  followers: string[];
+  leaders: string[];
   description: string;
 };
 
@@ -334,7 +342,7 @@ export type ProjectFileType = {
   name: string;
   file_type: string;
   file: string;
-  size: string;
+  size: number;
   date: string;
   uploaded_by: {
     name: string;
@@ -343,7 +351,6 @@ export type ProjectFileType = {
 };
 
 export type ProjectFileCreateType = {
-  id: number;
   name: string;
   file: any;
 };

@@ -7,7 +7,7 @@ import { useAppDispatch } from "../index";
 import { toCapitalize } from "../../utils";
 
 const useDeactivateEmployee = (
-	form_type?: "client" | "employee" = "employee"
+	form_type: "client" | "employee" = "employee"
 ) => {
 	const dispatch = useAppDispatch();
 

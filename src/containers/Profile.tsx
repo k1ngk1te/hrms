@@ -2,19 +2,15 @@ import { useCallback, useEffect, useState } from "react";
 import { FaCheckCircle, FaLock, FaUserEdit } from "react-icons/fa"
 
 import { DEFAULT_IMAGE, LEAVES_PAGE_URL } from "../config";
-import { isErrorWithData, isFormError } from "../store"
-import { logout } from "../store/features/auth-slice";
+import { isErrorWithData } from "../store"
 import {
   open as modalOpen,
   close as modalClose,
 } from "../store/features/modal-slice";
-import {
-  useGetProfileQuery,
-  useChangePasswordMutation,
-} from "../store/features/auth-api-slice";
+import { useGetProfileQuery } from "../store/features/auth-api-slice";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { getDate, toCapitalize } from "../utils";
-import { ChangePasswordForm } from "../components/Employees";
+import { ChangePasswordForm } from "../components/Profile";
 import { UpdateForm } from "../components/Profile";
 import { Container, InfoComp, InfoTopBar, Modal } from "../components/common";
 
@@ -27,25 +23,6 @@ const Profile = () => {
   const getData = useGetProfileQuery();
   const empData = getData.data;
 
-  const [changePassword, { error, status, isLoading }] =
-    useChangePasswordMutation();
-
-  const handlePasswordChange = useCallback(
-    (form: { password1: string; password2: string }) => {
-      changePassword(form);
-    },
-    [changePassword]
-  );
-
-  useEffect(() => {
-    const changeErrorStatus =
-      isErrorWithData(error) && error?.status === 401;
-    const errorStatus =
-      isErrorWithData(getData.error) &&
-      getData.error.status === 401;
-    if (changeErrorStatus === true || errorStatus === true) dispatch(logout());
-  }, [dispatch, getData.error, error]);
-
   return (
     <Container
       heading="My Profile"
@@ -55,6 +32,10 @@ const Profile = () => {
       }}
       loading={getData.isLoading}
       disabledLoading={!getData.isLoading && getData.isFetching}
+      error={isErrorWithData(getData.error) ? {
+        statusCode: getData.error?.status || 500,
+        title: String(getData.error.data?.detail || getData.error.data?.error || "")
+      } : undefined}
     >
       <InfoTopBar
         email={empData?.user?.email}
@@ -184,13 +165,7 @@ const Profile = () => {
           formType === "profile" ? (
             <UpdateForm initState={empData} />
           ) : formType === "password" ? (
-            <ChangePasswordForm
-              errors={isFormError<{new_password1?: string; new_password2?: string}>(error) ? error.data : undefined}
-              errorStatus={isErrorWithData(error) ? error.status : undefined}
-              onSubmit={handlePasswordChange}
-              isLoading={isLoading}
-              success={status === "fulfilled"}
-            />
+            <ChangePasswordForm />
           ) : (
             <></>
           )

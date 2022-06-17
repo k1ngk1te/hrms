@@ -13,14 +13,14 @@ import { useGetTasksQuery, useCreateTaskMutation } from "../../../../store/featu
 import { useAppDispatch, useAppSelector, useDeleteTask, useUpdateTask } from "../../../../hooks";
 import { TaskCards, TaskForm, TaskTable, TaskTopbar } from "../../../../components/Projects"
 import { Container, Modal } from "../../../../components/common";
-import { TaskCreateType, TaskCreateErrorType } from "../../../../types/employees";
+import { TaskCreateType, TaskCreateErrorType, TaskFormInitStateType } from "../../../../types/employees";
 
 
 const Tasks = () => {
 	const { id } = useParams()
 	const [editMode, setEditMode] = useState(false)
 	const [editId, setEditId] = useState<string | undefined>(undefined)
-	const [initState, setInitState] = useState<TaskCreateType | undefined>(undefined)
+	const [initState, setInitState] = useState<TaskFormInitStateType | undefined>(undefined)
 
 	const [offset, setOffset] = useState(0);
 	const [search, setSearch] = useState("");
@@ -49,7 +49,7 @@ const Tasks = () => {
 		if (createData.error && isErrorWithData(createData.error)) {
 			if (createData.error.status === 401) dispatch(logout())
 			else {
-				const error = createData.error.detail || createData.error.error || "A server error occurred"
+				const error = createData.error.data.detail || createData.error.data.error || "A server error occurred"
 				dispatch(alertModalOpen({
 					header: "Failed to create task",
 					color: "danger",
@@ -123,7 +123,7 @@ const Tasks = () => {
 			<div className="mt-3">
 				<TaskTable
 					tasks={data ? data.results : []}
-					onEdit={(id: string, initState: TaskCreateType) => {
+					onEdit={(id: string, initState: TaskFormInitStateType) => {
 						setEditId(id);
 						setInitState(initState);
 						setEditMode(true);
@@ -131,7 +131,7 @@ const Tasks = () => {
 					}}
 					deleteLoading={deleteTask.isLoading}
 					onDelete={(task_id: string) => {
-						deleteTask.onSubmit(id, task_id)
+						if (id) deleteTask.onSubmit(id, task_id)
 					}}
 				/>
 			</div>

@@ -1,4 +1,5 @@
 import { Outlet } from "react-router-dom";
+import { BRAND_IMAGE } from "../config";
 import { ScrollToTop, Sidebar, Topbar } from "../components/Layout";
 import { MenuIcon } from "../components/common";
 import { useFadeIn, useOutClick } from "../hooks";
@@ -17,7 +18,7 @@ const Layout = () => {
           />
           <header className="bg-gray-100 flex items-center justify-between px-4 py-3 md:px-6 md:py-4 lg:hidden">
             <div className="h-[30px] w-[130px]">
-              <img className="h-full w-full" src="/static/images/logo.jpg" title="kite" />
+              <img className="h-full w-full" src={BRAND_IMAGE} title="kite" />
             </div>
             <MenuIcon
               color="primary"

@@ -8,7 +8,7 @@ import { ProjectType } from "../../../types";
 export type ProjectDetailProps = {
 	changePriority: (priority: string) => void;
 	loading: boolean;
-	data: ProjectType[];
+	data: ProjectType;
 };
 
 const ProjectDetail: FC<ProjectDetailProps> = ({
@@ -20,13 +20,13 @@ const ProjectDetail: FC<ProjectDetailProps> = ({
 		onChange: ({ value }) => changePriority(value),
 	});
 
-	const start_date = new Date(data.start_date)
-	const end_date = new Date(data.end_date)
-	const hours = (end_date - start_date) / (1000 * 60 * 60)
+	const start_date = data ? new Date(data.start_date) : undefined
+	const end_date = data ? new Date(data.end_date) : undefined
+	const hours = start_date && end_date ? (end_date.getTime() - start_date.getTime()) / (1000 * 60 * 60) : undefined
 
-	const total_cost = (data.initial_cost || 0) + ((data.rate || 0) * hours)
+	const total_cost = data && hours ? (data.initial_cost || 0) + ((data.rate || 0) * hours) : 0
 
-	return (
+	return data ? (
 		<div className="py-2 w-full sm:px-4 lg:w-1/3">
 			<div className="flex flex-col items-center md:flex-row md:items-start lg:flex-col lg:items-center">
 				<div className="bg-white my-4 p-4 rounded-md shadow-lg w-full md:mr-6 md:w-[55%] lg:mr-0 lg:w-full">
@@ -40,7 +40,7 @@ const ProjectDetail: FC<ProjectDetailProps> = ({
 						</li>
 						<li className="odd:bg-gray-100 rounded-sm flex items-center justify-between p-2 font-medium text-gray-800 text-base md:text-lg lg:text-base">
 							<p>Total Hours:</p>
-							<p>{hours} hour{hours > 1 ? "s" : ""}</p>
+							<p>{hours || 0} hour{hours ? hours > 1 ? "s" : "" : ""}</p>
 						</li>
 						<li className="odd:bg-gray-100 rounded-sm flex items-center justify-between p-2 font-medium text-gray-800 text-base md:text-lg lg:text-base">
 							<p>Rate / Hour:</p>
@@ -52,11 +52,11 @@ const ProjectDetail: FC<ProjectDetailProps> = ({
 						</li>
 						<li className="odd:bg-gray-100 rounded-sm flex items-center justify-between p-2 capitalize font-medium text-gray-800 text-base md:text-lg lg:text-base">
 							<p>created:</p>
-							<p>{start_date.toDateString()}</p>
+							<p>{start_date ? start_date.toDateString() : "------"}</p>
 						</li>
 						<li className="odd:bg-gray-100 rounded-sm flex items-center justify-between p-2 capitalize font-medium text-gray-800 text-base md:text-lg lg:text-base">
 							<p>deadline:</p>
-							<p>{end_date.toDateString()}</p>
+							<p>{end_date ? end_date.toDateString() : "------"}</p>
 						</li>
 						<li className="odd:bg-gray-100 rounded-sm flex items-center justify-between p-2 capitalize font-medium text-gray-800 text-base md:text-lg lg:text-base">
 							<p>Priority:</p>
@@ -192,7 +192,7 @@ const ProjectDetail: FC<ProjectDetailProps> = ({
 				</ul>
 			</div>
 		</div>
-	);
+	) : <></>;
 };
 
 export default ProjectDetail;

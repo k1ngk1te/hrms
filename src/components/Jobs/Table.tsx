@@ -8,8 +8,8 @@ const heads: HeadType = [{ value: "name" }, { type: "actions", value: "edit" }];
 
 const getRows = (
   data: JobType[],
-  updateJob: (data: { id: number | string; name: string }) => void,
-  deleteJob: (id: string | number) => void,
+  updateJob: (id: string, data: { name: string }) => void,
+  deleteJob: (id: string) => void,
   disableAction: boolean
 ): RowType[] =>
   data.map((job) => [
@@ -22,8 +22,7 @@ const getRows = (
           disabled: disableAction,
           Icon: FaPen,
           onClick: () =>
-            updateJob({
-              id: job.id,
+            updateJob(job.id, {
               name: job.name,
             }),
         },
@@ -39,9 +38,8 @@ const getRows = (
 
 type TableType = {
   jobs: JobType[];
-  loading: boolean;
-  updateJob: (data: { id: number | string; name: string }) => void;
-  deleteJob: (id: number | string) => void;
+  updateJob: (id:string, data: { name: string }) => void;
+  deleteJob: (id: string) => void;
   disableAction: boolean;
 };
 

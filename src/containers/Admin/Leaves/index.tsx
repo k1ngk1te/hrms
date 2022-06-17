@@ -238,7 +238,7 @@ const Leave = () => {
 		<Container
 			heading="Employee Leaves"
 			error={isErrorWithData(leaves.error) ? {
-				status: leaves.error.status || 500,
+				statusCode: leaves.error?.status || 500,
 				title: String(leaves.error.data?.detail || leaves.error.data?.error || "")
 			} : undefined}
 			refresh={{
@@ -280,7 +280,7 @@ const Leave = () => {
 					<Form
 						adminView
 						data={form}
-						errors={isFormError<FormErrorType>(error) && error.data}
+						errors={isFormError<FormErrorType>(error) ? error.data : undefined}
 						formErrors={errors}
 						loading={loading}
 						onChange={handleChange}

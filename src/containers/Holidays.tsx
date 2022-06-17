@@ -25,7 +25,7 @@ import { Container, Modal } from "../components/common";
 const Holidays = () => {
 	const [offset, setOffset] = useState(0);
 	const [search, setSearch] = useState("");
-	const [holidayId, setHolidayId] = useState<number | string | null>(null);
+	const [holidayId, setHolidayId] = useState<string | null>(null);
 	const [editMode, setEditMode] = useState(false);
 	const [initState, setInitState] = useState<HolidayCreateType>({
 		name: "",
@@ -68,7 +68,7 @@ const Holidays = () => {
 	);
 
 	const handleDelete = useCallback(
-		(id: number | string, data: HolidayCreateType) => {
+		(id: string, data: HolidayCreateType) => {
 			dispatch(
 				alertModalOpen({
 					color: "danger",
@@ -257,13 +257,13 @@ const Holidays = () => {
 			/>
 			<HolidayTable
 				holidays={data ? data.results : []}
-				onEdit={(id: number | string, data: HolidayCreateType) => {
+				onEdit={(id: string, data: HolidayCreateType) => {
 					setEditMode(true);
 					setHolidayId(id);
 					setInitState(data);
 					dispatch(modalOpen());
 				}}
-				onDelete={(id: number | string, data: HolidayCreateType) =>
+				onDelete={(id: string, data: HolidayCreateType) =>
 					handleDelete(id, data)
 				}
 			/>

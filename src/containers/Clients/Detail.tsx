@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 import { isErrorWithData } from "../../store";
 import { open as alertOpen } from "../../store/features/alert-slice";
+import { logout } from "../../store/features/auth-slice";
 import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
 import { close as modalClose, open as modalOpen } from "../../store/features/modal-slice";
 import { useGetClientQuery, useDeleteClientMutation } from "../../store/features/employees-slice";
@@ -27,7 +28,7 @@ const ClientDetail = () => {
 
 	const [formType, setFormType] = useState<"client" | "password">("client");
 
-	const { data, error, isLoading, refetch } = useGetClientQuery(id || "", {
+	const { data, error, isLoading, isFetching, refetch } = useGetClientQuery(id || "", {
 		skip: id === undefined,
 	});
 
@@ -100,12 +101,8 @@ const ClientDetail = () => {
 			error={
 				isErrorWithData(error)
 					? {
-							statusCode:
-								error && isErrorWithData(error) ? error.status : undefined,
-							title:
-								error && isErrorWithData(error)
-									? String(error.data?.detail || error.data?.error || "")
-									: undefined,
+							statusCode: error.status || 500,
+							title: String(error.data?.detail || error.data?.error || "")
 					  }
 					: undefined
 			}

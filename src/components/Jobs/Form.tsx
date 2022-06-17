@@ -4,7 +4,6 @@ import { Button, Input } from "../controls";
 
 type FormType = {
   name: string;
-  id?: number;
 };
 
 type ErrorType = {
@@ -41,11 +40,9 @@ const Form: FC<FormProps> = ({
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
-      const form: FormType = { name: name.value };
-      if (editMode && initState.id) form["id"] = initState.id;
-      onSubmit(form);
+      onSubmit({ name: name.value });
     },
-    [editMode, initState, onSubmit, name.value]
+    [onSubmit, name.value]
   );
 
   return (

@@ -43,7 +43,7 @@ const initialState = {
 
 export type InitStateType = {
 	name: string;
-	client: string;
+	client?: string;
 	start_date: string;
 	end_date: string;
 	initial_cost: number;
@@ -161,7 +161,7 @@ const Form: FC<FormProps> = ({
 	const name = useFormInput(initState.name, {
 		onChange: () => (removeErrors ? removeErrors("name") : ""),
 	});
-	const client = useFormSelect(initState.client, {
+	const client = useFormSelect(initState?.client || "", {
 		onChange: () => (removeErrors ? removeErrors("client") : ""),
 	});
 	const start_date = useFormInput(initState.start_date, {

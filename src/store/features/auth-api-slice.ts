@@ -58,7 +58,7 @@ const authApi = baseApi.injectEndpoints({
         body: generateProfile(profile),
         credentials: "include"
       }),
-      invalidatesTags: (result) => result ? ["Profile", "User"] : [],
+      invalidatesTags: (result) => result ? ["Profile"] : [],
     }),
     changePassword: build.mutation<
       { detail: string },

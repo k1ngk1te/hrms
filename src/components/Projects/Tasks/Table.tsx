@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { FaEye, FaPen, FaTrash } from "react-icons/fa";
 import { useParams } from "react-router-dom"
 import { PROJECT_TASK_PAGE_URL } from "../../../config";
-import { TaskType, TaskCreateType } from "../../../types/employees";
+import { TaskType, TaskFormInitStateType } from "../../../types/employees";
 import Table, { HeadType, RowType } from "../../controls/Table";
 
 const heads: HeadType = [
@@ -14,7 +14,7 @@ const heads: HeadType = [
 
 const getRows = (
   data: TaskType[],
-  onEdit: (id: string, initState: TaskCreateType) => void,
+  onEdit: (id: string, initState: TaskFormInitStateType) => void,
   onDelete: (id: string) => void,
   loading: boolean,
   project_id?: string,
@@ -67,7 +67,7 @@ const getRows = (
 type TableType = {
   tasks: TaskType[];
   deleteLoading: boolean;
-  onEdit: (id: string, initState: TaskCreateType) => void;
+  onEdit: (id: string, initState: TaskFormInitStateType) => void;
   onDelete: (id: string) => void;
 };
 

@@ -32,7 +32,7 @@ const Overtime = () => {
 	const modalVisible = useAppSelector((state) => state.modal.visible);
 
 	const overtime = useGetAdminOvertimeQuery({
-		limit: OVERTIME_ADMIN_EXPORT_URL,
+		limit: DEFAULT_PAGINATION_SIZE,
 		offset,
 		search: nameSearch,
 		from: dateQuery.from,
@@ -119,7 +119,7 @@ const Overtime = () => {
 		<Container
 			heading="Employee Overtime"
 			error={isErrorWithData(overtime.error) ? {
-				status: overtime.error.status || 500,
+				statusCode: overtime.error.status || 500,
 				title: String(overtime.error.data?.detail || overtime.error.data?.error || "")
 			} : undefined}
 			refresh={{
@@ -160,7 +160,7 @@ const Overtime = () => {
 				component={
 					<Form
 						adminView
-						errors={isFormError<OvertimeCreateErrorType>(error) && error.data}
+						errors={isFormError<OvertimeCreateErrorType>(error) ? error.data : undefined}
 						loading={isLoading}
 						onSubmit={handleSubmit}
 						success={status === "fulfilled"}

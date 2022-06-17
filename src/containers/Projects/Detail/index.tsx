@@ -32,7 +32,11 @@ import { createProject } from "../../../utils/projects";
 const Tasks = ({
 	tasks,
 }: {
-	tasks: { id: string; name: string; completed: boolean }[];
+	tasks: {
+    id: string;
+    name: string;
+    completed: boolean;
+  }[]
 }) => {
 	return tasks && tasks.length > 0 ? (
 		<ul>
@@ -65,7 +69,7 @@ const Detail = () => {
 	const deleteProject = useDeleteProject()
 
 	const screens = [
-		{ title: "all tasks", component: <Tasks tasks={data?.tasks || []} /> },
+		{ title: "all tasks", component: <Tasks tasks={data && data.tasks ? data.tasks : []} /> },
 		{
 			title: "completed tasks",
 			component: (
@@ -240,7 +244,7 @@ const Detail = () => {
 							changePriority={(priority: string) => {
 								if (priority !== data.priority) {
 									const project = { ...createProject(data), priority };
-									updateProject.onSubmit(id, project);
+									if (id) updateProject.onSubmit(id, project);
 								}
 							}}
 							data={data}

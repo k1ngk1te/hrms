@@ -11,6 +11,7 @@ import {
 	TASK_URL,
 } from "../../config";
 import {
+	DataListType,
 	ProjectListType,
 	PaginationType,
 	ProjectType,
@@ -26,7 +27,7 @@ export interface TaskPaginationType extends PaginationType {
 	project_id: string;
 }
 
-export interface ProjectEmployeesListType extends PaginationType {
+export interface ProjectEmployeesListType extends DataListType {
 	results: UserEmployeeType[]
 }
 

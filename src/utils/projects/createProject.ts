@@ -2,7 +2,7 @@ import { ProjectType, ProjectCreateType, UserEmployeeType } from "../../types"
 
 const createProject = (project: ProjectType): ProjectCreateType => ({
 	name: project.name,
-	client: project.client ? project.client.id : null,
+	client: project.client ? project.client.id : "",
 	priority: project.priority,
 	description: project.description || "",
 	leaders: project.leaders.map((leader: UserEmployeeType) => ({id: leader.id})),

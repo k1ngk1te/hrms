@@ -15,7 +15,7 @@ const EmployeeForm = ({
   empId,
   data,
 }: {
-  empId: number | string;
+  empId: string;
   data?: EmployeeType;
 }) => {
   const [errors, setErrors] = useState<ErrorFormType>(initErrorState);
@@ -73,13 +73,9 @@ const EmployeeForm = ({
       const omitForm = omitKey(form, ["image","supervisor"]);
       const { valid, result } = validateForm(omitForm);
       if (valid) {
-        updateEmployee({
-          employee: {
-            ...form,
-            email: form.email.toLowerCase(),
-          },
-          id: empId,
-        });
+        const employee = { ...form }
+        if (form.email) employee["email"] = form.email.toLowerCase()
+        updateEmployee({ employee, id: empId });
       } else if (valid === false) {
         setErrors(result);
         setLoading(false);

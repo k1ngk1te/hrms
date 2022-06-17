@@ -219,7 +219,7 @@ const Leave = () => {
 			loading={leaves.isLoading}
 			disabledLoading={!leaves.isLoading && leaves.isFetching}
 			paginate={leaves.data ? {
-				loading: leaves.data.isFetching, setOffset, offset,
+				loading: leaves.isFetching, setOffset, offset,
 				totalItems: leaves.data.count
 			} : undefined}
 		>
@@ -244,7 +244,7 @@ const Leave = () => {
 				component={
 					<Form
 						data={form}
-						errors={isFormError<FormErrorType>(error) && error.data}
+						errors={isFormError<FormErrorType>(error) ? error.data : undefined}
 						formErrors={errors}
 						loading={loading}
 						onChange={handleChange}

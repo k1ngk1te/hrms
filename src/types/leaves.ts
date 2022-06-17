@@ -59,6 +59,7 @@ export type OvertimeType = {
     value: string;
   };
   status: StatusType;
+  admin_status?: StatusType;
   date: string;
   hours: number;
   reason: string;

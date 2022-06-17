@@ -73,7 +73,7 @@ const ProjectImages: FC<ProjectImagesProps> = ({ files }) => {
 									onClick={() => downloadFile(file.file, file.name)}
 									className="cursor-pointer mt-1 text-left text-sm text-gray-700 hover:text-blue-600 hover:underline"
 								>
-									{file.name.split(0, 40)}
+									{file.name.slice(0, 40)}
 									{file.name.length > 40 ? "..." : ""}
 								</p>
 								{file.uploaded_by && (

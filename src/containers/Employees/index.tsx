@@ -116,10 +116,9 @@ const Employees = () => {
 			setLoading(true);
 			const { valid, result } = validateForm(form, ["supervisor"]);
 			if (valid) {
-				createEmployee({
-					...form,
-					email: form.email.toLowerCase(),
-				});
+				const data: FormType = { ...form }
+				if (form.email) data["email"] = form.email.toLowerCase()
+				createEmployee(data);
 			} else if (valid === false) {
 				setErrors(result);
 				setLoading(false);

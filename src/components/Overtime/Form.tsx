@@ -26,8 +26,8 @@ export type InitErrorType = {
   employee?: string;
   overtime_type?: string;
   date?: string;
-  hours?: number;
-  reason: string;
+  hours?: string;
+  reason?: string;
 }
 
 export type InitErrorKey = "overtime_type" | "employee" | "date" | "reason" | "hours";
@@ -53,7 +53,7 @@ const Form: FC<FormProps> = ({
 
   const modalVisible = useAppSelector((state) => state.modal.visible);
   const employees = useGetEmployeesQuery(
-    { limit: empLimit, offset: 0, name: "" },
+    { limit: empLimit, offset: 0, search: "" },
     {
       skip: (adminView && modalVisible === true) ? false : true,
     }
@@ -113,9 +113,9 @@ const Form: FC<FormProps> = ({
 
   const handleSubmit = useCallback((form: OvertimeCreateType) => {
     const invalidates = adminView ? [] : ["employee"]
-    const {valid,reason} = validateForm(form, invalidates)
+    const {valid,result} = validateForm(form, invalidates)
     if (valid) onSubmit(form)
-    else setFormErrors(prevState => ({ ...prevState, ...reason }))
+    else setFormErrors(prevState => ({ ...prevState, ...result }))
   }, [onSubmit, adminView])
 
   return (
@@ -143,8 +143,8 @@ const Form: FC<FormProps> = ({
                 loading: employees.isFetching,
                 onClick: () => {
                   if (
-                    employees.initState &&
-                    employees.initState.count > employees.initState.results.length
+                    employees.data &&
+                    employees.data.count > employees.data.results.length
                   ) {
                     setEmpLimit((prevState) => prevState + DEFAULT_PAGINATION_SIZE);
                   }

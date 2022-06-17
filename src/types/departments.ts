@@ -9,6 +9,13 @@ export type DepartmentType = {
 	no_of_employees?: number;
 }
 
+export type DepartmentCreateType = {
+	name: string;
+	hod?: {
+		id: string;
+	}
+}
+
 export interface GetDepartmentsDataType extends DataListType {
 	results: DepartmentType[];
 }

@@ -20,6 +20,7 @@ import {
 	FaUserClock,
 } from "react-icons/fa";
 import * as routes from "../../config/routes";
+import { DEFAULT_IMAGE } from "../../config";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { baseApi } from "../../store/features/base";
 import { open } from "../../store/features/alert-modal-slice";
@@ -92,13 +93,13 @@ const Sidebar = forwardRef<HTMLDivElement, PropsType>(
 					},
 					{
 						admin: false,
-						Icon: FaUserClock,
+						Icon: FaClock,
 						title: "overtime",
 						href: routes.OVERTIME_PAGE_URL,
 					},
 					{
 						admin: true,
-						Icon: FaClock,
+						Icon: FaUserClock,
 						title: "overtime (admin)",
 						href: routes.ADMIN_OVERTIME_PAGE_URL,
 					},
@@ -179,20 +180,20 @@ const Sidebar = forwardRef<HTMLDivElement, PropsType>(
 						<div className="h-[75px] relative rounded-full w-[75px]">
 							<img
 								className="h-full rounded-full w-full"
-								src={data?.image ? data?.image : "/static/images/default.png"}
+								src={data ? data?.image : DEFAULT_IMAGE}
 								alt="user"
 							/>
 						</div>
 					</div>
-					{data?.first_name && data?.last_name && (
-						<p className="capitalize italic mb-1 mt-2 text-white text-xs tracking-white md:text-sm">
-							{data ? `${data?.first_name} ${data?.last_name}` : "No Name"}
-						</p>
-					)}
-					{data?.job && (
-						<span className="capitalize italic text-gray-300 text-tiny tracking-white md:text-xs">
-							{data.job}
-						</span>
+					{data && (
+						<>
+							<p className="capitalize italic mb-1 mt-2 text-white text-xs tracking-white md:text-sm">
+								{data?.full_name || "---------"}
+							</p>
+							<span className="capitalize italic text-gray-300 text-tiny tracking-white md:text-xs">
+								{data?.job || "--------"}
+							</span>
+						</>
 					)}
 				</div>
 				<div className="mt-3">

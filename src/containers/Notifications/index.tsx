@@ -48,11 +48,11 @@ const Notifications = () => {
     <Container
       heading="Notifications"
       refresh={{
-        onClick: () => notifications?.refetch(),
-        loading: notifications?.isFetching,
+        onClick: notifications.refetch,
+        loading: notifications.isFetching,
       }}
       error={isErrorWithData(notifications.error) ? {
-        status: notifications.error.status || 500,
+        statusCode: notifications.error.status || 500,
         title: String(notifications.error.data?.detail || notifications.error.data?.error || "")
       } : undefined}
       disabledLoading={!notifications.isLoading && notifications.isFetching}
@@ -75,8 +75,8 @@ const Notifications = () => {
 	            goto={
 	              notification._type === "L"
 	                ? authData && authData?.is_admin && notification.recipient.email === authData?.email
-	                  ? ADMIN_LEAVE_DETAIL_PAGE_URL(notification.message_id)
-	                  : LEAVE_DETAIL_PAGE_URL(notification.message_id)
+	                  ? ADMIN_LEAVE_DETAIL_PAGE_URL(String(notification.message_id))
+	                  : LEAVE_DETAIL_PAGE_URL(String(notification.message_id))
 	                : undefined
 	            }
 	            read={notification.read}
