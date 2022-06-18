@@ -6,8 +6,7 @@
     "dev": "vite",
     "preview": "vite preview",
     "lint": "tsc",
-    "build": "tsc && vite build",
-    "force_build": "vite build"
+    "build": "tsc && vite build && python manage.py collectstatic --no-input"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.8.1",
