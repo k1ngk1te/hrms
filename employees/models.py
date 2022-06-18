@@ -127,7 +127,7 @@ class Project(models.Model):
 
 
 def file_folder(instance, filename):
-    return 'blogs/{}/{}'.format(instance.project.name, filename)
+    return 'images/projects/{}/{}'.format(instance.project.name, filename)
 
 class ProjectFile(models.Model):
 	project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="files")

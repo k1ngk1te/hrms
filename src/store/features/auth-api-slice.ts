@@ -17,7 +17,7 @@ const authApi = baseApi.injectEndpoints({
       query: ({ email, password }) => ({
         url: LOGIN_URL,
         method: "POST",
-        body: { email, password },
+        body: { email: email.lower(), password },
       }),
     }),
     logout: build.mutation<{ detail: string }, void>({
