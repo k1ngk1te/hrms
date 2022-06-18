@@ -6,6 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = environ.Env()
 
+DEBUG = bool(env('DEBUG'))
 SECRET_KEY = env('SECRET_KEY')
 
 # CONTACT_SUPPORT_EMAIL = ""

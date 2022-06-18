@@ -5,8 +5,6 @@ from HRMS.settings.base import INSTALLED_APPS
 
 ALLOWED_HOSTS = ['localhost', 'testserver']
 
-DEBUG = True
-
 
 DATABASES = {
     'default': {
