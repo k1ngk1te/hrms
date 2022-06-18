@@ -18,6 +18,7 @@ import {
 	ProjectCreateType,
 	ProjectFileCreateType,
 	ProjectFileType,
+	UserEmployeeType,
 	TaskCreateType,
 	TaskListType,
 	TaskType,
@@ -127,7 +128,7 @@ const projectsApi = baseApi.injectEndpoints({
 			}),
 			keepUnusedDataFor: DATA_LIFETIME,
 			providesTags: (result, error, id) =>
-				result ? [{ type: "Project", id }] : [],
+				result ? [{ type: "Project" as const, id }] : [],
 		}),
 		getProjectEmployees: build.query<
 			ProjectEmployeesListType,
@@ -141,7 +142,7 @@ const projectsApi = baseApi.injectEndpoints({
 				credentials: "include",
 			}),
 			keepUnusedDataFor: DATA_LIFETIME,
-			providesTags: [{type: "Task", id: "TASK_LIST"}, {type: "Project",id: "PROJECT_LIST"}],
+			providesTags: [{type: "Task" as const, id: "TASK_LIST"}, {type: "Project" as const,id: "PROJECT_LIST"}],
 		}),
 		getProjects: build.query<ProjectListType, PaginationType>({
 			query: ({ limit, offset, search }) => ({
@@ -155,10 +156,10 @@ const projectsApi = baseApi.injectEndpoints({
 			providesTags: (data) =>
 				data
 					? [
-							...data.results.map(({ id }) => ({ type: "Project", id })),
-							{ type: "Project", id: "PROJECT_LIST" },
+							...data.results.map(({ id }) => ({ type: "Project" as const, id })),
+							{ type: "Project" as const, id: "PROJECT_LIST" },
 					  ]
-					: [{ type: "Project", id: "PROJECT_LIST" }],
+					: [{ type: "Project" as const, id: "PROJECT_LIST" }],
 		}),
 		getTask: build.query<TaskType, { project_id: string; id: string }>({
 			query: ({ id, project_id }) => ({
@@ -168,7 +169,7 @@ const projectsApi = baseApi.injectEndpoints({
 			}),
 			keepUnusedDataFor: DATA_LIFETIME,
 			providesTags: (result, error, args) =>
-				result ? [{ type: "Task", id: args.id }] : [],
+				result ? [{ type: "Task" as const, id: args.id }] : [],
 		}),
 		getTasks: build.query<TaskListType, TaskPaginationType>({
 			query: ({ project_id, limit, offset, search }) => ({
@@ -182,10 +183,10 @@ const projectsApi = baseApi.injectEndpoints({
 			providesTags: (data) =>
 				data
 					? [
-							...data.results.map(({ id }) => ({ type: "Task", id })),
-							{ type: "Task", id: "TASK_LIST" },
+							...data.results.map(({ id }) => ({ type: "Task" as const, id })),
+							{ type: "Task" as const, id: "TASK_LIST" },
 					  ]
-					: [{ type: "Task", id: "TASK_LIST" }],
+					: [{ type: "Task" as const, id: "TASK_LIST" }],
 		}),
 		markProjectCompleted: build.mutation<
 			{ detail: string },

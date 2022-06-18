@@ -133,7 +133,7 @@ const employeesApi = baseApi.injectEndpoints({
 			invalidatesTags: (result, error, id) =>
 				!error ? [{ type: "Holiday", id }] : [],
 		}),
-		getAttendance: build.query<AttendanceListType, PaginateType>({
+		getAttendance: build.query<AttendanceListType, PaginationType>({
 			query: ({ limit, offset }) => ({
 				url: `${ATTENDANCE_URL}?limit=${limit}&offset=${offset}`,
 				method: "GET",
@@ -159,7 +159,7 @@ const employeesApi = baseApi.injectEndpoints({
 			}),
 			keepUnusedDataFor: DATA_LIFETIME,
 			providesTags: (result, error, id) =>
-				result ? [{ type: "Client", id }] : [],
+				result ? [{ type: "Client" as const, id }] : [],
 		}),
 		getClients: build.query<ClientListType, ClientPaginationType>({
 			query: ({ limit, offset, search, active }) => ({
@@ -173,8 +173,8 @@ const employeesApi = baseApi.injectEndpoints({
 			providesTags: (data) =>
 				data
 					? [
-							...data.results.map(({ id }) => ({ type: "Client", id })),
-							{ type: "Client", id: "CLIENT_LIST" },
+							...data.results.map(({ id }) => ({ type: "Client" as const, id })),
+							{ type: "Client" as const, id: "CLIENT_LIST" },
 					  ]
 					: [{ type: "Client", id: "CLIENT_LIST" }],
 		}),
@@ -186,7 +186,7 @@ const employeesApi = baseApi.injectEndpoints({
 			}),
 			keepUnusedDataFor: DATA_LIFETIME,
 			providesTags: (result, error, id) =>
-				result ? [{ type: "Employee", id }] : [],
+				result ? [{ type: "Employee" as const, id }] : [],
 		}),
 		getEmployees: build.query<GetEmployeesDataType, PaginationType>({
 			query: ({ limit, offset, search }) => ({
@@ -200,12 +200,12 @@ const employeesApi = baseApi.injectEndpoints({
 			providesTags: (data) =>
 				data
 					? [
-							...data.results.map(({ id }) => ({ type: "Employee", id })),
-							{ type: "Employee", id: "EMPLOYEE_LIST" },
+							...data.results.map(({ id }) => ({ type: "Employee" as const, id })),
+							{ type: "Employee" as const, id: "EMPLOYEE_LIST" },
 					  ]
-					: [{ type: "Employee", id: "EMPLOYEE_LIST" }],
+					: [{ type: "Employee" as const, id: "EMPLOYEE_LIST" }],
 		}),
-		getHolidays: build.query<HolidayListType, PaginateType>({
+		getHolidays: build.query<HolidayListType, PaginationType>({
 			query: ({ limit, offset, search }) => ({
 				url: `${HOLIDAYS_URL}?offset=${search ? 0 : offset}&limit=${
 					search ? 0 : limit
@@ -217,10 +217,10 @@ const employeesApi = baseApi.injectEndpoints({
 			providesTags: (data) =>
 				data
 					? [
-							...data.results.map(({ id }) => ({ type: "Holiday", id })),
-							{ type: "Holiday", id: "HOLIDAY_LIST" },
+							...data.results.map(({ id }) => ({ type: "Holiday" as const, id })),
+							{ type: "Holiday" as const, id: "HOLIDAY_LIST" },
 					  ]
-					: [{ type: "Holiday", id: "HOLIDAY_LIST" }],
+					: [{ type: "Holiday" as const, id: "HOLIDAY_LIST" }],
 		}),
 		punchAction: build.mutation<{ detail: string }, "in" | "out">({
 			query: (action) => ({

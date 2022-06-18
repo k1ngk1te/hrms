@@ -20,8 +20,8 @@ const jobsApi = baseApi.injectEndpoints({
 			providesTags: (data) =>
 				data
 					? [
-							...data.results.map(({ id }) => ({ type: "Job", id })),
-							{ type: "Job", id: "JOB_LIST" },
+							...data.results.map(({ id }) => ({ type: "Job" as const, id })),
+							{ type: "Job" as const, id: "JOB_LIST" },
 					  ]
 					: [],
 		}),

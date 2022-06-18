@@ -122,10 +122,10 @@ const leavesApi = baseApi.injectEndpoints({
 			providesTags: (data) =>
 				data
 					? [
-							...data.results.map(({ id }) => ({ type: "LeaveAdmin", id })),
-							{ type: "LeaveAdmin", id: "LEAVE_ADMIN_LIST" },
+							...data.results.map(({ id }) => ({ type: "LeaveAdmin" as const, id })),
+							{ type: "LeaveAdmin" as const, id: "LEAVE_ADMIN_LIST" },
 					  ]
-					: [{ type: "LeaveAdmin", id: "LEAVE_ADMIN_LIST" }],
+					: [{ type: "LeaveAdmin" as const, id: "LEAVE_ADMIN_LIST" }],
 		}),
 		getAdminOvertime: build.query<OvertimeListType, QueryType>({
 			query: ({ from, limit, search, offset, to }) => ({
@@ -142,10 +142,10 @@ const leavesApi = baseApi.injectEndpoints({
 			providesTags: (data) =>
 				data
 					? [
-							...data.results.map(({ id }) => ({ type: "OvertimeAdmin", id })),
-							{ type: "OvertimeAdmin", id: "OVERTIME_ADMIN_LIST" },
+							...data.results.map(({ id }) => ({ type: "OvertimeAdmin" as const, id })),
+							{ type: "OvertimeAdmin" as const, id: "OVERTIME_ADMIN_LIST" },
 					  ]
-					: [{ type: "OvertimeAdmin", id: "OVERTIME_ADMIN_LIST" }],
+					: [{ type: "OvertimeAdmin" as const, id: "OVERTIME_ADMIN_LIST" }],
 		}),
 		getLeave: build.query<LeaveType, string>({
 			query: (id) => ({
@@ -158,7 +158,7 @@ const leavesApi = baseApi.injectEndpoints({
 			}),
 			keepUnusedDataFor: DATA_LIFETIME,
 			providesTags: (result, error, id) =>
-				result ? [{ type: "Leave", id }] : [],
+				result ? [{ type: "Leave" as const, id }] : [],
 		}),
 		getLeaves: build.query<GetLeavesDataType, QueryType>({
 			query: ({ from, limit, offset, to }) => ({
@@ -173,10 +173,10 @@ const leavesApi = baseApi.injectEndpoints({
 			providesTags: (data) =>
 				data
 					? [
-							...data.results.map(({ id }) => ({ type: "Leave", id })),
-							{ type: "Leave", id: "LEAVE_LIST" },
+							...data.results.map(({ id }) => ({ type: "Leave" as const, id })),
+							{ type: "Leave" as const, id: "LEAVE_LIST" },
 					  ]
-					: [{ type: "Leave", id: "LEAVE_LIST" }],
+					: [{ type: "Leave" as const, id: "LEAVE_LIST" }],
 		}),
 		getOvertime: build.query<OvertimeListType, QueryType>({
 			query: ({ from, limit, offset, to }) => ({
@@ -191,10 +191,10 @@ const leavesApi = baseApi.injectEndpoints({
 			providesTags: (data) =>
 				data
 					? [
-							...data.results.map(({ id }) => ({ type: "Overtime", id })),
-							{ type: "Overtime", id: "OVERTIME_LIST" },
+							...data.results.map(({ id }) => ({ type: "Overtime" as const, id })),
+							{ type: "Overtime" as const, id: "OVERTIME_LIST" },
 					  ]
-					: [{ type: "Overtime", id: "OVERTIME_LIST" }],
+					: [{ type: "Overtime" as const, id: "OVERTIME_LIST" }],
 		}),
 		getOvertimeData: build.query<OvertimeType, string>({
 			query: (id) => ({
@@ -207,7 +207,7 @@ const leavesApi = baseApi.injectEndpoints({
 			}),
 			keepUnusedDataFor: DATA_LIFETIME,
 			providesTags: (result, error, id) =>
-				result ? [{ type: "Overtime", id }] : [],
+				result ? [{ type: "Overtime" as const, id }] : [],
 		}),
 		requestLeave: build.mutation<LeaveType, FormType>({
 			query: (data) => ({

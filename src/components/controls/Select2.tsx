@@ -46,7 +46,7 @@ export type SelectProps = {
 	placeholderImage?: string;
 	rounded?: string;
 	textSize?: string;
-	value: string | number | string[] | number[];
+	value: string | string[];
 };
 
 const Select: FC<SelectProps> = ({
@@ -187,21 +187,12 @@ const Select: FC<SelectProps> = ({
 						} ${rounded} ${textSize} ${divide} ${divideColor} absolute bg-white z-20 w-full shadow-lg transition ease-in duration-100 max-h-56 ring-1 ring-black ring-opacity-50 overflow-x-hidden overflow-y-auto focus:outline-none`}
 					>
 						{options.map((option, index) => {
-							// const active =
-							// 	multiple && Array.isArray(value)
-							// 		? Boolean(
-							// 				value.find(
-							// 					(item: string | number) => item === option.value
-							// 				)
-							// 		  )
-							// 		: option.value === value;
 							const active =
 								multiple && Array.isArray(value)
-									? Boolean(
-											value.filter(
-												(item: string | number) => item === option.value
-											)
-									  )
+									? 
+										Boolean(value.find(
+											(item: string) => item === option.value
+										))
 									: option.value === value;
 
 							return (

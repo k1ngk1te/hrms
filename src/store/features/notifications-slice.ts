@@ -19,10 +19,10 @@ const notificationsApi = baseApi.injectEndpoints({
 			providesTags: (data) =>
 				data
 					? [
-							...data.results.map(({ id }) => ({ type: "Notification", id })),
-							{ type: "Notification", id: "NOTIFICATION_LIST" },
+							...data.results.map(({ id }) => ({ type: "Notification" as const, id })),
+							{ type: "Notification" as const, id: "NOTIFICATION_LIST" },
 					  ]
-					: [{ type: "Notification", id: "NOTIFICATION_LIST" }],
+					: [{ type: "Notification" as const, id: "NOTIFICATION_LIST" }],
 		}),
 		deleteNotification: build.mutation<{ success: string }, string | number>({
 			query: (id) => ({
