@@ -7,13 +7,13 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env = environ.Env()
-
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-environment = env('ENV')
+env = environ.Env()
 
-if environment is not None and environment == "development":
+DEBUG = bool(int(env('DEBUG')))
+
+if DEBUG:
 	os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'HRMS.settings.dev')
 else:
 	os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'HRMS.settings.prod')

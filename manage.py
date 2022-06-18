@@ -13,12 +13,12 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 env = environ.Env()
 
-environment = env('ENV')
+DEBUG = bool(int(env('DEBUG')))
 
 
 def main():
     """Run administrative tasks."""
-    if environment is not None and environment == "development":
+    if DEBUG:
         os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'HRMS.settings.dev')
     else:
         os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'HRMS.settings.prod')
