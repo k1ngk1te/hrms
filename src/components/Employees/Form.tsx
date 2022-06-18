@@ -50,19 +50,19 @@ const Form: FC<FormProps> = ({
   const modalVisible = useAppSelector((state) => state.modal.visible);
 
   const jobs = useGetJobsQuery(
-    { limit: jobLimit, offset: 0},
+    { limit: jobLimit, offset: 0, search: "" },
     {
       skip: !modalVisible,
     }
   );
   const employees = useGetEmployeesQuery(
-    { limit: empLimit, offset: 0 },
+    { limit: empLimit, offset: 0, search: "" },
     {
       skip: !modalVisible,
     }
   );
   const departments = useGetDepartmentsQuery(
-    { limit: depLimit, offset: 0 },
+    { limit: depLimit, offset: 0, search: "" },
     {
       skip: !modalVisible,
     }

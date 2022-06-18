@@ -17,7 +17,7 @@ const authApi = baseApi.injectEndpoints({
       query: ({ email, password }) => ({
         url: LOGIN_URL,
         method: "POST",
-        body: { email: email.lower(), password },
+        body: { email: email.toLowerCase(), password },
       }),
     }),
     logout: build.mutation<{ detail: string }, void>({
@@ -58,7 +58,7 @@ const authApi = baseApi.injectEndpoints({
         body: generateProfile(profile),
         credentials: "include"
       }),
-      invalidatesTags: (result) => result ? ["Profile"] : [],
+      invalidatesTags: (result) => result ? ["Profile", "User"] : [],
     }),
     changePassword: build.mutation<
       { detail: string },

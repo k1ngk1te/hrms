@@ -1,4 +1,5 @@
 import { ChangeEvent, FormEvent, FC } from "react";
+import { LOGO_IMAGE } from "../../config";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import { Button, Input } from "../../components/controls";
 
@@ -12,18 +13,18 @@ const Login: FC<LoginProps> = ({
   <div className="bg-primary-500 h-screen w-full">
     <div className="flex h-full items-center w-full" style={{ background: "url(/static/images/bg.png)" }}>
       <div className="bg-transparent flex h-full mt-3 w-full sm:items-center sm:mt-0">
-        <div className="bg-gray-100 flex flex-col justify-center max-h-[600px] max-w-xs mx-auto pb-6 rounded-md shadow-lg w-full sm:max-w-sm">
-          <div className="flex justify-center mb-6 py-6 rounded-t-sm">
-            <div className="h-[30px] w-[130px]">
+        <div className="bg-gray-100 flex flex-col justify-center max-h-[600px] max-w-xs mx-auto pb-3 rounded-md shadow-lg w-full">
+          <div className="flex justify-center mb-3 pt-4">
+            <div className="h-[40px] w-[40px] md:h-[50px] md:w-[50px]">
               <img
                 className="h-full w-full"
-                src="/static/images/logo.jpg"
+                src={LOGO_IMAGE}
                 alt="kite"
               />
             </div>
           </div>
           <div className="px-10">
-            <h3 className="capitalize font-bal font-semibold my-6 text-left text-primary-500 text-xl tracking-wide md:text-2xl">
+            <h3 className="capitalize font-bold mt-3 mb-6 text-left text-primary-500 text-xl tracking-wide md:text-2xl">
               sign in
             </h3>
             {error && !error.password && !error.email && (
@@ -86,12 +87,12 @@ const Login: FC<LoginProps> = ({
           <h1 className="font-extrabold my-6 text-5xl text-center text-white tracking-wide">
             Login to{" "}
             <span className="text-primary-100 uppercase">
-              unifoam<span className="text-secondary-500">hr</span>
+              kite<span className="text-secondary-500">hrms</span>
             </span>
           </h1>
           <p className="leading-8 max-w-lg mx-auto my-6 text-base text-center text-gray-100 tracking-wide">
             A Centralised Management System that manages all employee
-            information, leaves, departments and more.
+            information, leaves, overtime and more.
           </p>
         </div>
       </div>

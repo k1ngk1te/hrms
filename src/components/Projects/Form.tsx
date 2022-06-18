@@ -104,13 +104,13 @@ const Form: FC<FormProps> = ({
 	const modalVisible = useAppSelector((state) => state.modal.visible);
 
 	const clients = useGetClientsQuery(
-		{ limit: clientLimit, offset: 0, active: true },
+		{ limit: clientLimit, offset: 0, search: "", active: true },
 		{
 			skip: !modalVisible,
 		}
 	);
 	const employees = useGetEmployeesQuery(
-		{ limit: empLimit, offset: 0 },
+		{ limit: empLimit, offset: 0, search: "" },
 		{
 			skip: !modalVisible,
 		}

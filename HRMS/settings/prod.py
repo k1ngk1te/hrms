@@ -1,6 +1,6 @@
 import environ
 
-from UnifoamHr.settings.base import *
+from HRMS.settings.base import *
 
 env = environ.Env()
 

@@ -1,7 +1,6 @@
 import os
 
 from HRMS.settings.base import *
-from HRMS.settings.base import INSTALLED_APPS
 
 ALLOWED_HOSTS = ['localhost', 'testserver']
 

@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { BRAND_IMAGE } from "../config";
+import { LOGO_IMAGE } from "../config";
 import { ScrollToTop, Sidebar, Topbar } from "../components/Layout";
 import { MenuIcon } from "../components/common";
 import { useFadeIn, useOutClick } from "../hooks";
@@ -16,9 +16,9 @@ const Layout = () => {
             ref={scrollToTopView.ref}
             style={{ visibility: "collapse", zIndex: -150 }}
           />
-          <header className="bg-gray-100 flex items-center justify-between px-4 py-3 md:px-6 md:py-4 lg:hidden">
-            <div className="h-[30px] w-[130px]">
-              <img className="h-full w-full" src={BRAND_IMAGE} title="kite" />
+          <header className="bg-gray-100 flex items-center justify-between px-4 py-2 md:px-6 md:py-3 lg:hidden">
+            <div className="h-[32px] w-[35px] md:h-[35px] md:w-[40px]">
+              <img className="h-full w-full" src={LOGO_IMAGE} title="kite" />
             </div>
             <MenuIcon
               color="primary"

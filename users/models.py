@@ -91,7 +91,7 @@ class Profile(models.Model):
     image = models.ImageField(upload_to="images/users/profile", default="images/users/profile/default.png")
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default='M')
     address = models.TextField(blank=True, null=True)
-    date_of_birth = models.DateField(blank=True, null=True)
+    date_of_birth = models.DateField(default=now, blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     state = models.CharField(max_length=100, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)

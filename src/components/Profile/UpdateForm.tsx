@@ -2,7 +2,7 @@ import { FormEvent, FC, useCallback, useEffect, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 
 import { isErrorWithData, isFormError } from "../../store";
-import { setData, logout } from "../../store/features/auth-slice";
+import { logout } from "../../store/features/auth-slice";
 import { useUpdateProfileMutation } from "../../store/features/auth-api-slice";
 import { open as alertModalOpen } from "../../store/features/alert-modal-slice";
 import { close as modalClose } from "../../store/features/modal-slice";
@@ -118,15 +118,8 @@ const Form: FC<FormProps> = ({ initState }) => {
 					message: "Profile information was updated successfully!",
 				})
 			);
-			const userData: any = {
-				first_name: data?.user.first_name,
-				last_name: data?.user.last_name,
-			};
-			if (data?.image !== null && data?.image !== undefined)
-				userData["image"] = data?.image;
-			dispatch(setData(userData));
 		}
-	}, [dispatch, status, data]);
+	}, [dispatch, status]);
 
 	return (
 		<form onSubmit={handleSubmit} className="p-4">

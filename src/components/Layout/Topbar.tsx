@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { FaBell } from "react-icons/fa"
-import { BRAND_IMAGE, DEFAULT_IMAGE } from "../../config"
+import { LOGO_IMAGE, DEFAULT_IMAGE } from "../../config"
 import { NOTIFICATIONS_PAGE_URL } from "../../config/routes";
 import { useNotificationsQuery } from "../../store/features/notifications-slice";
 import { useAppSelector } from "../../hooks";
@@ -20,10 +20,10 @@ const Topbar = () => {
     <section className="bg-white flex items-center justify-between shadow-lg p-3 md:p-4 lg:p-5 xl:px-7 w-full">
       <div>
         <div className="hidden lg:flex lg:items-center lg:justify-center">
-          <div className="h-[30px] w-[130px]">
+          <div className="h-[32px] w-[35px] md:h-[35px] md:w-[40px]">
             <img
               className="h-full w-full"
-              src={BRAND_IMAGE}
+              src={LOGO_IMAGE}
               alt="kite"
             />
           </div>

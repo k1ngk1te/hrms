@@ -41,19 +41,19 @@ const InfoComp: FC<InfoCompType> = ({ description, infos, title, titleWidth }) =
               {detail?.type === "badge" ? (
                 <div className="font-medium w-full">
 									<div className="max-w-[120px]">
-										<Badge margin="mx-1" title={detail.value} {...detail.options} />
+										<Badge margin="mx-1" title={String(detail.value)} {...detail.options} />
 									</div>
 								</div>
               ) : detail?.type === "image" ? (
                 <div className={`${index % 2 === 0 ? "border-white" : "border-gray-50"} border-2 h-[150px] rounded-full w-[160px]`}>
                   <img
-                    alt={typeof detail.value === 'object' ? detail.value.alt : "no-image"}
+                    alt={typeof detail.value === 'object' ? detail.value?.alt : "no-image"}
                     className="h-full rounded-full w-full"
-                    src={typeof detail.value === 'object' ? detail.value.src : DEFAULT_IMAGE}
+                    src={typeof detail.value === 'object' ? detail.value?.src : DEFAULT_IMAGE}
                   />
                 </div>
               ) : (
-                detail.value || "-------"
+                String(detail.value) || "-------"
               )}
             </dd>
           </div>
