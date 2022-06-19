@@ -1,5 +1,5 @@
 alldata.json.gz
-# mydata.json.gz
+mydata.json.gz
 
 /env
 /venv
@@ -27,10 +27,10 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-# dist
-# dist-ssr
-# /src/dist
-# /src/dist-ssr
+dist
+dist-ssr
+/src/dist
+/src/dist-ssr
 *.local
 
 # Editor directories and files
