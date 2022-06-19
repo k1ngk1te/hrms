@@ -12,6 +12,6 @@ export default defineConfig({
     manifest: true
   },
   plugins: [react()],
-  publicDir: "../static",
+  // publicDir: "../static",
   root: "src"
 })
