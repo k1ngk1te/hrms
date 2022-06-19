@@ -26,9 +26,12 @@ def set_department_id(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Department)
 def set_hod(sender, instance, **kwargs):
-	if instance.hod and instance.hod.department != instance:
-		instance.hod.department = instance
-		instance.hod.save()
+	try:
+		if instance.hod and instance.hod.department != instance:
+			instance.hod.department = instance
+			instance.hod.save()
+	except:
+		pass
 
 @receiver(pre_save, sender=Employee)
 def set_employee_id(sender, instance, **kwargs):
