@@ -11,10 +11,10 @@ env = environ.Env()
 
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-environment = env('ENV')
+DEBUG = env('DEBUG')
 
 # Set the default Django settings module for the 'celery' program.
-if environment is not None and environment == "development":
+if DEBUG:
 	os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'HRMS.settings.dev')
 else:
 	os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'HRMS.settings.prod')
