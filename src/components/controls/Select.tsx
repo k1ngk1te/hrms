@@ -16,6 +16,8 @@ type SelectProps = {
   errorSize?: string;
   Icon?: IconType;
   iconColor?: string;
+  iconClass?: string;
+  iconSize?: string;
   label?: string;
   labelColor?: string;
   labelSize?: string;
@@ -46,6 +48,8 @@ const Select = ({
   errorSize,
   Icon,
   iconColor,
+  iconClass,
+  iconSize,
   label,
   labelColor,
   labelSize,
@@ -123,12 +127,12 @@ const Select = ({
         } relative w-full`}
       >
         {Icon && (
-          <Icon className={`${iconBgColor} ${iconTextColor} mx-2 text-xs`} />
+          <Icon className={`${iconBgColor} ${iconTextColor} ${iconClass} ${iconSize}`} />
         )}
         <select
           className={`${textColor} ${padding} ${
             disabled ? "cursor-not-allowed" : "cursor-pointer"
-          } ${textSize} appearance-none bg-transparent block leading-tight pr-8 shadow-lg w-full focus:bg-gray-100 focus:border-primary-300 focus:outline-none`}
+          } ${textSize} ${rounded} appearance-none bg-transparent block leading-tight pr-8 shadow-lg w-full focus:bg-gray-100 focus:border-primary-300 focus:outline-none`}
           disabled={disabled}
           name={name}
           onChange={onChange}
@@ -172,6 +176,8 @@ Select.defaultProps = {
   color: "text-gray-700",
   errorSize: "text-xs",
   iconColor: "text-primary-500",
+  iconSize: "text-xs",
+  iconClass: "mx-2",
   labelSize: "text-xs md:text-sm",
   multiple: false,
   padding: "px-3 py-2",

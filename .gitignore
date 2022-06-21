@@ -31,6 +31,8 @@ dist
 dist-ssr
 /src/dist
 /src/dist-ssr
+src/dist
+src/dist-ssr
 *.local
 
 # Editor directories and files

@@ -26,6 +26,8 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 	helpTextSize?: string;
 	Icon?: IconType;
 	iconColor?: string;
+	iconClass?: string;
+	iconSize?: string;
 	label?: string;
 	labelColor?: string;
 	labelSize?: string;
@@ -58,6 +60,8 @@ const Input = ({
 	helpTextSize,
 	Icon,
 	iconColor,
+	iconClass,
+	iconSize,
 	label,
 	labelColor,
 	labelSize,
@@ -142,12 +146,12 @@ const Input = ({
 				className={`${borderColor} ${bgColor} ${rounded} ${bdr} flex items-center shadow-lg text-xs w-full`}
 			>
 				{Icon && (
-					<span className={`${bgColor} ${iconTextColor} mx-2 text-xs`}>
-						<Icon className={`${iconTextColor} text-xs`} />
+					<span className={`${bgColor} ${iconTextColor} ${iconSize} ${iconClass}`}>
+						<Icon className={`${iconTextColor} ${iconSize}`} />
 					</span>
 				)}
 				<input
-					className={`${bgColor} ${textColor} ${padding} ${
+					className={`${bgColor} ${textColor} ${rounded} ${padding} ${
 						_type === "date" ? "cursor-text" : ""
 					} ${textSize} apperance-none leading-tight w-full focus:outline-none focus:shadow-outline`}
 					disabled={disabled}
@@ -207,6 +211,8 @@ Input.defaultProps = {
 	helpTextColor: "text-gray-400",
 	helpTextSize: "text-xs",
 	iconColor: "text-primary-500",
+	iconClass: "mx-2",
+	iconSize: "text-xs",
 	labelSize: "text-xs md:text-sm",
 	multiple: false,
 	padding: "px-3 py-2",

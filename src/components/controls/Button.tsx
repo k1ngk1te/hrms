@@ -31,6 +31,7 @@ const Button = ({
   color,
   disabled,
   focus,
+  iconSize,
   IconLeft,
   IconRight,
   link,
@@ -91,7 +92,7 @@ const Button = ({
           <>
             {IconLeft && (
               <span className="flex items-center justify-center mx-2 text-xs">
-                <IconLeft className={`${color} text-xs`} />
+                <IconLeft className={`${color} ${iconSize}`} />
               </span>
             )}
             <span className="flex items-center justify-center">
@@ -99,7 +100,7 @@ const Button = ({
             </span>
             {IconRight && (
               <span className="flex items-center justify-center mx-2 text-xs">
-                <IconRight className={`${color} text-xs`} />
+                <IconRight className={`${color} ${iconSize}`} />
               </span>
             )}
           </>
@@ -116,6 +117,7 @@ Button.defaultProps = {
   caps: false,
   color: "text-white",
   focus: "",
+  iconSize: "text-xs md:text-sm",
   padding: "px-4 py-2",
   rounded: "rounded",
   ref: null,
@@ -140,6 +142,7 @@ export interface ButtonProps {
   color?: string;
   disabled?: boolean;
   focus?: string;
+  iconSize?: string;
   IconLeft?: IconType;
   IconRight?: IconType;
   link?: string;

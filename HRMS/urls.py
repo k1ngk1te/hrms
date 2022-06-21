@@ -23,7 +23,6 @@ urlpatterns = [
     path('', include('leaves.urls')),
     path('', include('notifications.urls')),
     path('', include('users.urls')),
-    path('', TemplateView.as_view(template_name="index.html")),
 
     path('docs/', include_docs_urls('Kite Human Resource Management Administration')),
     path('docs/openapi/', get_schema_view(
@@ -36,5 +35,7 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-urlpatterns += [re_path(r'^.*$', TemplateView.as_view(template_name="index.html")), ]
+    
+    urlpatterns += [re_path(r'^.*$', TemplateView.as_view(template_name="base.html")), ]
+else:
+    urlpatterns += [re_path(r'^.*$', TemplateView.as_view(template_name="index.html")), ]
