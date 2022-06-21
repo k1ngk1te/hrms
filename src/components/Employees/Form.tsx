@@ -144,12 +144,15 @@ const Form: FC<FormProps> = ({
 
   useEffect(() => {
     if (employees.data) {
-      const options = employees.data.results.map((employee) => ({
-        title: `${toCapitalize(employee.user.first_name)} ${toCapitalize(
-          employee.user.last_name
-        )}`,
-        value: String(employee.id),
-      }));
+      const options = []
+      employees.data.results.forEach(employee => {
+        if (employee.user.active) {
+          options.push({
+            title: toCapitalize(employee.user.full_name),
+            value: String(employee.id),
+          })
+        }
+      })
       setEmpOptions(options);
     }
   }, [employees.data]);
