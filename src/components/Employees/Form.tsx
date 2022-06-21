@@ -144,7 +144,7 @@ const Form: FC<FormProps> = ({
 
   useEffect(() => {
     if (employees.data) {
-      const options = []
+      const options: OptionsType = []
       employees.data.results.forEach(employee => {
         if (employee.user.active) {
           options.push({
