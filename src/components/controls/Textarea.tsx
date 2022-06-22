@@ -21,6 +21,7 @@ type TextareaProps = {
   placeholderColor?: string;
   rounded?: string;
   required?: boolean;
+  requiredColor?: string;
   style?: CSSProperties;
   textSize?: string;
   value: string;
@@ -45,6 +46,7 @@ const Textarea = ({
   placeholderColor,
   rounded,
   required,
+  requiredColor,
   style,
   textSize,
   value,
@@ -80,6 +82,11 @@ const Textarea = ({
               htmlFor={name}
             >
               {label}
+              {required && (
+                <span className={`${requiredColor || "text-red-500"} mx-1`}>
+                  *
+                </span>
+              )}
             </label>
           )}
           {btn && (
@@ -134,6 +141,8 @@ Textarea.defaultProps = {
   errorSize: "text-xs",
   labelSize: "text-xs md:text-sm",
   placeholderColor: "placeholder-white text-white",
+  required: true,
+  requiredColor: "text-red-500",
   rounded: "rounded",
   textSize: "text-xs md:text-sm",
 };

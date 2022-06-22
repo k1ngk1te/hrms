@@ -38,11 +38,12 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 	placeholder?: string;
 	placeholderColor?: string;
 	required?: boolean;
+	requiredColor?: string;
 	rounded?: string;
 	textSize?: string;
 	type?: string;
 	value: string | number;
-};
+}
 
 const Input = ({
 	badge,
@@ -73,6 +74,7 @@ const Input = ({
 	placeholderColor,
 	rounded,
 	required,
+	requiredColor,
 	textSize,
 	type,
 	value,
@@ -103,7 +105,9 @@ const Input = ({
 	const textColor = disabled
 		? placeholderColor
 		: type === "date"
-		? value === "" || value === null || (value === undefined && "text-gray-400")
+		? value === "" || value === null || value === undefined
+			? "text-gray-400"
+			: color
 		: color;
 
 	const handlePasswordCheck = useCallback((): void => {
@@ -121,6 +125,11 @@ const Input = ({
 							htmlFor={name}
 						>
 							{label}
+							{required && (
+								<span className={`${requiredColor || "text-red-500"} mx-1`}>
+									*
+								</span>
+							)}
 						</label>
 					)}
 					{btn && (
@@ -146,7 +155,9 @@ const Input = ({
 				className={`${borderColor} ${bgColor} ${rounded} ${bdr} flex items-center shadow-lg text-xs w-full`}
 			>
 				{Icon && (
-					<span className={`${bgColor} ${iconTextColor} ${iconSize} ${iconClass}`}>
+					<span
+						className={`${bgColor} ${iconTextColor} ${iconSize} ${iconClass}`}
+					>
 						<Icon className={`${iconTextColor} ${iconSize}`} />
 					</span>
 				)}
@@ -218,6 +229,7 @@ Input.defaultProps = {
 	padding: "px-3 py-2",
 	placeholderColor: "placeholder-white text-white",
 	required: true,
+	requiredColor: "text-red-500",
 	rounded: "rounded",
 	textSize: "text-xs md:text-sm",
 	type: "text",

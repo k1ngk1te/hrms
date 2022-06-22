@@ -15,7 +15,8 @@ const defaultInputProps = {
 	bg: "bg-white",
 	bdr: "border",
 	bdrColor: "border-primary-500",
-	rounded: "rounded-l-lg"
+	rounded: "rounded-l-lg",
+	required: false
 };
 
 const InputButton = ({ buttonProps, inputProps }: InputButtonProps) => (

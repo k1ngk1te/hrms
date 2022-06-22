@@ -10,6 +10,8 @@ type FileProps = {
 	error?: string;
 	errorSize?: string;
 	Icon?: IconType;
+	iconColor?: string;
+	iconSize?: string;
 	label?: string;
 	labelColor?: string;
 	labelSize?: string;
@@ -18,6 +20,7 @@ type FileProps = {
 	padding?: string;
 	placeholder?: string;
 	required?: boolean;
+	requiredColor?: string;
 	rounded?: string;
 	txtColor?: string;
 	textSize?: string;
@@ -33,6 +36,8 @@ const File = ({
 	error,
 	errorSize,
 	Icon,
+	iconColor,
+	iconSize,
 	label,
 	labelColor,
 	labelSize,
@@ -41,6 +46,7 @@ const File = ({
 	padding,
 	placeholder,
 	required,
+	requiredColor,
 	rounded,
 	txtColor,
 	textSize,
@@ -64,7 +70,7 @@ const File = ({
 		? "text-red-500"
 		: labelColor;
 
-	const iconTextColor = disabled ? "text-white" : "text-primary-500";
+	const iconTextColor = disabled ? "text-white" : iconColor;
 
 	const textColor = disabled
 		? "text-white"
@@ -77,16 +83,21 @@ const File = ({
 					className={`${_labelColor} block capitalize font-semibold mb-2 ${labelSize}`}
 				>
 					{label}
+					{required && (
+            <span className={`${requiredColor || "text-red-500"} mx-1`}>
+              *
+            </span>
+          )}
 				</span>
 			)}
 			<div
-				className={`${borderColor} ${rounded} ${bdr} block shadow-lg w-full`}
+				className={`${rounded} block shadow-lg w-full`}
 			>
 				<label 
-					className={`${padding} ${bgColor} ${!disabled ? "cursor-pointer" : ""} flex items-center justify-center`}
+					className={`${padding} ${bdr} ${borderColor} ${rounded} ${bgColor} ${!disabled ? "cursor-pointer" : ""} flex items-center justify-center`}
 				>
 					{Icon && (
-						<Icon className={`${iconTextColor} block mx-2 text-xs`} style={{fontSize: 10}} />
+						<Icon className={`${iconTextColor} block mx-2 ${iconSize}`} />
 					)}
 					<p className={`${textColor} block capitalize text-xs md:text-sm`}>
 						{placeholder}
@@ -105,7 +116,7 @@ const File = ({
 			</div>
 			{value && (
 				<p className={`capitalize font-primary font-semibold italic mt-1 text-primary-500 ${textSize}`}>
-					{value}
+					{String(value)}
 				</p>
 			)}
 			{error && (
@@ -122,10 +133,13 @@ File.defaultProps = {
 	bg: "bg-primary-500 hover:bg-primary-400",
 	bdr: "border",
 	errorSize: "text-xs",
+	iconColor: "text-gray-100",
+	iconSize: "text-xs",
 	labelColor: "text-primary-500",
 	labelSize: "text-xs md:text-sm",
 	padding: "px-3 py-2",
 	required: true,
+	requiredColor: "text-red-500",
 	rounded: "rounded",
 	textSize: "text-xs"
 }

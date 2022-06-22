@@ -2,6 +2,7 @@ import { ChangeEvent } from "react";
 
 export type CheckboxProps = {
   caps?: boolean | "upper";
+  between?: boolean;
   centered?: boolean;
   disabled?: boolean;
   error?: string;
@@ -12,6 +13,8 @@ export type CheckboxProps = {
   name?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
+  requiredColor?: string;
+  reverse?: boolean;
   textSize?: string;
   type?: "checkbox" | "switch";
   value: boolean;
@@ -19,6 +22,7 @@ export type CheckboxProps = {
 
 const Checkbox = ({
   caps,
+  between,
   centered,
   disabled,
   error,
@@ -29,6 +33,8 @@ const Checkbox = ({
   name,
   onChange,
   required,
+  requiredColor,
+  reverse,
   textSize,
   type,
   value,
@@ -37,9 +43,9 @@ const Checkbox = ({
   return (
     <>
       <label
-        className={`${centered ? "justify-center" : ""} ${
+        className={`${centered ? "justify-center" : between ? "justify-between" : ""} ${
           disabled ? "cursor-not-allowed" : "cursor-pointer"
-        } block flex font-bold items-center ${labelColor}`}
+        } ${reverse ? "flex-row-reverse" : "flex-row"} block flex font-bold items-center ${labelColor}`}
       >
         <div
           className={`${
@@ -85,6 +91,11 @@ const Checkbox = ({
             } ${labelSize}`}
           >
             {label}
+            {required && (
+              <span className={`${requiredColor || "text-red-500"} mx-1`}>
+                *
+              </span>
+            )}
           </span>
         )}
       </label>
@@ -98,11 +109,14 @@ const Checkbox = ({
 };
 
 Checkbox.defaultProps = {
+  between: false,
   centered: false,
+  reverse: false,
+  required: true,
+  requiredColor: "text-red-500",
   errorSize: "text-xs",
   labelColor: "text-primary-500",
   labelSize: "text-xs md:text-sm",
-  required: true,
   textSize: "text-xs md:text-sm"
 };
 

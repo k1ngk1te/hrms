@@ -31,6 +31,7 @@ type SelectProps = {
   padding?: string;
   placeholder?: string;
   required?: boolean;
+  requiredColor?: boolean;
   rounded?: string;
   textSize?: string;
   value: string | number;
@@ -60,6 +61,7 @@ const Select = ({
   padding,
   placeholder,
   required,
+  requiredColor,
   rounded,
   textSize,
   value,
@@ -100,6 +102,11 @@ const Select = ({
               htmlFor={name}
             >
               {label}
+              {required && (
+                <span className={`${requiredColor || "text-red-500"} mx-1`}>
+                  *
+                </span>
+              )}
             </label>
           )}
           {btn && (
@@ -182,6 +189,8 @@ Select.defaultProps = {
   multiple: false,
   padding: "px-3 py-2",
   rounded: "rounded",
+  required: true,
+  requiredColor: "text-red-500",
   textSize: "text-xs md:text-sm"
 };
 

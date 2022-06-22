@@ -45,6 +45,8 @@ export type SelectProps = {
 	placeholder?: string;
 	placeholderImage?: string;
 	rounded?: string;
+	required?: boolean;
+  requiredColor?: string;
 	textSize?: string;
 	value: string | string[];
 };
@@ -84,6 +86,8 @@ const Select: FC<SelectProps> = ({
 	placeholder,
 	placeholderImage,
 	rounded,
+	required,
+  requiredColor,
 	textSize,
 	value,
 }) => {
@@ -121,6 +125,11 @@ const Select: FC<SelectProps> = ({
 							htmlFor={name}
 						>
 							{label}
+							{required && (
+                <span className={`${requiredColor || "text-red-500"} mx-1`}>
+                  *
+                </span>
+              )}
 						</label>
 					)}
 					{btn && (
@@ -273,6 +282,8 @@ Select.defaultProps = {
 	optionTextHover: "hover:text-gray-100",
 	padding: "pl-3 pr-10 py-2",
 	rounded: "rounded-md",
+	required: true,
+  requiredColor: "text-red-500",
 	textSize: "text-xs md:text-sm",
 };
 
