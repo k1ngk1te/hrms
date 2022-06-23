@@ -1,6 +1,7 @@
 export { default as AlertModal } from "./AlertModal";
 export { Avatar, default as Avatars } from "./Avatars"
 export { default as Badge } from "./Badge";
+export { default as Breadcrumbs } from "./Breadcrumbs";
 export { default as Calendar } from "./Calendar";
 export { default as Card } from "./Card";
 export { default as Container } from "./Container";
