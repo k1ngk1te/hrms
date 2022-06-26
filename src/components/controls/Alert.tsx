@@ -49,7 +49,7 @@ const Icon = ({ type }: { type?: ColorTypes }) => {
 };
 
 const classes =
-  "py-2 px-3 text-sm inline-flex items-center justify-between w-full sm:py-3 sm:px-4 md:px-6 md:py-5 md:text-base";
+  "p-3 text-sm inline-flex items-center justify-between w-full sm:px-4 md:px-6 md:py-5 md:text-base";
 
 const Alert = ({ message, onClick, rounded, type, visible }: AlertProps) => {
   const [_visible, setVisible] = useState(false);
