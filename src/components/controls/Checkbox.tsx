@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, CSSProperties } from "react";
 
 export type CheckboxProps = {
   caps?: boolean | "upper";
@@ -10,6 +10,8 @@ export type CheckboxProps = {
   label?: string;
   labelColor?: string;
   labelSize?: string;
+  labelStyle?: CSSProperties;
+  margin?: string;
   name?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
@@ -30,6 +32,8 @@ const Checkbox = ({
   label,
   labelColor,
   labelSize,
+  labelStyle,
+  margin,
   name,
   onChange,
   required,
@@ -45,7 +49,10 @@ const Checkbox = ({
       <label
         className={`${centered ? "justify-center" : between ? "justify-between" : ""} ${
           disabled ? "cursor-not-allowed" : "cursor-pointer"
-        } ${reverse ? "flex-row-reverse" : "flex-row"} block flex font-bold items-center ${labelColor}`}
+        } ${reverse ? "flex-row-reverse" : "flex-row"} flex font-bold items-center ${labelColor}`}
+        style={{
+          ...labelStyle
+        }}
       >
         <div
           className={`${
@@ -71,7 +78,7 @@ const Checkbox = ({
         <input
           className={`${type === "switch" ? "hidden" : ""} ${
             disabled ? "cursor-not-allowed" : "cursor-pointer"
-          } ${textSize} mr-2 leading-tight`}
+          } ${textSize} ${margin} leading-tight`}
           disabled={disabled}
           name={name}
           onChange={onChange}
@@ -114,6 +121,7 @@ Checkbox.defaultProps = {
   reverse: false,
   required: true,
   requiredColor: "text-red-500",
+  margin: "mr-2",
   errorSize: "text-xs",
   labelColor: "text-primary-500",
   labelSize: "text-xs md:text-sm",
