@@ -1,7 +1,17 @@
-import { FC, ChangeEvent, CSSProperties, ReactNode, useCallback, useEffect, useState } from "react";
+import {
+  FC,
+  ChangeEvent,
+  CSSProperties,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { Link } from "react-router-dom";
+import { IconType } from "react-icons"
 import { FaSadTear } from "react-icons/fa";
 import Badge from "../../common/Badge";
+import Button from "../Button";
 import Checkbox from "../Checkbox";
 import { DotsLoader } from "../Loader";
 import Actions from "./Actions";
@@ -15,16 +25,19 @@ export type HeadType = {
 export type RowBaseType = {
   options?: any;
   classes?: string;
+  Icon?: IconType;
   link?: string;
-  type?: "actions" | "badge" | "image" | "switch";
+  type?: "actions" | "badge" | "button" | "icon" | "image" | "switch";
   style?: CSSProperties;
   value?: any;
-}
-
-export type RowType = RowBaseType[] | {
-  id: string,
-  rows: RowBaseType[]
 };
+
+export type RowType =
+  | RowBaseType[]
+  | {
+      id: string;
+      rows: RowBaseType[];
+    };
 
 export type TableOptionsProps = {
   heads?: {
@@ -41,8 +54,8 @@ export type TableOptionsProps = {
   };
 };
 
-export type GetTickedValuesParamType = "all" | (string)[]
-export type GetTickedValuesType = (Ids: GetTickedValuesParamType) => void
+export type GetTickedValuesParamType = "all" | string[];
+export type GetTickedValuesType = (Ids: GetTickedValuesParamType) => void;
 
 export type TableProps = {
   heads: HeadType;
@@ -63,7 +76,7 @@ export type TableProps = {
   sn?: boolean;
   title?: string;
   showTicks?: boolean;
-  getTickedValues?: GetTickedValuesType
+  getTickedValues?: GetTickedValuesType;
 };
 
 const NoData = ({ loading }: { loading?: boolean }) => (
@@ -94,18 +107,26 @@ export type TableContainerProps = {
   children: ReactNode;
   link?: string;
   classes?: string;
-  props?: any
-}
+  props?: any;
+};
 
-export const Container: FC<TableContainerProps> = ({ children, link, classes, ...props }) => {
-  const defaultClasses = "flex items-center justify-center px-2 py-3 w-full " + (classes || "")
-  const linkClass = !classes ? " cursor-pointer hover:bg-purple-100 " : ""
+export const Container: FC<TableContainerProps> = ({
+  children,
+  link,
+  classes,
+  ...props
+}) => {
+  const defaultClasses =
+    "flex items-center justify-center px-2 py-3 w-full " + (classes || "");
+  const linkClass = !classes ? " cursor-pointer hover:bg-purple-100 " : "";
   return link ? (
     <Link className={defaultClasses + linkClass} to={link} {...props}>
       {children}
     </Link>
   ) : (
-    <div className={defaultClasses} {...props}>{children}</div>
+    <div className={defaultClasses} {...props}>
+      {children}
+    </div>
   );
 };
 
@@ -121,31 +142,35 @@ const Table = ({
   title,
 }: TableProps) => {
   const [tickAll, setTickAll] = useState(false);
-  const [ticked, setTicked] = useState<(string)[]>([]);
+  const [ticked, setTicked] = useState<string[]>([]);
 
-  const handleTickAll = useCallback(({ target: { checked }}: ChangeEvent<HTMLInputElement>) => {
-    if (showTicks) {
-      setTickAll(checked)
-      if (!checked) setTicked([])
-    }
-  }, [showTicks, tickAll])
+  const handleTickAll = useCallback(
+    ({ target: { checked } }: ChangeEvent<HTMLInputElement>) => {
+      if (showTicks) {
+        setTickAll(checked);
+        if (!checked) setTicked([]);
+      }
+    },
+    [showTicks, tickAll]
+  );
 
-  const handleTickChange = useCallback((id: string, checked: boolean) => {
-    if (showTicks) {
-      let newState: string[] = [];
-      if (checked && !ticked.includes(id)) 
-        newState = [...ticked, id]
-      else if (!checked && ticked.includes(id))
-        newState = ticked.filter(value => value !== id)
+  const handleTickChange = useCallback(
+    (id: string, checked: boolean) => {
+      if (showTicks) {
+        let newState: string[] = [];
+        if (checked && !ticked.includes(id)) newState = [...ticked, id];
+        else if (!checked && ticked.includes(id))
+          newState = ticked.filter((value) => value !== id);
 
-      setTicked(newState)
-    }
-  }, [showTicks, ticked])
+        setTicked(newState);
+      }
+    },
+    [showTicks, ticked]
+  );
 
   useEffect(() => {
-    if (showTicks && getTickedValues) 
-      getTickedValues(tickAll ? "all" : ticked)
-  }, [showTicks, getTickedValues, tickAll, ticked])
+    if (showTicks && getTickedValues) getTickedValues(tickAll ? "all" : ticked);
+  }, [showTicks, getTickedValues, tickAll, ticked]);
 
   return (
     <>
@@ -156,7 +181,9 @@ const Table = ({
       )}
       {split && (
         <div
-          className={`${split.length?.md ? split.length.md : "md:grid-cols-4"} ${
+          className={`${
+            split.length?.md ? split.length.md : "md:grid-cols-4"
+          } ${
             split.length?.lg ? split.length.lg : "lg:grid-cols-6"
           } grid grid-cols-2 mt-1 w-full`}
         >
@@ -197,13 +224,20 @@ const Table = ({
               }`}
             >
               {showTicks && (
-                <th 
+                <th
                   className="flex items-center justify-center px-2 py-[0.75rem]"
                   style={{ minWidth: "16px", maxWidth: "60px" }}
                 >
-                  <Checkbox labelStyle={{
-                    maxWidth: "60px"
-                  }} centered margin="" value={tickAll} onChange={handleTickAll} required={false} />
+                  <Checkbox
+                    labelStyle={{
+                      maxWidth: "60px",
+                    }}
+                    centered
+                    margin=""
+                    value={tickAll}
+                    onChange={handleTickAll}
+                    required={false}
+                  />
                 </th>
               )}
               {sn && (
@@ -243,18 +277,25 @@ const Table = ({
           ) : rows && rows.length > 0 ? (
             <tbody>
               {rows.map((data, index) => {
-
-                const isAnArray = Array.isArray(data)
+                const isAnArray = Array.isArray(data);
 
                 if (showTicks) {
                   if (isAnArray)
-                    throw new Error("Since showTicks is true, rows must be an object containing an array of RowBaseType Objects and an id key")
+                    throw new Error(
+                      "Since showTicks is true, rows must be an object containing an array of RowBaseType Objects and an id key"
+                    );
                   else if ("id" in data === false)
-                    throw new Error("Value of row must have an id field/key")  
+                    throw new Error("Value of row must have an id field/key");
                 }
 
-                const rowData: RowBaseType[] = isAnArray ? data : "rows" in data ? data.rows : []
-                const rowTicked = tickAll || !isAnArray && "id" in data && ticked.includes(data.id)
+                const rowData: RowBaseType[] = isAnArray
+                  ? data
+                  : "rows" in data
+                  ? data.rows
+                  : [];
+                const rowTicked =
+                  tickAll ||
+                  (!isAnArray && "id" in data && ticked.includes(data.id));
 
                 return (
                   <tr
@@ -271,14 +312,18 @@ const Table = ({
                   >
                     {showTicks && (
                       <td style={{ minWidth: "16px", maxWidth: "60px" }}>
-                        <Checkbox 
-                          labelStyle={{ maxWidth: "60px"}} 
-                          centered 
-                          margin="" 
+                        <Checkbox
+                          labelStyle={{ maxWidth: "60px" }}
+                          centered
+                          margin=""
                           name={!isAnArray ? data.id : ""}
-                          value={rowTicked} 
-                          onChange={(e) => !isAnArray ? handleTickChange(data.id, e.target.checked) : undefined} 
-                          required={false} 
+                          value={rowTicked}
+                          onChange={(e) =>
+                            !isAnArray
+                              ? handleTickChange(data.id, e.target.checked)
+                              : undefined
+                          }
+                          required={false}
                         />
                       </td>
                     )}
@@ -287,13 +332,11 @@ const Table = ({
                         className="text-center"
                         style={{ minWidth: "16px", maxWidth: "32px" }}
                       >
-                        <Container>
-                          {index + 1}
-                        </Container>
+                        <Container>{index + 1}</Container>
                       </td>
                     )}
                     {rowData?.map((props, index: number) => {
-                      const { style, classes, type, link, value } = props;
+                      const { style, classes, Icon, type, link, value } = props;
                       const rowOptions = props?.options || {};
 
                       return type === "actions" ? (
@@ -322,11 +365,11 @@ const Table = ({
                           style={style}
                         >
                           <Container>
-                            <Checkbox 
+                            <Checkbox
                               required={false}
-                              {...rowOptions} 
-                              value={value} 
-                              key={index} 
+                              {...rowOptions}
+                              value={value}
+                              key={index}
                             />
                           </Container>
                         </td>
@@ -347,16 +390,37 @@ const Table = ({
                         >
                           {type === "badge" ? (
                             <Container classes={classes} link={link}>
-                              <Badge title={value} {...rowOptions} key={index} />
+                              <Badge
+                                title={value}
+                                {...rowOptions}
+                                key={index}
+                              />
+                            </Container>
+                          ) : type === "button" ? (
+                            <Container classes={classes}>
+                              <Button
+                                bg="bg-primary-600 hover:bg-primary-400"
+                                caps
+                                padding="px-4 py-1"
+                                title={value}
+                                {...rowOptions}
+                                key={index}
+                              />
+                            </Container>
+                          ) : type === "icon" && Icon ? (
+                            <Container classes={classes} link={link}>
+                              <Icon {...rowOptions} />
                             </Container>
                           ) : (
-                            <Container classes={classes} link={link}>{value}</Container>
+                            <Container classes={classes} link={link}>
+                              {value}
+                            </Container>
                           )}
                         </td>
                       );
                     })}
                   </tr>
-                )
+                );
               })}
             </tbody>
           ) : (
@@ -366,7 +430,7 @@ const Table = ({
       </div>
     </>
   );
-}
+};
 
 export const defaultOptions: TableOptionsProps = {
   heads: {
@@ -385,8 +449,7 @@ Table.defaultProps = {
   options: defaultOptions,
   loading: false,
   sn: true,
-  showTicks: false
+  showTicks: false,
 };
 
 export default Table;
-
