@@ -10,34 +10,60 @@ type InfoCompType = {
 		type?: "badge" | "image";
 		value: any; // string | { alt: string; src: string }
 	}[];
-	title: string;
-	titleWidth?: string;
+  evenBgColor?: string;
+  gridStyle?: string;
+  oddBgColor?: string;
+  evenBorderColor?: string;
+  oddBorderColor?: string;
+  padding?: string;
+	title?: string;
+  titleColor?: string;
+  titleColSpan?: string;
+  valueColSpan?: string;
 }
 
-const InfoComp: FC<InfoCompType> = ({ description, infos, title, titleWidth }) => (
+const InfoComp: FC<InfoCompType> = ({ 
+  description, 
+  infos, 
+  evenBgColor,
+  oddBgColor,
+  evenBorderColor,
+  oddBorderColor,
+  gridStyle,
+  padding,
+  title,
+  titleColor,
+  titleColSpan,
+  valueColSpan
+}) => (
 	
 	<div className="bg-white shadow-md mt-4 mb-4 p-2 overflow-hidden sm:rounded-lg">
-    <div className="px-4 py-5 sm:px-6">
-      <h3 className="capitalize text-lg leading-6 font-medium text-gray-700">
-        {title}
-      </h3>
-      {description && (
-      	<p className="mt-1 max-w-2xl text-sm text-gray-500">{description}</p>
-      )}
-    </div>
+    {(title || description) && (
+      <div className="px-4 py-5 sm:px-6">
+        {title && (
+          <h3 className={`${titleColor} capitalize text-lg leading-6 font-medium`}>
+            {title}
+          </h3>
+        )}
+        {description && (
+          <p className="mt-1 max-w-2xl text-sm text-gray-500">{description}</p>
+        )}
+      </div>
+    )}
+    
     <div className="border-t border-gray-200">
       <dl>
         {infos.map((detail, index) => (
           <div
             key={index}
             className={`${
-              index % 2 === 0 ? "bg-gray-50" : "bg-white"
-            } px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6`}
+              index % 2 === 0 ? evenBgColor : oddBgColor
+            } ${padding} ${gridStyle}`}
           >
-            <dt className="text-sm font-medium text-gray-500 md:text-base">
+            <dt className={`${titleColSpan} text-sm font-medium text-gray-500 md:text-base`}>
               {detail.title}
             </dt>
-            <dd className="mt-1 text-sm text-gray-700 sm:mt-0 sm:col-span-2 md:text-base">
+            <dd className={`${valueColSpan} mt-1 text-sm text-gray-700 sm:mt-0 md:text-base`}>
               {detail?.type === "badge" ? (
                 <div className="font-medium w-full">
 									<div className="max-w-[120px]">
@@ -45,7 +71,7 @@ const InfoComp: FC<InfoCompType> = ({ description, infos, title, titleWidth }) =
 									</div>
 								</div>
               ) : detail?.type === "image" ? (
-                <div className={`${index % 2 === 0 ? "border-white" : "border-gray-50"} border-2 h-[150px] rounded-full w-[160px]`}>
+                <div className={`${index % 2 === 0 ? evenBorderColor : oddBorderColor} border-2 h-[150px] rounded-full w-[160px]`}>
                   <img
                     alt={typeof detail.value === 'object' ? detail.value?.alt : "no-image"}
                     className="h-full rounded-full w-full"
@@ -63,5 +89,17 @@ const InfoComp: FC<InfoCompType> = ({ description, infos, title, titleWidth }) =
   </div>
 
 )
+
+InfoComp.defaultProps = {
+  gridStyle: "sm:grid sm:grid-cols-3 sm:gap-4",
+  padding: "px-4 py-5 sm:px-6",
+  oddBgColor: "bg-white",
+  evenBgColor: "bg-gray-50",
+  oddBorderColor: "bg-white",
+  evenBorderColor: "bg-gray-50",
+  titleColor: "text-gray-600",
+  titleColSpan: "",
+  valueColSpan: "sm:col-span-2"
+}
 
 export default InfoComp;
