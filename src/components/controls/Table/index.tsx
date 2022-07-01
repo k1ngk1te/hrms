@@ -13,6 +13,8 @@ import { FaSadTear } from "react-icons/fa";
 import Badge from "../../common/Badge";
 import Button from "../Button";
 import Checkbox from "../Checkbox";
+import Input from "../Input";
+import Select from "../Select";
 import { DotsLoader } from "../Loader";
 import Actions from "./Actions";
 
@@ -27,7 +29,7 @@ export type RowBaseType = {
   classes?: string;
   Icon?: IconType;
   link?: string;
-  type?: "actions" | "badge" | "button" | "icon" | "image" | "switch";
+  type?: "actions" | "badge" | "button" | "icon" | "image" | "switch" | "input" | "select";
   style?: CSSProperties;
   value?: any;
 };
@@ -393,7 +395,6 @@ const Table = ({
                               <Badge
                                 title={value}
                                 {...rowOptions}
-                                key={index}
                               />
                             </Container>
                           ) : type === "button" ? (
@@ -404,12 +405,29 @@ const Table = ({
                                 padding="px-4 py-1"
                                 title={value}
                                 {...rowOptions}
-                                key={index}
                               />
                             </Container>
                           ) : type === "icon" && Icon ? (
                             <Container classes={classes} link={link}>
                               <Icon {...rowOptions} />
+                            </Container>
+                          ) : type === "input" ? (
+                            <Container classes={classes}>
+                              <Input
+                                required={false}
+                                bdrColor="border-gray-300"
+                                value={value}
+                                {...rowOptions}
+                              />
+                            </Container>
+                          ) : type === "select" ? (
+                            <Container classes={classes}>
+                              <Select
+                                required={false}
+                                bdrColor="border-gray-300"
+                                value={value}
+                                {...rowOptions}
+                              />
                             </Container>
                           ) : (
                             <Container classes={classes} link={link}>
