@@ -17,17 +17,19 @@ const NavDesign1 = ({
 	activeScreen,
 	screens,
 	setScreen,
+	gridLength
 }: {
 	activeScreen: number;
 	screens: ScreenType[];
 	setScreen?: (e: number) => void;
+	gridLength?: number
 }) => (
 	<div className="bg-gray-100 border-b border-gray-300 divide-y divide-white flex flex-wrap items-center mb-4 md:divide-y-0 md:divide-x">
 		{screens?.map(({ title }, index) => (
 			<NavDesignLink1
 				active={activeScreen === index}
 				key={index}
-				gridLength={screens.length}
+				gridLength={gridLength || screens.length}
 				onClick={setScreen ? () => setScreen(index) : undefined}
 				title={title || `${index + 1}`}
 			/>
@@ -37,7 +39,9 @@ const NavDesign1 = ({
 
 const NavDesignLink1 = ({ active, gridLength, onClick, title }: NavProps) => {
 	const gl = gridLength
-		? gridLength >= 5
+		? gridLength >= 6
+			? "lg:w-1/6"
+			: gridLength === 5
 			? "lg:w-1/5"
 			: gridLength === 4
 			? "lg:w-1/4"
@@ -76,6 +80,7 @@ export type NavigatorProps = {
 	screenIndex?: number;
 	container?: string;
 	disableNavButtons?: boolean;
+	gridLength?: number
 };
 
 const TabNavigator = ({
@@ -83,6 +88,7 @@ const TabNavigator = ({
 	screenIndex = 0,
 	screens,
 	disableNavButtons,
+	gridLength,
 }: NavigatorProps) => {
 	const [activeScreen, setActiveScreen] = useState<number>(screenIndex || 0);
 	const title = screens[activeScreen]?.title;
@@ -103,7 +109,7 @@ const TabNavigator = ({
 	);
 
 	useEffect(() => {
-		if (typeof screenIndex === 'number') handleScreenChange(screenIndex);
+		if (typeof screenIndex === "number") handleScreenChange(screenIndex);
 	}, [screenIndex, handleScreenChange]);
 
 	return (
@@ -116,6 +122,7 @@ const TabNavigator = ({
 						? (screenId: number) => handleScreenChange(screenId)
 						: undefined
 				}
+				gridLength={gridLength}
 			/>
 			<div className="bg-white m-2 rounded-lg shadow-lg md:mx-4 md:my-6">
 				<div className="bg-gray-200 my-2 rounded-t-lg w-full">
