@@ -82,27 +82,23 @@ export type TableProps = {
 };
 
 const NoData = ({ loading }: { loading?: boolean }) => (
-  <tbody className="absolute bg-gray-200 flex flex-col h-full items-center justify-center left-0 top-8 w-full">
-    <tr>
-      <td className="flex flex-col items-center">
-        {loading ? (
-          <DotsLoader color="info" />
-        ) : (
-          <>
-            <FaSadTear
-              className="leading-[0px] inline-block text-gray-400"
-              style={{
-                fontSize: "120px",
-              }}
-            />
-            <p className="font-semibold mt-2 text-center text-gray-500 text-base md:text-lg">
-              There is currently no data on this table.
-            </p>
-          </>
-        )}
-      </td>
-    </tr>
-  </tbody>
+  <div className="bg-gray-200 flex flex-col h-[250px] items-center justify-center w-full">    
+    {loading ? (
+      <DotsLoader color="info" />
+    ) : (
+      <>
+        <FaSadTear
+          className="leading-[0px] inline-block text-gray-400"
+          style={{
+            fontSize: "120px",
+          }}
+        />
+        <p className="font-semibold mt-2 text-center text-gray-500 text-base md:text-lg">
+          There is currently no data on this table.
+        </p>
+      </>
+    )}
+  </div>
 );
 
 export type TableContainerProps = {
@@ -214,11 +210,7 @@ const Table = ({
           maxHeight: options?.maxHeight,
         }}
       >
-        <table
-          className={`${
-            rows.length <= 0 || loading ? "h-[250px]" : ""
-          } relative table table-auto w-full`}
-        >
+        <table className="relative table table-auto w-full">
           <thead>
             <tr
               className={`bg-gray-300 font-extrabold rounded-lg text-primary-500 text-sm ${
@@ -274,9 +266,7 @@ const Table = ({
               ))}
             </tr>
           </thead>
-          {loading ? (
-            <NoData loading={loading} />
-          ) : rows && rows.length > 0 ? (
+          {loading === false && rows && rows.length > 0 && (
             <tbody>
               {rows.map((data, index) => {
                 const isAnArray = Array.isArray(data);
@@ -441,10 +431,11 @@ const Table = ({
                 );
               })}
             </tbody>
-          ) : (
-            <NoData />
           )}
         </table>
+        {(rows === null || rows === undefined || rows.length <= 0) && (
+          <NoData loading={loading || false} />
+        )}
       </div>
     </>
   );
